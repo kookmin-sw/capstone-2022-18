@@ -1,1 +1,1 @@
-pip3 install firebase_admin
+pip3 install --upgrade firebase_admin requests beautifulsoup4
