@@ -7,9 +7,8 @@ class Thema {
   late String genre;
   late int difficulty;
   late String poster;
-  late List<dynamic> reviews;
 
-  Thema(this.id, this.name, this.description, this.genre, this.difficulty, this.poster, this.reviews);
+  Thema(this.id, this.name, this.description, this.genre, this.difficulty, this.poster);
 
   factory Thema.fromDocument(DocumentSnapshot doc) {
     return Thema(
@@ -19,7 +18,6 @@ class Thema {
       doc.get("genre").toString(),
       doc.get("difficulty"),
       doc.get("poster").toString(),
-      doc.get("reviews")
     );
   }
 }

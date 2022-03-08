@@ -20,7 +20,7 @@ class _ThemaGridViewWidgetState extends State<ThemaGridViewWidget> {
         crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 0.8,
+        childAspectRatio: 0.7,
       ),
       itemBuilder: (BuildContext context, int index) {
         return ThemaGridTileWidget(thema: widget.themaList[index]);

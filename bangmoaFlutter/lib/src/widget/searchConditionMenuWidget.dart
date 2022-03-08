@@ -18,9 +18,10 @@ class _SearchConditionMenuWidgetState extends State<SearchConditionMenuWidget> {
       children: [
         ExpansionPanel(
           headerBuilder: (BuildContext context, bool isOpen) {
-            return const Center(
-              child: Text("지역 검색", style: TextStyle(fontSize: 30),)
-            );
+            return const Padding(
+                padding: EdgeInsets.only(left: 10.0),
+                child: Text("지역 검색", style: TextStyle(fontSize: 30),),
+              );
           },
           body: Container(
                 height: 200,

@@ -33,7 +33,28 @@ class _mainViewState extends State<mainView> {
         });
         Provider.of<ThemaProvider>(context, listen: false).initThemaList(themaList);
         return Scaffold(
-
+          bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.grey,
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white.withOpacity(0.6),
+            selectedFontSize: 15,
+            unselectedFontSize: 14,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.description),
+                label: "테마정보"
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_today_outlined),
+                label: "예약현황"
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: "유저"
+              ),
+            ],
+          ),
           body: Column(
             children: [
               SearchConditionMenuWidget(),

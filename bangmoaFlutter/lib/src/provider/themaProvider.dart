@@ -22,6 +22,6 @@ class ThemaProvider extends ChangeNotifier {
         return element;
       }
     }
-    return Thema("-1", "-1", "-1", "-1", -1, "-1", []);
+    return Thema("-1", "-1", "-1", "-1", -1, "-1");
   }
 }
