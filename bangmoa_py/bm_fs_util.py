@@ -12,11 +12,7 @@ class BangMoaFireStroe:
     
     def update_db(self, col, doc_id, data_dict):
         doc_ref = self.db.collection(col).document(doc_id)
-        doc = doc_ref.get()
-        if doc.exists:
-            doc_ref.update(data_dict)
-        else:
-            doc_ref.set(data_dict)
+        doc_ref.set(data_dict)
 
     def read_db(self, collection):
         docs = db.collection(col).stream()
