@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "406738438978",
+    "project_id": "capstone-2022-18",
+    "storage_bucket": "capstone-2022-18.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406738438978:android:4fbc127c76d9df4ab496db",
+        "android_client_info": {
+          "package_name": "com.example.bangmoa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406738438978-kc0viaeaghk40griv6oc2572eq47jc4n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVlEtNC7fM82N8Qed7YkovDtJWlM52TRo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406738438978-kc0viaeaghk40griv6oc2572eq47jc4n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406738438978:android:fb96c0b59eb9e649b496db",
+        "android_client_info": {
+          "package_name": "com.example.capstone_2022_18"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406738438978-kc0viaeaghk40griv6oc2572eq47jc4n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVlEtNC7fM82N8Qed7YkovDtJWlM52TRo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406738438978-kc0viaeaghk40griv6oc2572eq47jc4n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
