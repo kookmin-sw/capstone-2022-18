@@ -30,6 +30,30 @@ class BangMoaFireStroe:
         docs = self.db.collection(col).stream()
         for doc in docs:
             doc.reference.delete()
+    
+    def read_doc(self, col, doc_id):
+        doc_ref = self.db.collection(col).document(doc_id)
+        doc = doc_ref.get()
+        if doc.exists:
+            return doc.to_dict()
+
+
+class BMWebsite(metaclass=ABCMeta):
+    # each website for crawling
+    def __init__(self, bmfs):
+        self.fs = bmfs
+
+    @abstractmethod
+    def renew_theme_info(self):
+        pass
+    
+    @abstractmethod
+    def renew_cafe_info(self):
+        pass
+    
+    def update_information(self):
+        self.renew_cafe_info()
+        self.renew_theme_info()
 
 
 class BMObject(metaclass=ABCMeta):

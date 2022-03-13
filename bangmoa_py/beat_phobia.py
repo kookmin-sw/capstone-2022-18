@@ -1,13 +1,13 @@
-from bm_util import get_bs_obj, get_hash, BMCafe, BMThema
+from bm_util import get_bs_obj, get_hash, BMCafe, BMThema, BMWebsite
 
-class BeatPhobia:
+class BeatPhobia(BMWebsite):
     url = 'https://www.xphobia.net/'
     
-    def renew_theme_info(bmfs):
-        bsobj = get_bs_obj(BeatPhobia.url + 'quest/quest_list.php')
+    def renew_theme_info(self):
+        bsobj = get_bs_obj(self.url + 'quest/quest_list.php')
         thema_list = bsobj.find_all("div", class_="txt_wrap")
         for thema in thema_list:
-            bmt = BMThema(BeatPhobia.url)
+            bmt = BMThema(self.url)
 
             thema_page = get_bs_obj(thema.find("a")["href"])
             title_block = thema_page.find("div", class_="tit_block")
@@ -23,7 +23,7 @@ class BeatPhobia:
                 bmt.description.append(line.text.replace('\n', ''))
             bmt.description = bmt.description[:-2]
 
-            bmfs.write_bm_object(u'thema', bmt)
+            self.fs.write_bm_object(u'thema', bmt)
 
             # add theme to cafe
             _cafe = quest_type[2].text.strip()
@@ -38,21 +38,20 @@ class BeatPhobia:
                     cafe_list.append(' '.join(temp[i:i+2]))
             else:
                 cafe_list.append(_cafe)
-            print(cafe_list)
             for cafe in cafe_list:
-                cafe_ref = bmfs.db.collection(u'cafe').document(get_hash(BeatPhobia.url + cafe))
+                cafe_ref = self.fs.db.collection(u'cafe').document(get_hash(self.url + cafe))
                 cafe_doc = cafe_ref.get()
                 if cafe_doc.exists:
-                    bmc = BMCafe(BeatPhobia.url)
+                    bmc = BMCafe(self.url)
                     bmc.from_dict(cafe_doc.to_dict())
                     bmc.themes.append(bmt.get_id())
-                    bmfs.write_bm_object(u'cafe', bmc)
+                    self.fs.write_bm_object(u'cafe', bmc)
     
-    def renew_cafe_info(bmfs):
-        bsobj = get_bs_obj(BeatPhobia.url + 'directions/directions.php')
+    def renew_cafe_info(self):
+        bsobj = get_bs_obj(self.url + 'directions/directions.php')
         cafe_list = bsobj.find("div", class_="sear_bot").find_all('a')
         for cafe in cafe_list:
-            bmc = BMCafe(BeatPhobia.url)
+            bmc = BMCafe(self.url)
 
             cafe_info_page = get_bs_obj(cafe["href"]).find("div", class_="shop_info")
             td_all = cafe_info_page.find_all("td")
@@ -63,4 +62,4 @@ class BeatPhobia:
             bmc.destination = td_all[2].text
             bmc.description.append(td_all[3].text)
 
-            bmfs.write_bm_object(u'cafe', bmc)
+            self.fs.write_bm_object(u'cafe', bmc)
