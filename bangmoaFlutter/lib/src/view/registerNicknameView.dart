@@ -1,4 +1,4 @@
-import 'package:bangmoa/src/provider/registerUserIDProvider.dart';
+import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/mainView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +13,11 @@ class RegisterNicknameView extends StatefulWidget {
 
 class _RegisterNicknameViewState extends State<RegisterNicknameView> {
   final TextEditingController _textController = TextEditingController();
-  late String _userID;
+  late String? _userID;
 
   @override
   Widget build(BuildContext context) {
-    _userID = Provider.of<RegisterUserIDPRovder>(context, listen: false).getUserID;
+    _userID = Provider.of<UserLoginStatusProvider>(context, listen: false).getUserID;
     CollectionReference users = FirebaseFirestore.instance.collection('user');
     return Scaffold(
       appBar: AppBar(
@@ -57,6 +57,7 @@ class _RegisterNicknameViewState extends State<RegisterNicknameView> {
                 );
               }
               else {
+                Provider.of<UserLoginStatusProvider>(context, listen: false).setUserNickName(_textController.text);
                 users.doc(_userID).set({"nickname" : _textController.text});
                 Navigator.pop(context);
                 Navigator.push(context, MaterialPageRoute(builder: (context) => mainView()));

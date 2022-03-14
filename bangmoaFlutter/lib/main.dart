@@ -1,6 +1,5 @@
-import 'package:bangmoa/src/provider/registerUserIDProvider.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
-import 'package:bangmoa/src/view/loginView.dart';
+import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/mainView.dart';
 import 'package:bangmoa/src/view/registerNicknameView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,7 +17,7 @@ void main() async{
       providers: [
         ChangeNotifierProvider<ThemaProvider>(create: (BuildContext context) => ThemaProvider()),
         ChangeNotifierProvider<SelectedThemaProvider>(create: (BuildContext context) => SelectedThemaProvider()),
-        ChangeNotifierProvider<RegisterUserIDPRovder>(create: (BuildContext context) => RegisterUserIDPRovder())
+        ChangeNotifierProvider<UserLoginStatusProvider>(create: (BuildContext context) => UserLoginStatusProvider()),
       ],
         child : MyApp()
     )
@@ -34,14 +33,9 @@ class MyApp extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
         if (snapshot.data == null) {
-          return MaterialApp(
-            title: 'BangMoa',
-            theme: ThemeData(
-              primarySwatch: Colors.grey,
-            ),
-            home: const LoginView(),
-          );
+          Provider.of<UserLoginStatusProvider>(context).logout();
         } else {
+          Provider.of<UserLoginStatusProvider>(context).login();
           print(snapshot.data?.uid);
           return FutureBuilder(
             future : FirebaseFirestore.instance.collection('user').doc(snapshot.data?.uid).get(),
@@ -50,8 +44,11 @@ class MyApp extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator(),);
               }
               print(snapshot1.data!.exists);
-              if (!snapshot1.data!.exists) {
-                Provider.of<RegisterUserIDPRovder>(context, listen: false).setUserID(snapshot.data!.uid);
+              if (snapshot1.data!.exists) {
+                Provider.of<UserLoginStatusProvider>(context, listen: false).setUserID(snapshot.data!.uid);
+                Provider.of<UserLoginStatusProvider>(context, listen: false).setUserNickName(snapshot1.data!["nickname"]);
+              } else {
+                Provider.of<UserLoginStatusProvider>(context).setUserID(snapshot.data!.uid);
                 return MaterialApp(
                   title: 'BangMoa',
                   theme: ThemeData(
@@ -59,19 +56,24 @@ class MyApp extends StatelessWidget {
                   ),
                   home: const RegisterNicknameView(),
                 );
-              } else {
-                return MaterialApp(
-                  title: 'BangMoa',
-                  theme: ThemeData(
-                    primarySwatch: Colors.grey,
-                  ),
-                  home: const mainView(),
-                );
               }
-              return Container();
+              return MaterialApp(
+                title: 'BangMoa',
+                theme: ThemeData(
+                  primarySwatch: Colors.grey,
+                ),
+                home: const mainView(),
+              );
             }
           );
         }
+        return MaterialApp(
+          title: 'BangMoa',
+          theme: ThemeData(
+            primarySwatch: Colors.grey,
+          ),
+          home: const mainView(),
+        );
       }
     );
   }

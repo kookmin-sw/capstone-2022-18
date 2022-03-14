@@ -1,5 +1,6 @@
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/themaProvider.dart';
+import 'package:bangmoa/src/view/userProfileView.dart';
 import 'package:bangmoa/src/widget/searchConditionMenuWidget.dart';
 import 'package:bangmoa/src/widget/themaGridViewWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +16,13 @@ class mainView extends StatefulWidget {
 
 class _mainViewState extends State<mainView> {
   List<Thema> themaList = [];
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +40,16 @@ class _mainViewState extends State<mainView> {
           themaList.add(Thema.fromDocument(doc));
         });
         Provider.of<ThemaProvider>(context, listen: false).initThemaList(themaList);
+        List<Widget> _widgetOption = <Widget>[
+          Column(
+            children: [
+              const SearchConditionMenuWidget(),
+              Expanded(child: ThemaGridViewWidget(themaList: themaList)),
+            ],
+          ),
+          Container(),
+          const UserProfileView()
+        ];
         return Scaffold(
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
@@ -40,14 +58,18 @@ class _mainViewState extends State<mainView> {
             unselectedItemColor: Colors.white.withOpacity(0.6),
             selectedFontSize: 15,
             unselectedFontSize: 14,
+            currentIndex: _selectedIndex,
+            onTap: (int index){
+              _onItemTapped(index);
+            },
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.description),
-                label: "테마정보"
+                label: "테마정보",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today_outlined),
-                label: "예약현황"
+                icon: Icon(Icons.wifi),
+                label: "커뮤니티"
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
@@ -55,12 +77,7 @@ class _mainViewState extends State<mainView> {
               ),
             ],
           ),
-          body: Column(
-            children: [
-              SearchConditionMenuWidget(),
-              Expanded(child: ThemaGridViewWidget(themaList: themaList)),
-            ],
-          ),
+          body: _widgetOption[_selectedIndex],
         );
       }
     );
