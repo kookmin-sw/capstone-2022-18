@@ -1,3 +1,6 @@
+// 유저 개인정보 페이지
+// 현재는 로그인정보가 없을 시 로그인을 하기 위한 페이지만 존재, 개인정보 및 로그아웃 등 기능은 미구현.
+
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/loginView.dart';
 import 'package:flutter/material.dart';

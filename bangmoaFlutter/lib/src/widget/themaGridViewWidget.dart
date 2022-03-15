@@ -1,3 +1,4 @@
+// 메인페이지에 테마들을 보여주는 그리드뷰 위젯.
 
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/widget/themaGridTileWidget.dart';

@@ -1,6 +1,8 @@
+// 로그인을 진행하는 뷰.
+// Login With google 버튼 하나만 존재하는 페이지.
+// 로그인 시 FireStore Authentication에 새로운 user가 추가된다.
+
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
-import 'package:bangmoa/src/view/registerNicknameView.dart';
-import 'package:bangmoa/src/view/userProfileView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -46,7 +48,6 @@ class _LoginViewState extends State<LoginView> {
                 ),
               );
             }
-
           }
       ),
     );

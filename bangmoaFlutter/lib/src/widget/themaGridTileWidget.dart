@@ -1,3 +1,5 @@
+// 메인페이지의 테마 타일을 만드는 위젯.
+
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
 import 'package:bangmoa/src/view/themaInfoView.dart';

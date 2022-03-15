@@ -1,3 +1,6 @@
+// 앱의 메인이 되는 방탈출 테마 리스트를 그리드형태로 보여주는 페이지
+// 현재는 테마정보를 불러오는곳이지만 카페 추가하면서 Firebase에서 데이터 불러와서 구성하는 부분은 main으로 통합시킬 필요 존재.
+
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/themaProvider.dart';
 import 'package:bangmoa/src/view/userProfileView.dart';

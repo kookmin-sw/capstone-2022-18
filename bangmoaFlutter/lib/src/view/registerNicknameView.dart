@@ -1,3 +1,8 @@
+// 닉네임 설정을 위한 페이지.
+// 닉네임 입력창과 버튼 하나로 구성.
+// 버튼 클릭시 입력된 닉네임으로 유저 id를 파이어베이스에 등록.
+// 닉네임 변경기능을 추가할 시 뷰 재활용 가능할지 고려해봐야 함.
+
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/mainView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

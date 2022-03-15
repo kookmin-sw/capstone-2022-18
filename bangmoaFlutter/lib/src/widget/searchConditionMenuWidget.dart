@@ -1,3 +1,6 @@
+// 메인페이지의 상단 검색조건 패널
+// 지역검색으로 되어있지만 종합검색으로 변경해야함.
+
 import 'package:flutter/material.dart';
 
 class SearchConditionMenuWidget extends StatefulWidget {

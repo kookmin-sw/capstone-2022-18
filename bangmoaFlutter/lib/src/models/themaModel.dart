@@ -1,3 +1,7 @@
+// 테마 클래스
+// id, 테마이름, 상세설명, 장르, 난이도, 포스터 포함
+// 포스터의 경우는 해당 포스터의 인터넷 주소로 사용시 Image.network로 불러와야 함.
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Thema {
