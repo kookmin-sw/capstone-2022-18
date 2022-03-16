@@ -3,6 +3,7 @@ import hashlib
 
 import requests
 from bs4 import BeautifulSoup
+from selenium import webdriver
 
 import firebase_admin
 from firebase_admin import firestore
@@ -39,6 +40,7 @@ class BangMoaFireStroe:
 
 
 class BMWebsite(metaclass=ABCMeta):
+    sleep_time = 0.1
     # each website for crawling
     def __init__(self, bmfs):
         self.fs = bmfs
@@ -54,6 +56,13 @@ class BMWebsite(metaclass=ABCMeta):
     def update_information(self):
         self.renew_cafe_info()
         self.renew_theme_info()
+    
+    def get_webdriver():
+        options = webdriver.ChromeOptions()
+        options.add_argument('headless')
+        options.add_argument('window-size=1920x1080')
+        options.add_argument("disable-gpu")
+        return webdriver.Chrome('../confidential/chromedriver', options=options)
 
 
 class BMObject(metaclass=ABCMeta):
@@ -86,12 +95,14 @@ class BMThema(BMObject):
         self.genre = ''
         self.difficulty = 0
         self.poster = ''
+        self.url
 
     def to_dict(self):
         super().to_dict()
         self.doc_dict['genre'] = self.genre
         self.doc_dict['difficulty'] = self.difficulty
         self.doc_dict['poster'] = self.poster
+        self.doc_dict['url'] = self.url
         return self.doc_dict
 
     def from_dict(self, data_dict):
@@ -99,7 +110,7 @@ class BMThema(BMObject):
         self.genre = data_dict['genre']
         self.difficulty = data_dict['difficulty']
         self.poster = data_dict['poster']
-
+        self.url = self.doc_dict['url']
 
 class BMCafe(BMObject):
     def __init__(self, page_name):

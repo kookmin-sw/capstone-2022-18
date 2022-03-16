@@ -1,4 +1,6 @@
 from bm_util import get_bs_obj, get_hash, BMCafe, BMThema, BMWebsite
+from selenium.webdriver.common.by import By
+import time
 
 class BeatPhobia(BMWebsite):
     url = 'https://www.xphobia.net/'
@@ -63,3 +65,54 @@ class BeatPhobia(BMWebsite):
             bmc.description.append(td_all[3].text)
 
             self.fs.write_bm_object(u'cafe', bmc)
+    
+    def get_reservation_info(date_str, theme_name):
+        _y, _m, _d = date_str.split('-')
+        res = {}
+        driver = BeatPhobia.get_webdriver()
+        driver.get(BeatPhobia.url + '/reservation/reservation_check.php')
+        days = driver.find_elements(By.XPATH, '//*[@data-handler="selectDay"]')
+        for d in days:
+            if d.text.strip() == _d:# and d.get_attribute('data-month') == _m and d.get_attribute('data-year') == _y:
+                d.click(); time.sleep(BeatPhobia.sleep_time)
+                break
+        
+        num_categories = len(driver.find_element(By.ID, 'ji_category').find_elements(By.TAG_NAME, 'li'))
+        for category_i in range(num_categories):
+            category = driver.find_element(By.ID, 'ji_category').find_elements(By.TAG_NAME, 'li')[category_i]
+            if category.text.strip() == '미션 브레이크':
+                continue
+            category.click(); time.sleep(BeatPhobia.sleep_time)
+
+            num_cafes = len(driver.find_element(By.ID, 'cl1').find_elements(By.TAG_NAME, 'li'))
+            for cafe_i in range(num_cafes):
+                cafe = driver.find_element(By.ID, 'cl1').find_elements(By.TAG_NAME, 'li')[cafe_i]
+                cafe.click(); time.sleep(BeatPhobia.sleep_time)
+                try:
+                    driver.switch_to.alert.accept()
+                    continue
+                except:
+                    pass
+
+                num_themes = len(driver.find_element(By.ID, 'cl2').find_elements(By.TAG_NAME, 'li'))
+                theme_dict = {}
+                for theme_i in range(num_themes):
+                    theme = driver.find_element(By.ID, 'cl2').find_elements(By.TAG_NAME, 'li')[theme_i]
+                    if theme_name not in theme.text:
+                        continue
+                    theme.click(); time.sleep(BeatPhobia.sleep_time)
+
+                    num_times = len(driver.find_element(By.ID, 'cl3').find_elements(By.TAG_NAME, 'li'))
+                    time_dict = {}
+                    for time_i in range(num_times):
+                        each_time = driver.find_element(By.ID, 'cl3').find_elements(By.TAG_NAME, 'li')[time_i]
+                        time_dict[each_time.text.strip()] = 'time_lock' not in each_time.get_attribute('class')
+                    if time_dict:
+                        theme_dict[theme.text.strip()] = time_dict
+                if theme_dict:
+                    res[cafe.text.strip()] = theme_dict
+        return res
+
+
+if __name__ == '__main__':
+    BeatPhobia.get_reservation_info('2022-03-16', '잭 더 리퍼')
