@@ -36,7 +36,6 @@ class MyApp extends StatelessWidget {
           Provider.of<UserLoginStatusProvider>(context).logout();
         } else {
           Provider.of<UserLoginStatusProvider>(context).login();
-          print(snapshot.data?.uid);
           return FutureBuilder(
             future : FirebaseFirestore.instance.collection('user').doc(snapshot.data?.uid).get(),
             builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot1) {

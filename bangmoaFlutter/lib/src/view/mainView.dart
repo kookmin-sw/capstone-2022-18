@@ -1,6 +1,7 @@
 // 앱의 메인이 되는 방탈출 테마 리스트를 그리드형태로 보여주는 페이지
 // 현재는 테마정보를 불러오는곳이지만 카페 추가하면서 Firebase에서 데이터 불러와서 구성하는 부분은 main으로 통합시킬 필요 존재.
 
+import 'package:bangmoa/src/const/mainViewConst.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/themaProvider.dart';
 import 'package:bangmoa/src/view/userProfileView.dart';
@@ -37,7 +38,7 @@ class _mainViewState extends State<mainView> {
           return Text('Error : ${snapshot1.error}');
         }
         if (snapshot1.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(),);
+          return mainViewLoadingIndicator();
         }
         snapshot1.data!.docs.forEach((doc) {
           themaList.add(Thema.fromDocument(doc));
@@ -56,11 +57,11 @@ class _mainViewState extends State<mainView> {
         return Scaffold(
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.grey,
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white.withOpacity(0.6),
-            selectedFontSize: 15,
-            unselectedFontSize: 14,
+            backgroundColor: bottomNavigationBackGroundColor,
+            selectedItemColor: bottomNavigationSelectedItemColor,
+            unselectedItemColor: bottomNavigationUnselectedItemColor,
+            selectedFontSize: bottomNavigationSelectedFontSize,
+            unselectedFontSize: bottomNavigationUnselectedFontSize,
             currentIndex: _selectedIndex,
             onTap: (int index){
               _onItemTapped(index);

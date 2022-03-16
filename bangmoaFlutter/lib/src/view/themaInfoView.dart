@@ -2,6 +2,7 @@
 // 테마 설명부분과 하단 댓글 Bottom Sheet 로 구성되어 있음.
 // 하단 Bottom Sheet 은 reviewBottomSheet 위젯 사용.
 
+import 'package:bangmoa/src/const/themaInfoViewConst.dart';
 import 'package:bangmoa/src/models/reviewModel.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
@@ -31,7 +32,7 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
           return Text('Error : ${snapshot1.error}');
         }
         if (snapshot1.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(),);
+          return themaInfoViewLoadingIndicator();
         }
         snapshot1.data?.docs.forEach((QueryDocumentSnapshot element) async {
           late String writerNickName;
@@ -45,27 +46,27 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
               Column(
                 children: [
                   Center(
-                    child: Text(selectedThema.name, style: TextStyle(fontSize: 30),),
+                    child: Text(selectedThema.name, style: themaTitleStyle),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: imagePadding,
                     child: Center(
                         child: Image.network(
                           selectedThema.poster,
-                          height: MediaQuery.of(context).size.height*0.3,
-                          width: MediaQuery.of(context).size.width,
+                          height: getPosterImageHeight(context),
+                          width: getPosterImageWidth(context),
                         )
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
+                    padding: genreAndDifficultyPadding,
                     child: Container(
                       child: Text("장르 : ${selectedThema.genre}"),
                       alignment: Alignment.centerRight,
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
+                    padding: genreAndDifficultyPadding,
                     child: Container(
                       child: Text("난이도 : ${selectedThema.difficulty.toString()}"),
                       alignment: Alignment.centerRight,
@@ -74,13 +75,13 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
                   Expanded(
                     child: SingleChildScrollView(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: descriptionPadding,
                         child: Text(selectedThema.description),
                       ),
                     ),
                   ),
                   Container(
-                    height: MediaQuery.of(context).size.height*0.08,
+                    height: getBottomPaddingHeight(context),
                   )
                 ],
               ),

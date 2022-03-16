@@ -3,6 +3,7 @@
 // 버튼 클릭시 입력된 닉네임으로 유저 id를 파이어베이스에 등록.
 // 닉네임 변경기능을 추가할 시 뷰 재활용 가능할지 고려해봐야 함.
 
+import 'package:bangmoa/src/const/registerNicknameViewConst.dart';
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/mainView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,17 +27,14 @@ class _RegisterNicknameViewState extends State<RegisterNicknameView> {
     CollectionReference users = FirebaseFirestore.instance.collection('user');
     return Scaffold(
       appBar: AppBar(
-        title: const Text("닉네임 설정"),
+        title: appBarText,
       ),
       body: Column(
         children: [
           Expanded(
             child: Center(
               child: TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "NickName",
-                ),
+                decoration: nickNameInputDecoration,
                 controller: _textController,
               ),
             ),
@@ -48,7 +46,7 @@ class _RegisterNicknameViewState extends State<RegisterNicknameView> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      content: const Text("닉네임을 입력해주세요."),
+                      content: dialogWarningText,
                       actions: <Widget>[
                         TextButton(
                           onPressed: () {
@@ -68,7 +66,7 @@ class _RegisterNicknameViewState extends State<RegisterNicknameView> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => mainView()));
               }
             },
-            child: const Text("완료"),
+            child: registerButtonText,
           ),
         ],
       ),

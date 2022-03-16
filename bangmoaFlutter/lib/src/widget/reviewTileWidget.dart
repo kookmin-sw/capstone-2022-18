@@ -1,33 +1,26 @@
 // 리뷰 타일
 // 향후 별점 등 기능 추가 가능성이 존재해서 위젯화함.
 
+import 'package:bangmoa/src/const/themaInfoViewConst.dart';
 import 'package:bangmoa/src/models/reviewModel.dart';
 import 'package:flutter/material.dart';
 
 Widget reviewTileWidget(BuildContext context, ReviewModel reviewModel) {
   return Container(
-    color: const Color.fromRGBO(22, 32, 45, 1),
+    color: reviewTileColor,
     child: Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: tileRowPadding,
       child: Row(
         children: [
           SizedBox(
             child: Text(reviewModel.writerNickName,
-            style: const TextStyle(
-                color: Colors.white
-              ),
+            style: reviewTextStyle,
             ),
-            width: MediaQuery.of(context).size.width*0.25,
-          ),
-          Container(
-            width: 1,
-            color: Colors.black,
+            width: getNickNameBoxWidth(context),
           ),
           Expanded(
             child: Text(reviewModel.text,
-              style: const TextStyle(
-                  color: Colors.white
-              ),
+              style: reviewTextStyle,
             )
           )
         ],

@@ -1,6 +1,7 @@
 // 테마의 리뷰를 모아서 보여주는 BottomSheet
 // 테마 상세정보 페이지 내부에서 활용.
 
+import 'package:bangmoa/src/const/themaInfoViewConst.dart';
 import 'package:bangmoa/src/models/reviewModel.dart';
 import 'package:bangmoa/src/widget/reviewTileWidget.dart';
 import 'package:flutter/material.dart';
@@ -8,30 +9,30 @@ import 'package:flutter/material.dart';
 Widget reviewBottomSheet(List<ReviewModel> reviewList) {
   return SizedBox.expand(
     child: DraggableScrollableSheet(
-      initialChildSize: 0.08,
-      minChildSize: 0.08,
-      maxChildSize: 1,
+      initialChildSize: sheetMinSize,
+      minChildSize: sheetMinSize,
+      maxChildSize: sheetMaxSize,
       builder: (BuildContext context, ScrollController scrollController) {
         return SingleChildScrollView(
           controller: scrollController,
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
-                width: 1,
+                width: sheetBorderLineWidth,
                 color: Colors.grey,
               ),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: sheetBorderRadius,
               color: Colors.white
             ),
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text("댓글", style: TextStyle(fontSize: 18),)
+                Padding(
+                  padding: sheetDragBarPadding,
+                  child: sheetDragBarText,
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height*0.92,
-                  width: MediaQuery.of(context).size.width,
+                  height: getReviewListBoxHeight(context),
+                  width: getReviewListBoxWidth(context),
                   child: ListView.builder(
                     itemCount: reviewList.length,
                     itemBuilder: (BuildContext context, int index) {
