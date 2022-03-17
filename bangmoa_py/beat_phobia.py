@@ -70,7 +70,7 @@ class BeatPhobia(BMWebsite):
         _y, _m, _d = date_str.split('-')
         res = {}
         driver = BeatPhobia.get_webdriver()
-        driver.get(BeatPhobia.url + '/reservation/reservation_check.php')
+        driver.get(BeatPhobia.url + 'reservation/reservation_check.php')
         days = driver.find_elements(By.XPATH, '//*[@data-handler="selectDay"]')
         for d in days:
             if d.text.strip() == _d:# and d.get_attribute('data-month') == _m and d.get_attribute('data-year') == _y:

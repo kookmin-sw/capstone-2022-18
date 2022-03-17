@@ -53,6 +53,27 @@ class BMWebsite(metaclass=ABCMeta):
     def renew_cafe_info(self):
         pass
     
+    @abstractmethod
+    def get_reservation_info(date_str, theme_name):
+        '''
+        return {
+            'cafe1': {
+                'theme1': {
+                    'time1': available(bool)
+                    'time2': available(bool)
+                }
+            }, 
+            'cafe2': {
+                'theme1': {
+                    'time1': available(bool)
+                    'time2': available(bool)
+                }
+            }
+        }
+        '''
+        pass
+
+    
     def update_information(self):
         self.renew_cafe_info()
         self.renew_theme_info()
@@ -72,7 +93,6 @@ class BMObject(metaclass=ABCMeta):
         self.page = page_name
         self.name = ''
         self.description = []
-        self.doc_dict = {}
 
     def get_id(self):
         # id is hash of (web_URL + name)
@@ -80,8 +100,10 @@ class BMObject(metaclass=ABCMeta):
     
     @abstractmethod
     def to_dict(self):
-        self.doc_dict['name'] = self.name
-        self.doc_dict['description'] = '\n'.join(self.description)
+        res = {}
+        res['name'] = self.name
+        res['description'] = '\n'.join(self.description)
+        return res
     
     @abstractmethod
     def from_dict(self, data_dict):
@@ -95,22 +117,21 @@ class BMThema(BMObject):
         self.genre = ''
         self.difficulty = 0
         self.poster = ''
-        self.url
 
     def to_dict(self):
-        super().to_dict()
-        self.doc_dict['genre'] = self.genre
-        self.doc_dict['difficulty'] = self.difficulty
-        self.doc_dict['poster'] = self.poster
-        self.doc_dict['url'] = self.url
-        return self.doc_dict
+        res = super().to_dict()
+        res['genre'] = self.genre
+        res['difficulty'] = self.difficulty
+        res['poster'] = self.poster
+        res['url'] = self.page
+        return res
 
     def from_dict(self, data_dict):
         super().from_dict(data_dict)
         self.genre = data_dict['genre']
         self.difficulty = data_dict['difficulty']
         self.poster = data_dict['poster']
-        self.url = self.doc_dict['url']
+        self.url = data_dict['url']
 
 class BMCafe(BMObject):
     def __init__(self, page_name):
@@ -120,11 +141,11 @@ class BMCafe(BMObject):
         self.themes = []
     
     def to_dict(self):
-        super().to_dict()
-        self.doc_dict['destination'] = self.destination
-        self.doc_dict['phone'] = self.phone
-        self.doc_dict['themes'] = self.themes
-        return self.doc_dict
+        res = super().to_dict()
+        res['destination'] = self.destination
+        res['phone'] = self.phone
+        res['themes'] = self.themes
+        return res
     
     def from_dict(self, data_dict):
         super().from_dict(data_dict)
