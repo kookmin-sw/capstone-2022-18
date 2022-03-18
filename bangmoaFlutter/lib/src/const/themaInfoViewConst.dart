@@ -39,7 +39,7 @@ double getReviewListBoxWidth(BuildContext context) {
 
 // Const used in reviewTile
 Color reviewTileColor = const Color.fromRGBO(22, 32, 45, 1);
-EdgeInsetsGeometry tileRowPadding = const EdgeInsets.all(8.0);
+EdgeInsetsGeometry tileRowPadding = const EdgeInsets.only(top: 8.0);
 TextStyle reviewTextStyle = const TextStyle(
     color: Colors.white
 );

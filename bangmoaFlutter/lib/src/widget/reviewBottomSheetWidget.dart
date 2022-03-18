@@ -3,48 +3,167 @@
 
 import 'package:bangmoa/src/const/themaInfoViewConst.dart';
 import 'package:bangmoa/src/models/reviewModel.dart';
+import 'package:bangmoa/src/provider/reviewProvider.dart';
+import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
+import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/widget/reviewTileWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-Widget reviewBottomSheet(List<ReviewModel> reviewList) {
-  return SizedBox.expand(
-    child: DraggableScrollableSheet(
-      initialChildSize: sheetMinSize,
-      minChildSize: sheetMinSize,
-      maxChildSize: sheetMaxSize,
-      builder: (BuildContext context, ScrollController scrollController) {
-        return SingleChildScrollView(
-          controller: scrollController,
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: sheetBorderLineWidth,
-                color: Colors.grey,
-              ),
-              borderRadius: sheetBorderRadius,
-              color: Colors.white
-            ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: sheetDragBarPadding,
-                  child: sheetDragBarText,
-                ),
-                SizedBox(
-                  height: getReviewListBoxHeight(context),
-                  width: getReviewListBoxWidth(context),
-                  child: ListView.builder(
-                    itemCount: reviewList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return reviewTileWidget(context, reviewList[index]);
-                    }
-                  ),
-                )
-              ],
-            ),
-          ),
-        );
-      }
-    ),
-  );
+class ReviewBottomSheet extends StatefulWidget {
+  const ReviewBottomSheet({Key? key}) : super(key: key);
+
+  @override
+  State<ReviewBottomSheet> createState() => _ReviewBottomSheetState();
 }
+
+class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
+  final TextEditingController _textEditingController = TextEditingController();
+  final DraggableScrollableController _controller = DraggableScrollableController();
+  late List<ReviewModel> reviewList;
+  CollectionReference review = FirebaseFirestore.instance.collection('review');
+
+  @override
+  Widget build(BuildContext context) {
+    ReviewProvider reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
+    reviewList = reviewProvider.getReviewList;
+    return SizedBox.expand(
+      child: DraggableScrollableSheet(
+          initialChildSize: sheetMinSize,
+          minChildSize: sheetMinSize,
+          maxChildSize: sheetMaxSize,
+          controller: _controller,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return SingleChildScrollView(
+              controller: scrollController,
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      width: sheetBorderLineWidth,
+                      color: Colors.grey,
+                    ),
+                    borderRadius: sheetBorderRadius,
+                    color: Colors.white
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: sheetDragBarPadding,
+                        child: sheetDragBarText,
+                      ),
+                      TextField(
+                        maxLines: 5,
+                        decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                                onPressed: () async {
+                                  await review.add({
+                                    'text' : _textEditingController.text,
+                                    'themaID' : Provider.of<SelectedThemaProvider>(context, listen: false).getSelectedThema.id,
+                                    'writerID' : Provider.of<UserLoginStatusProvider>(context, listen: false).getUserID,
+                                  });
+                                  reviewProvider.resetList();
+                                  _textEditingController.clear();
+                                },
+                                icon: const Icon(Icons.arrow_forward_ios_rounded)
+                            ),
+                            border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10.0))
+                            )
+                        ),
+                        controller: _textEditingController,
+                      ),
+                      SizedBox(
+                        height: getReviewListBoxHeight(context),
+                        width: getReviewListBoxWidth(context),
+                        child: ListView.builder(
+                            itemCount: reviewList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return reviewTileWidget(context, reviewList[index]);
+                            }
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+      ),
+    );
+  }
+}
+
+
+// Widget reviewBottomSheet(BuildContext context, TextEditingController textEditingController) {
+//   DraggableScrollableController _controller = DraggableScrollableController();
+//   List<ReviewModel> reviewList = Provider.of<ReviewProvider>(context).getReviewList;
+//   CollectionReference review = FirebaseFirestore.instance.collection('review');
+//   return SizedBox.expand(
+//     child: DraggableScrollableSheet(
+//       initialChildSize: sheetMinSize,
+//       minChildSize: sheetMinSize,
+//       maxChildSize: sheetMaxSize,
+//       controller: _controller,
+//       builder: (BuildContext context, ScrollController scrollController) {
+//         return SingleChildScrollView(
+//           controller: scrollController,
+//           child: Container(
+//             decoration: BoxDecoration(
+//               border: Border.all(
+//                 width: sheetBorderLineWidth,
+//                 color: Colors.grey,
+//               ),
+//               borderRadius: sheetBorderRadius,
+//               color: Colors.white
+//             ),
+//             child: Padding(
+//               padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+//               child: Column(
+//                 children: [
+//                   Padding(
+//                     padding: sheetDragBarPadding,
+//                     child: sheetDragBarText,
+//                   ),
+//                  TextField(
+//                     maxLines: 5,
+//                     decoration: InputDecoration(
+//                       suffixIcon: IconButton(
+//                         onPressed: () async {
+//                           await review.add({
+//                             'text' : textEditingController.text,
+//                             'themaID' : Provider.of<SelectedThemaProvider>(context, listen: false).getSelectedThema.id,
+//                             'writerID' : Provider.of<UserLoginStatusProvider>(context, listen: false).getUserID,
+//                           });
+//                           Provider.of<ReviewProvider>(context).resetList();
+//                           textEditingController.clear();
+//                         },
+//                         icon: const Icon(Icons.arrow_forward_ios_rounded)
+//                       ),
+//                       border: const OutlineInputBorder(
+//                         borderRadius: BorderRadius.all(Radius.circular(10.0))
+//                       )
+//                     ),
+//                     controller: textEditingController,
+//                   ),
+//                   SizedBox(
+//                     height: getReviewListBoxHeight(context),
+//                     width: getReviewListBoxWidth(context),
+//                     child: ListView.builder(
+//                       itemCount: reviewList.length,
+//                       itemBuilder: (BuildContext context, int index) {
+//                         return reviewTileWidget(context, reviewList[index]);
+//                       }
+//                     ),
+//                   )
+//                 ],
+//               ),
+//             ),
+//           ),
+//         );
+//       }
+//     ),
+//   );
+// }

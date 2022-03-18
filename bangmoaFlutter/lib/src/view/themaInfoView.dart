@@ -5,6 +5,7 @@
 import 'package:bangmoa/src/const/themaInfoViewConst.dart';
 import 'package:bangmoa/src/models/reviewModel.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
+import 'package:bangmoa/src/provider/reviewProvider.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
 import 'package:bangmoa/src/widget/reviewBottomSheetWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,7 +21,6 @@ class ThemaInfoView extends StatefulWidget {
 
 class _ThemaInfoViewState extends State<ThemaInfoView> {
   late Thema selectedThema;
-  List<ReviewModel> _reviewList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,9 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
         snapshot1.data?.docs.forEach((QueryDocumentSnapshot element) async {
           late String writerNickName;
           await FirebaseFirestore.instance.collection('user').doc(element.get("writerID")).get().then((value) => writerNickName = value["nickname"]);
-          _reviewList.add(ReviewModel(element.id, element["text"], element["themaID"], element["writerID"], writerNickName));
+          if(Provider.of<ReviewProvider>(context, listen: false).reviewIDCheck(element.id)) {
+            Provider.of<ReviewProvider>(context, listen: false).addReview(ReviewModel(element.id, element["text"], element["themaID"], element["writerID"], writerNickName));
+          }
         });
         return Scaffold(
           backgroundColor: Colors.white,
@@ -85,7 +87,7 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
                   )
                 ],
               ),
-              reviewBottomSheet(_reviewList),
+              ReviewBottomSheet(),
             ],
           ),
         );

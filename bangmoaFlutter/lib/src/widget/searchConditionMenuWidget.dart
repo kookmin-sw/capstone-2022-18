@@ -13,17 +13,6 @@ class SearchConditionMenuWidget extends StatefulWidget {
 class _SearchConditionMenuWidgetState extends State<SearchConditionMenuWidget> {
   bool _expanded = false;
   int _selectedIndex = 0;
-  Map<String, List<String>> regionMapping = {
-    "홍대" : ["홍대", "마포구"],
-    "신촌" : ["신촌", "서대문구"],
-    "강남" : ["강남", "강남구", "서초구"],
-    "건대" : ["건대", "광진구"],
-    "대학로" : ["대학로", "혜화", "종로구"],
-    "명동" : ["명동"],
-    "부산" : ["부산", "서면", "해운대"],
-    "인천" : ["인천", "부천"],
-    "대구" : ["대구", "동성로"],
-  };
   List<String> regionList = ["전체", "홍대", "신촌", "강남", "건대", "대학로", "명동", "부산", "인천", "대구", "기타"];
 
   @override
