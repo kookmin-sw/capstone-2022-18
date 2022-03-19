@@ -1,37 +1,28 @@
-## Welcome to GitHub Pages
+# 방탈출모아
+2022년 국민대학교 소프트웨어학부 캡스톤디자인 프로젝트
 
-You can use the [editor on GitHub](https://github.com/kookmin-sw/cap-template/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+## 1. 프로젝트 소개
+주어진 시간 안에 퍼즐을 해결하고 밀실을 탈출하는 방탈출 카페에 대한 정보를 제공하고, 원하는 테마의 예약을 돕는 모바일 어플리케이션을 제작하는 프로젝트입니다. 현재 각 카페에서 제공하는 정보들을 크롤링하여 한 화면에서 모아볼 수 있도록 하며, 관심있는 테마의 예약 정보를 제공합니다.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## 2. Abstract
 
-### Markdown
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## 3. 소개영상
 
-```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+## 4. 팀 소개
+### **박정규** (----1624)
+```
+e-mail : pjg1020@kookmin.ac.kr
+role : 어플리케이션 제작
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+### **김남재** (----1584)
+```
+e-mail : kimnj3050@kookmin.ac.kr
+role : 데이터 수집, AWS 서버 관리
+```
 
-### Jekyll Themes
+## 5. 사용법
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/kookmin-sw/cap-template/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+## 6. 기타
