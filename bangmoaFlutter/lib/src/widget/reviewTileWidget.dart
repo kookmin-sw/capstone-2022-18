@@ -18,10 +18,25 @@ Widget reviewTileWidget(BuildContext context, ReviewModel reviewModel) {
             ),
             width: getNickNameBoxWidth(context),
           ),
-          Expanded(
-            child: Text(reviewModel.text,
-              style: reviewTextStyle,
-            )
+          SizedBox(
+            height: 60,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      index < reviewModel.rating ? Icons.star : Icons.star_border,
+                    );
+                  }),
+                ),
+                Expanded(
+                  child: Text(reviewModel.text,
+                    style: reviewTextStyle,
+                  )
+                ),
+              ],
+            ),
           )
         ],
       ),

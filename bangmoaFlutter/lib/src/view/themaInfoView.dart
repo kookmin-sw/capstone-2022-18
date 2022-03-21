@@ -7,6 +7,7 @@ import 'package:bangmoa/src/models/reviewModel.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/reviewProvider.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
+import 'package:bangmoa/src/view/reservationView.dart';
 import 'package:bangmoa/src/widget/reviewBottomSheetWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
           late String writerNickName;
           await FirebaseFirestore.instance.collection('user').doc(element.get("writerID")).get().then((value) => writerNickName = value["nickname"]);
           if(Provider.of<ReviewProvider>(context, listen: false).reviewIDCheck(element.id)) {
-            Provider.of<ReviewProvider>(context, listen: false).addReview(ReviewModel(element.id, element["text"], element["themaID"], element["writerID"], writerNickName));
+            Provider.of<ReviewProvider>(context, listen: false).addReview(ReviewModel(element.id, element["text"], element["themaID"], element["writerID"], writerNickName, element["rating"].toDouble()));
           }
         });
         return Scaffold(
@@ -82,9 +83,22 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
                       ),
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: Container(
+                      height: 50,
+                      alignment: Alignment.bottomRight,
+                      child: IconButton(
+                        icon: Icon(Icons.calendar_today),
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ReservationView()));
+                        },
+                      ),
+                    ),
+                  ),
                   Container(
                     height: getBottomPaddingHeight(context),
-                  )
+                  ),
                 ],
               ),
               ReviewBottomSheet(),

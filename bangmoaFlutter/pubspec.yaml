@@ -39,6 +39,9 @@ dependencies:
   provider: ^6.0.2
   firebase_auth: ^3.3.9
   google_sign_in: ^5.2.4
+  flutter_rating_bar: ^4.0.0
+  flutter_calendar_carousel: ^2.1.0
+  http: ^0.13.4
 
 dev_dependencies:
   flutter_test:

@@ -8,6 +8,7 @@ class ReviewModel{
   late String themaID;
   late String writerID;
   late String writerNickName;
+  late double rating;
 
-  ReviewModel(this.id, this.text, this.themaID, this.writerID, this.writerNickName);
+  ReviewModel(this.id, this.text, this.themaID, this.writerID, this.writerNickName, this.rating);
 }
