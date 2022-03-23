@@ -3,6 +3,7 @@ import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/cafeProvider.dart';
 import 'package:bangmoa/src/provider/reviewProvider.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
+import 'package:bangmoa/src/provider/themaCafeListProvider.dart';
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/mainView.dart';
 import 'package:bangmoa/src/view/registerNicknameView.dart';
@@ -24,6 +25,7 @@ void main() async{
         ChangeNotifierProvider<UserLoginStatusProvider>(create: (BuildContext context) => UserLoginStatusProvider()),
         ChangeNotifierProvider<CafeProvider>(create: (BuildContext context) => CafeProvider()),
         ChangeNotifierProvider<ReviewProvider>(create: (BuildContext context) => ReviewProvider()),
+        ChangeNotifierProvider<ThemaCafeListProvider>(create: (BuildContext context) => ThemaCafeListProvider()),
       ],
         child : MyApp()
     )
