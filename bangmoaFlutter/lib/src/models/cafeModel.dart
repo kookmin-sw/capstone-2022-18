@@ -14,6 +14,8 @@ class Cafe {
   Cafe(this.id, this.name, this.destination, this.phone, this.themas, this.description);
 
   factory Cafe.fromDocument(DocumentSnapshot doc) {
+    String dest = doc["destination"];
+
     return Cafe(
       doc.id,
       doc["name"],
