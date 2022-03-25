@@ -2,30 +2,30 @@ from flask import Flask, request, jsonify
 
 from bm_util import BangMoaFireStroe
 
-from beat_phobia import BeatPhobia
-from next_edition import NextEdition
+from cafe_website.beat_phobia import BeatPhobia
+from cafe_website.next_edition import NextEdition
 
 url_class = {
-    'https://www.xphobia.net/': BeatPhobia
+    'https://www.xphobia.net/': BeatPhobia,
     'https://www.nextedition.co.kr': NextEdition
 }
 
 app = Flask(__name__)
+bmfs = BangMoaFireStroe()
 
 @app.route('/')
 def hello_world():
     return "Hi zzz"
 
-@app.route('/reservation', method=['POST'])
+@app.route('/reservation', methods=['POST'])
 def reservation_check():
     input_data = request.get_json()
 
-    bmfs = BangMoaFireStroe()
-    theme_doc = bmfs.read_doc(u'thema', input_data['theme_id'])
+    theme_doc = bmfs.read_doc(u'thema', input_data['id'])
 
     output_data = url_class[theme_doc['url']].get_reservation_info(
         input_data['date'], 
-        theme_doc['title']
+        theme_doc['name']
     )
 
     return jsonify(output_data)

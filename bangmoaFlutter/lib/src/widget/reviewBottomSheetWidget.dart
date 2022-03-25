@@ -8,6 +8,7 @@ import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/widget/reviewTileWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -23,6 +24,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
   final DraggableScrollableController _controller = DraggableScrollableController();
   late List<ReviewModel> reviewList;
   CollectionReference review = FirebaseFirestore.instance.collection('review');
+  double _rating = 3.0;
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +56,24 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                         padding: sheetDragBarPadding,
                         child: sheetDragBarText,
                       ),
+                      RatingBar.builder(
+                        itemSize: 30,
+                        initialRating: 3,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        minRating: 1,
+                        direction: Axis.horizontal,
+                        allowHalfRating: false,
+                        itemCount: 5,
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          _rating = rating;
+                        },
+                      ),
                       TextField(
-                        maxLines: 5,
+                        maxLines: 2,
                         decoration: InputDecoration(
                             suffixIcon: IconButton(
                                 onPressed: () async {
@@ -63,9 +81,14 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                                     'text' : _textEditingController.text,
                                     'themaID' : Provider.of<SelectedThemaProvider>(context, listen: false).getSelectedThema.id,
                                     'writerID' : Provider.of<UserLoginStatusProvider>(context, listen: false).getUserID,
+                                    'rating' : _rating,
                                   });
                                   reviewProvider.resetList();
                                   _textEditingController.clear();
+                                  // setState(() {
+                                  //
+                                  // });
+                                  // scrollController.jumpTo(MediaQuery.of(context).size.height*0.2);
                                 },
                                 icon: const Icon(Icons.arrow_forward_ios_rounded)
                             ),

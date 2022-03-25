@@ -17,6 +17,7 @@ class _UserProfileViewState extends State<UserProfileView> {
   late bool _loginStatus;
   @override
   Widget build(BuildContext context) {
+    UserLoginStatusProvider userLoginStatusProvider = Provider.of<UserLoginStatusProvider>(context);
     _loginStatus = Provider.of<UserLoginStatusProvider>(context).getLogin;
     if (!_loginStatus) {
       return Center(
@@ -45,6 +46,30 @@ class _UserProfileViewState extends State<UserProfileView> {
         ),
       );
     }
-    return Container();
+    return Column(
+      children: [
+        Text(
+          "닉네임 : ${userLoginStatusProvider.getNickName}",
+          style: TextStyle(
+            fontSize: 30,
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+
+          },
+          child: SizedBox(
+            child: const Text(
+              "로그아웃",
+              style: TextStyle(
+                fontSize: 30
+              ),
+            ),
+            height: MediaQuery.of(context).size.height*0.1,
+            width: MediaQuery.of(context).size.width,
+          ),
+        )
+      ],
+    );
   }
 }

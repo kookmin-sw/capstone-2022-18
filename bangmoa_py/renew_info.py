@@ -1,7 +1,7 @@
 from bm_util import BangMoaFireStroe
 
-from beat_phobia import BeatPhobia
-from next_edition import NextEdition
+from cafe_website.beat_phobia import BeatPhobia
+from cafe_website.next_edition import NextEdition
 
 if __name__ == '__main__':
     bmfs = BangMoaFireStroe()

@@ -18,7 +18,7 @@ double getPosterImageWidth(BuildContext context) {
 }
 
 double getBottomPaddingHeight(BuildContext context) {
-  return MediaQuery.of(context).size.height*0.08;
+  return MediaQuery.of(context).size.height*0.1;
 }
 
 // Const used in reviewBottomSheet
