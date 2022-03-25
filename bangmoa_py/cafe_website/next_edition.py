@@ -71,6 +71,8 @@ class NextEdition(BMWebsite):
                 for each_time in times:
                     res[_cafe_name][theme_name][each_time.find_element(By.CLASS_NAME, 'time').text.strip()] = 'res-true' in each_time.get_attribute('class')
                 break
+                if len(res[_cafe_name][theme_name]) == 0:
+                    res = {}
         return res
 
 if __name__ == '__main__':
