@@ -1,3 +1,6 @@
+// 메인페이지의 테마 타일을 만드는 위젯.
+
+import 'package:bangmoa/src/const/mainViewConst.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
 import 'package:bangmoa/src/view/themaInfoView.dart';
@@ -11,21 +14,21 @@ class ThemaGridTileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: tilePadding,
       child: InkWell(
         child: Column(
           children: [
-            Center(child: Image.network(thema.poster, height: 150,)),
+            Center(child: Image.network(thema.poster, height: imageHeight,)),
             Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: Text(thema.name,style: TextStyle(fontSize: 20)),
+              padding: themaTextPadding,
+              child: Text(thema.name,style: themaTitleStyle),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 5.0),
+              padding: themaTextPadding,
               child: Text(thema.genre),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 5.0),
+              padding: themaTextPadding,
               child: Text("난이도 : ${thema.difficulty.toString()}"),
             )
           ],
@@ -33,7 +36,7 @@ class ThemaGridTileWidget extends StatelessWidget {
         ),
         onTap: () {
           Provider.of<SelectedThemaProvider>(context, listen: false).setSelectedThema(thema);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ThemaInfoView()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const ThemaInfoView()));
         },
       ),
     );

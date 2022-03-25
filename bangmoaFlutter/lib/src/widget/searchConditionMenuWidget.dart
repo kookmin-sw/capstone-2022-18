@@ -1,3 +1,6 @@
+// 메인페이지의 상단 검색조건 패널
+// 지역검색으로 되어있지만 종합검색으로 변경해야함.
+
 import 'package:flutter/material.dart';
 
 class SearchConditionMenuWidget extends StatefulWidget {
@@ -10,7 +13,7 @@ class SearchConditionMenuWidget extends StatefulWidget {
 class _SearchConditionMenuWidgetState extends State<SearchConditionMenuWidget> {
   bool _expanded = false;
   int _selectedIndex = 0;
-  List<String> regionList = ["전체", "홍대", "강남", "신촌", "건대", "대학로", "경기", "대구", "부산", "인천", "기타"];
+  List<String> regionList = ["전체", "홍대", "신촌", "강남", "건대", "대학로", "명동", "부산", "인천", "대구", "기타"];
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,7 @@ class _SearchConditionMenuWidgetState extends State<SearchConditionMenuWidget> {
           body: Container(
                 height: 200,
                 child: ListView.builder(
-                  itemCount: 11,
+                  itemCount: regionList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
                       title: Text(regionList[index]),

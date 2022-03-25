@@ -1,4 +1,6 @@
+// 메인페이지에 테마들을 보여주는 그리드뷰 위젯.
 
+import 'package:bangmoa/src/const/mainViewConst.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/widget/themaGridTileWidget.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +18,7 @@ class _ThemaGridViewWidgetState extends State<ThemaGridViewWidget> {
   Widget build(BuildContext context) {
     return GridView.builder(
       itemCount: widget.themaList.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 0.7,
-      ),
+      gridDelegate: themaGridViewDelegate,
       itemBuilder: (BuildContext context, int index) {
         return ThemaGridTileWidget(thema: widget.themaList[index]);
       }
