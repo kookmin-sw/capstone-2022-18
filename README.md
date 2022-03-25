@@ -27,4 +27,4 @@ role : 데이터 수집, AWS 서버 관리
 
 ### 5. 기타
 구조도(이후 Update 예정)
-![drawing](pages_src/drawing.jpg)
+![drawing](pages_src/structure.jpg)
