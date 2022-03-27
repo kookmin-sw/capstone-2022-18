@@ -31,17 +31,17 @@ def clac_similarity():
     )
     similarity.to_pickle('./confidential/similarity.pkl')
 
-def get_similar_theme(theme_id):
-    similarity = pd.read_pickle('./confidential/similarity.pkl')[theme_id]
-    calc_sum = similarity.mean(axis=1).drop(theme_id)
+def get_similar_theme(user_id):
+    # read visited themes
+    rating = pd.read_pickle('./confidential/rating.pkl')
+    rated = rating[rating[user_id] > 0][user_id].index
+    # get top 3
+    similarity = pd.read_pickle('./confidential/similarity.pkl')[rated]
+    calc_sum = similarity.mean(axis=1).drop(rated)
     res = calc_sum.sort_values(ascending=False)
     print(res.index[:3])
 
 if __name__ == '__main__':
     key_file = sys.argv[1]
     #init_rating_dataframe(key_file)
-    theme_li = [
-        '61e06a7cb6f6947c9bbc97a0b53aae6db3147e093725cbd1435f4ce4c99fa293',
-        'a04a74c6291ecee84ef07d31d392f980cfe08455a3d872e484111e83350ba188'
-    ]
-    get_similar_theme(theme_li)
+    get_similar_theme('te03st')
