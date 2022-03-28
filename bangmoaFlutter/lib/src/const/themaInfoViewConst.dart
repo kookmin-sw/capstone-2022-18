@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 Widget themaInfoViewLoadingIndicator() {
   return const CircularProgressIndicator();
 }
-TextStyle themaTitleStyle = const TextStyle(fontSize: 30);
+TextStyle themaTitleStyle = const TextStyle(fontSize: 25);
 EdgeInsetsGeometry imagePadding = const EdgeInsets.all(8.0);
 EdgeInsetsGeometry genreAndDifficultyPadding = const EdgeInsets.only(right: 10.0);
 EdgeInsetsGeometry descriptionPadding = const EdgeInsets.all(8.0);
@@ -38,7 +38,7 @@ double getReviewListBoxWidth(BuildContext context) {
 }
 
 // Const used in reviewTile
-Color reviewTileColor = const Color.fromRGBO(22, 32, 45, 1);
+Color reviewTileColor = Color.fromRGBO(22, 32, 45, 1);
 EdgeInsetsGeometry tileRowPadding = const EdgeInsets.only(top: 8.0);
 TextStyle reviewTextStyle = const TextStyle(
     color: Colors.white
