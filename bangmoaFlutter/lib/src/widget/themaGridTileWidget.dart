@@ -54,9 +54,9 @@ class ThemaGridTileWidget extends StatelessWidget {
 void loadReviewData(BuildContext context, Thema thema) async {
   Provider.of<ReviewProvider>(context, listen: false).initList();
   await FirebaseFirestore.instance.collection('review').where("themaID", isEqualTo: thema.id).get().then((QuerySnapshot querySnapshot) {
-    querySnapshot.docs.forEach((document) {
+    querySnapshot.docs.forEach((document) async {
       String writerNickName = "";
-      FirebaseFirestore.instance.collection('user').doc(document["writerID"]).get().then((value) => writerNickName = value["nickname"]);
+      await FirebaseFirestore.instance.collection('user').doc(document["writerID"]).get().then((value) => writerNickName = value["nickname"]);
       Provider.of<ReviewProvider>(context,listen: false).addReview(ReviewModel(document.id, document["text"], document["themaID"], document["writerID"], writerNickName, document["rating"].toDouble()));
     });
   });
