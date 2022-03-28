@@ -46,6 +46,16 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
           backgroundColor: Colors.grey,
           body : Column(
             children: [
+              Container(
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
+                    Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+                  ],
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(6.0),
                 child: Container(
