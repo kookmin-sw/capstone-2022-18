@@ -11,7 +11,6 @@ Widget reviewTileWidget(BuildContext context, ReviewModel reviewModel) {
     child: Container(
       decoration: BoxDecoration(
           color: reviewTileColor,
-          borderRadius: BorderRadius.circular(20)
       ),
       child: Padding(
         padding: tileRowPadding,

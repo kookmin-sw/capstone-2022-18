@@ -31,6 +31,7 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
     return StreamBuilder(
       stream: FirebaseFirestore.instance.collection('cafe').where("themes", arrayContains: selectedThema.id).snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> cafeSnapshot) {
+        cafeList = [];
         if (cafeSnapshot.hasError) {
           return Text('Error : ${cafeSnapshot.error}');
         }
