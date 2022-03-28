@@ -18,8 +18,8 @@ def get_hash(origin_text):
 
 class BangMoaFireStroe:
     # firestore
-    def __init__(self):
-        cred = firebase_admin.credentials.Certificate('../confidential/firebase_python_key.json')
+    def __init__(self, key_file):
+        cred = firebase_admin.credentials.Certificate(key_file)
         firebase_admin.initialize_app(cred)
         self.db = firestore.client()
     

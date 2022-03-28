@@ -6,10 +6,12 @@ import 'package:bangmoa/src/const/mainViewConst.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/themaProvider.dart';
 import 'package:bangmoa/src/view/userProfileView.dart';
+import 'package:bangmoa/src/widget/recommendThemaWidget.dart';
 import 'package:bangmoa/src/widget/searchConditionMenuWidget.dart';
 import 'package:bangmoa/src/widget/themaGridViewWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 
 class mainView extends StatefulWidget {
   const mainView({Key? key}) : super(key: key);
@@ -19,55 +21,30 @@ class mainView extends StatefulWidget {
 }
 
 class _mainViewState extends State<mainView> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  List<Thema> recommendList = [];
 
   @override
   Widget build(BuildContext context) {
     List<Thema> _themaList = Provider.of<ThemaProvider>(context).getThemaList;
-    List<Widget> _widgetOption = <Widget>[
-      Column(
+    var rng = Random();
+    for (var i = 0; i < 7; i++) {
+      recommendList.add(_themaList[rng.nextInt(_themaList.length)]);
+    }
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfileView()));
+        },
+        child: Icon(Icons.person),
+      ),
+      backgroundColor: Colors.grey,
+      body: Column(
         children: [
           const SearchConditionMenuWidget(),
+          RecommendThemaWidget(context, recommendList),
           Expanded(child: ThemaGridViewWidget(themaList: _themaList)),
         ],
       ),
-      Container(),
-      const UserProfileView()
-    ];
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: bottomNavigationBackGroundColor,
-        selectedItemColor: bottomNavigationSelectedItemColor,
-        unselectedItemColor: bottomNavigationUnselectedItemColor,
-        selectedFontSize: bottomNavigationSelectedFontSize,
-        unselectedFontSize: bottomNavigationUnselectedFontSize,
-        currentIndex: _selectedIndex,
-        onTap: (int index){
-          _onItemTapped(index);
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.description),
-            label: "테마정보",
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.wifi),
-              label: "커뮤니티"
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: "유저"
-          ),
-        ],
-      ),
-      body: _widgetOption[_selectedIndex],
     );
   }
 }
