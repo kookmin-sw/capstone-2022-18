@@ -20,7 +20,7 @@ class _SearchConditionMenuWidgetState extends State<SearchConditionMenuWidget> {
     return ExpansionPanelList(
       children: [
         ExpansionPanel(
-          backgroundColor: Colors.amberAccent,
+          backgroundColor: Colors.white38,
           headerBuilder: (BuildContext context, bool isOpen) {
             return const Padding(
                 padding: EdgeInsets.all(10.0),

@@ -60,82 +60,113 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
               }
             });
             return Scaffold(
-              backgroundColor: Colors.white,
-              body : Stack(
+              backgroundColor: Colors.grey,
+              body : Column(
                 children: [
-                  Column(
-                    children: [
-                      Center(
-                        child: Text(selectedThema.name, style: themaTitleStyle, overflow: TextOverflow.ellipsis,),
+                  Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white
                       ),
-                      Padding(
-                        padding: imagePadding,
-                        child: Center(
-                            child: Image.network(
-                              selectedThema.poster,
-                              height: getPosterImageHeight(context),
-                              width: getPosterImageWidth(context),
-                            )
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Text(selectedThema.name, style: themaTitleStyle, overflow: TextOverflow.ellipsis,),
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: List.generate(cafeList.length+1,
-                              (index) {
-                                if (index == 0) {
-                                  return const Padding(
-                                    padding: EdgeInsets.only(right: 8.0),
-                                    child: Text("지점 :"),
-                                  );
-                                }
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: Text(cafeList[index-1].name),
-                                );
-                              }
-                        ),
-                      ),
-                      Padding(
-                        padding: genreAndDifficultyPadding,
-                        child: Container(
-                          child: Text("장르 : ${selectedThema.genre}"),
-                          alignment: Alignment.centerRight,
-                        ),
-                      ),
-                      Padding(
-                        padding: genreAndDifficultyPadding,
-                        child: Container(
-                          child: Text("난이도 : ${selectedThema.difficulty.toString()}"),
-                          alignment: Alignment.centerRight,
-                        ),
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding: descriptionPadding,
-                            child: Text(selectedThema.description),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10.0),
-                        child: Container(
-                          height: 50,
-                          alignment: Alignment.bottomRight,
-                          child: IconButton(
-                            icon: Icon(Icons.calendar_today),
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => ReservationView()));
-                            },
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: getBottomPaddingHeight(context),
-                      ),
-                    ],
+                    ),
                   ),
-                  ReviewBottomSheet(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Padding(
+                                    padding: imagePadding,
+                                    child: Center(
+                                        child: Image.network(
+                                          selectedThema.poster,
+                                          height: getPosterImageHeight(context),
+                                          width: getPosterImageWidth(context),
+                                          fit: BoxFit.fill,
+                                        )
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: List.generate(cafeList.length+1,
+                                            (index) {
+                                          if (index == 0) {
+                                            return const Padding(
+                                              padding: EdgeInsets.only(right: 8.0),
+                                              child: Text("지점 :"),
+                                            );
+                                          }
+                                          return Padding(
+                                            padding: const EdgeInsets.only(right: 8.0),
+                                            child: Text(cafeList[index-1].name),
+                                          );
+                                        }
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: genreAndDifficultyPadding,
+                                    child: Container(
+                                      child: Text("장르 : ${selectedThema.genre}"),
+                                      alignment: Alignment.centerRight,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: genreAndDifficultyPadding,
+                                    child: Container(
+                                      child: Text("난이도 : ${selectedThema.difficulty.toString()}"),
+                                      alignment: Alignment.centerRight,
+                                    ),
+                                  ),
+                                  Center(
+                                    child: Padding(
+                                      padding: descriptionPadding,
+                                      child: Text(selectedThema.description),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        borderRadius: BorderRadius.circular(20)
+                                      ),
+                                      height: 50,
+                                      width: 80,
+                                      alignment: Alignment.center,
+                                      child: TextButton(
+                                        child: Text("예약 확인", style: TextStyle(color: Colors.white),),
+                                        onPressed: () {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => ReservationView()));
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          ReviewBottomSheet(),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             );

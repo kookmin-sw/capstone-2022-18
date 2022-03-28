@@ -30,6 +30,79 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
   Widget build(BuildContext context) {
     ReviewProvider reviewProvider = Provider.of<ReviewProvider>(context, listen: false);
     reviewList = reviewProvider.getReviewList;
+    return Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20)
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: sheetDragBarPadding,
+                child: sheetDragBarText,
+              ),
+              RatingBar.builder(
+                itemSize: 30,
+                initialRating: 3,
+                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: false,
+                itemCount: 5,
+                itemBuilder: (context, _) => Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                onRatingUpdate: (rating) {
+                  _rating = rating;
+                },
+              ),
+              TextField(
+                maxLines: 2,
+                decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                        onPressed: () async {
+                          await review.add({
+                            'text' : _textEditingController.text,
+                            'themaID' : Provider.of<SelectedThemaProvider>(context, listen: false).getSelectedThema.id,
+                            'writerID' : Provider.of<UserLoginStatusProvider>(context, listen: false).getUserID,
+                            'rating' : _rating,
+                          });
+                          reviewProvider.resetList();
+                          _textEditingController.clear();
+                          // setState(() {
+                          //
+                          // });
+                          // scrollController.jumpTo(MediaQuery.of(context).size.height*0.2);
+                        },
+                        icon: const Icon(Icons.arrow_forward_ios_rounded)
+                    ),
+                    border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))
+                    )
+                ),
+                controller: _textEditingController,
+              ),
+              SizedBox(
+                height: 75.0*reviewList.length,
+                width: getReviewListBoxWidth(context),
+                child: ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: reviewList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return reviewTileWidget(context, reviewList[index]);
+                  }
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
     return SizedBox.expand(
       child: DraggableScrollableSheet(
           initialChildSize: sheetMinSize,

@@ -18,7 +18,7 @@ class ThemaGridTileWidget extends StatelessWidget {
       child: InkWell(
         child: Column(
           children: [
-            Center(child: Image.network(thema.poster, height: imageHeight,)),
+            Center(child: Image.network(thema.poster, height: imageHeight, width: 150, fit: BoxFit.fill,)),
             Padding(
               padding: themaTextPadding,
               child: Text(thema.name,style: themaTitleStyle,overflow: TextOverflow.ellipsis),

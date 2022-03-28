@@ -6,10 +6,12 @@ import 'package:bangmoa/src/const/mainViewConst.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/themaProvider.dart';
 import 'package:bangmoa/src/view/userProfileView.dart';
+import 'package:bangmoa/src/widget/recommendThemaWidget.dart';
 import 'package:bangmoa/src/widget/searchConditionMenuWidget.dart';
 import 'package:bangmoa/src/widget/themaGridViewWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 
 class mainView extends StatefulWidget {
   const mainView({Key? key}) : super(key: key);
@@ -19,9 +21,15 @@ class mainView extends StatefulWidget {
 }
 
 class _mainViewState extends State<mainView> {
+  List<Thema> recommendList = [];
+
   @override
   Widget build(BuildContext context) {
     List<Thema> _themaList = Provider.of<ThemaProvider>(context).getThemaList;
+    var rng = Random();
+    for (var i = 0; i < 7; i++) {
+      recommendList.add(_themaList[rng.nextInt(_themaList.length)]);
+    }
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -29,9 +37,11 @@ class _mainViewState extends State<mainView> {
         },
         child: Icon(Icons.person),
       ),
+      backgroundColor: Colors.grey,
       body: Column(
         children: [
           const SearchConditionMenuWidget(),
+          RecommendThemaWidget(context, recommendList),
           Expanded(child: ThemaGridViewWidget(themaList: _themaList)),
         ],
       ),
