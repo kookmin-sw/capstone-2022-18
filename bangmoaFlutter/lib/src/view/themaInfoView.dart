@@ -66,7 +66,7 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
                   Column(
                     children: [
                       Center(
-                        child: Text(selectedThema.name, style: themaTitleStyle),
+                        child: Text(selectedThema.name, style: themaTitleStyle, overflow: TextOverflow.ellipsis,),
                       ),
                       Padding(
                         padding: imagePadding,

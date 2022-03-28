@@ -8,8 +8,8 @@ Widget mainViewLoadingIndicator() {
 SliverGridDelegate themaGridViewDelegate = const SliverGridDelegateWithFixedCrossAxisCount(
   crossAxisCount: 2,
   crossAxisSpacing: 10,
-  mainAxisSpacing: 10,
-  childAspectRatio: 0.7,
+  mainAxisSpacing: 5,
+  childAspectRatio: 0.75,
 );
 
 // Const used in Thema Grid Tile

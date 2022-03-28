@@ -19,55 +19,22 @@ class mainView extends StatefulWidget {
 }
 
 class _mainViewState extends State<mainView> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     List<Thema> _themaList = Provider.of<ThemaProvider>(context).getThemaList;
-    List<Widget> _widgetOption = <Widget>[
-      Column(
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfileView()));
+        },
+        child: Icon(Icons.person),
+      ),
+      body: Column(
         children: [
           const SearchConditionMenuWidget(),
           Expanded(child: ThemaGridViewWidget(themaList: _themaList)),
         ],
       ),
-      Container(),
-      const UserProfileView()
-    ];
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: bottomNavigationBackGroundColor,
-        selectedItemColor: bottomNavigationSelectedItemColor,
-        unselectedItemColor: bottomNavigationUnselectedItemColor,
-        selectedFontSize: bottomNavigationSelectedFontSize,
-        unselectedFontSize: bottomNavigationUnselectedFontSize,
-        currentIndex: _selectedIndex,
-        onTap: (int index){
-          _onItemTapped(index);
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.description),
-            label: "테마정보",
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.wifi),
-              label: "커뮤니티"
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: "유저"
-          ),
-        ],
-      ),
-      body: _widgetOption[_selectedIndex],
     );
   }
 }

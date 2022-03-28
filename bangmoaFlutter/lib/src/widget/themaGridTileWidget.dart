@@ -21,7 +21,7 @@ class ThemaGridTileWidget extends StatelessWidget {
             Center(child: Image.network(thema.poster, height: imageHeight,)),
             Padding(
               padding: themaTextPadding,
-              child: Text(thema.name,style: themaTitleStyle),
+              child: Text(thema.name,style: themaTitleStyle,overflow: TextOverflow.ellipsis),
             ),
             Padding(
               padding: themaTextPadding,
