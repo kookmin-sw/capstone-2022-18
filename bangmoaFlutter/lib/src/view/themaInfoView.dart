@@ -56,20 +56,6 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text(selectedThema.name, style: themaTitleStyle, overflow: TextOverflow.ellipsis,),
-                    ),
-                  ),
-                ),
-              ),
               Expanded(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
@@ -85,6 +71,20 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
+                              Padding(
+                                padding: const EdgeInsets.all(6.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white
+                                  ),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(selectedThema.name, style: themaTitleStyle, overflow: TextOverflow.ellipsis,),
+                                    ),
+                                  ),
+                                ),
+                              ),
                               Padding(
                                 padding: imagePadding,
                                 child: Center(
