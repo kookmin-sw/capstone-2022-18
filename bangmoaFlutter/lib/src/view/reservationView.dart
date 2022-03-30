@@ -56,127 +56,157 @@ class _ReservationViewState extends State<ReservationView> {
     _cafeList = cafeListProvider.getCafeList;
 
     return Scaffold(
+      backgroundColor: Colors.grey,
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
+            SizedBox(
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
+                  Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+                ],
+              ),
+            ),
             Padding(
-              padding: const EdgeInsets.only(top: 15, bottom: 10),
-              child: Center(
-                child: Text(themaProvider.getSelectedThema.name,
-                  style: const TextStyle(
-                    fontSize: 20
-                  ),
+              padding: const EdgeInsets.all(6),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20)
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15, bottom: 10),
+                      child: Center(
+                        child: Text(themaProvider.getSelectedThema.name,
+                          style: const TextStyle(
+                              fontSize: 20
+                          ),
+                        ),
+                      ),
+                    ),
+                    CalendarCarousel(
+                      onDayPressed: (DateTime date, List<Widget> events) {
+                        setState(() => _currentDate = date);
+                      },
+                      customGridViewPhysics: const NeverScrollableScrollPhysics(),
+                      height: 400,
+                      selectedDateTime: _currentDate,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child: Container(
+                            alignment: Alignment.bottomRight,
+                            child: TextButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(Colors.indigo),
+
+                              ),
+                              child: Text("알림 설정", style: TextStyle(color: Colors.white),),
+                              onPressed: () {
+                                
+                              },
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child: Container(
+                            alignment: Alignment.bottomRight,
+                            child: TextButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(Colors.indigo),
+
+                              ),
+                              child: Text("예약 검색", style: TextStyle(color: Colors.white),),
+                              onPressed: () {
+                                _requestReserve(_currentDate);
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
-            CalendarCarousel(
-              onDayPressed: (DateTime date, List<Widget> events) {
-                this.setState(() => _currentDate = date);
-              },
-              customGridViewPhysics: NeverScrollableScrollPhysics(),
-              height: 400,
-              selectedDateTime: _currentDate,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: Container(
-                    alignment: Alignment.bottomRight,
-                    child: TextButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.indigo),
+            reserveList.isEmpty? Container() : Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(6.0),
+                child: Column(
+                  children: List.generate(
+                    reserveList.length*2,
+                    (index1) {
+                      String searchKey = reserveList[(index1/2).floor()].keys.first;
+                      if (index1 == reserveList.length*2+1) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.indigo,
+                          ),
+                          child: TextButton(
+                            child: Text("예약 알림설정하기"),
+                            onPressed: () {
 
-                      ),
-                      child: Text("알림 설정", style: TextStyle(color: Colors.white),),
-                      onPressed: () {
-
-                      },
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: Container(
-                    alignment: Alignment.bottomRight,
-                    child: TextButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.indigo),
-
-                      ),
-                      child: Text("예약 검색", style: TextStyle(color: Colors.white),),
-                      onPressed: () {
-                        _requestReserve(_currentDate);
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            reserveList.isEmpty? Container() : Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                children: List.generate(
-                  reserveList.length*2,
-                  (index1) {
-                    String searchKey = reserveList[(index1/2).floor()].keys.first;
-                    if (index1 == reserveList.length*2+1) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.indigo,
-                        ),
-                        child: TextButton(
-                          child: Text("예약 알림설정하기"),
-                          onPressed: () {
-
-                          },
-                        ),
-                      );
+                            },
+                          ),
+                        );
+                      }
+                      else if (index1%2 != 0) {
+                        List<bool> boolList = List<bool>.from(reserveList[(index1/2).floor()][searchKey]!.values.toList());
+                        return SizedBox(
+                          height: 150,
+                          child: GridView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: reserveList[(index1/2).floor()][searchKey]!.length,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 5,
+                                childAspectRatio: 1.5,
+                                mainAxisSpacing: 10.0,
+                                crossAxisSpacing: 10.0,
+                              ),
+                              itemBuilder: (context, index) {
+                                return boolList[index] ? Container(
+                                  height: 10,
+                                  width: 20,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.black12,
+                                      )
+                                  ),
+                                  child: Center(child: Text(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index))),
+                                ) : Container(
+                                  height: 10,
+                                  width: 20,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                      border: Border.all(
+                                        color: Colors.black12,
+                                      )
+                                  ),
+                                  child: Center(child: Text(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index))),
+                                );
+                              }
+                          ),
+                        );
+                      } else {
+                        return Text(searchKey);
+                      }
                     }
-                    else if (index1%2 != 0) {
-                      List<bool> boolList = List<bool>.from(reserveList[(index1/2).floor()][searchKey]!.values.toList());
-                      return SizedBox(
-                        height: 150,
-                        child: GridView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: reserveList[(index1/2).floor()][searchKey]!.length,
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 5,
-                              childAspectRatio: 1.5,
-                              mainAxisSpacing: 10.0,
-                              crossAxisSpacing: 10.0,
-                            ),
-                            itemBuilder: (context, index) {
-                              return boolList[index] ? Container(
-                                height: 10,
-                                width: 20,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.black12,
-                                    )
-                                ),
-                                child: Center(child: Text(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index))),
-                              ) : Container(
-                                height: 10,
-                                width: 20,
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                    border: Border.all(
-                                      color: Colors.black12,
-                                    )
-                                ),
-                                child: Center(child: Text(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index))),
-                              );
-                            }
-                        ),
-                      );
-                    } else {
-                      return Text(searchKey);
-                    }
-                  }
-                )
+                  )
+                ),
               ),
             ),
           ],

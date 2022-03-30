@@ -19,6 +19,7 @@ class _SearchResultViewState extends State<SearchResultView> {
   List<Cafe> _cafeList = [];
   List<Thema> _fullThemaList = [];
   List<Thema> _selectedThemaList = [];
+  List<String> _idList = [];
   final textController = TextEditingController();
 
   @override
@@ -27,18 +28,47 @@ class _SearchResultViewState extends State<SearchResultView> {
     _cafeList = Provider.of<CafeProvider>(context).getCafeList;
     _fullThemaList = Provider.of<ThemaProvider>(context).getThemaList;
     _selectedThemaList = [];
+    for (var cafe in _cafeList) {
+      if (cafe.name.contains(_searchString)) {
+        for (var id in cafe.themas) {
+          if (!_idList.contains(id)) {
+            _idList.add(id);
+          }
+        }
+        continue;
+      }
+      if (cafe.destination.contains(_searchString)) {
+        for (var id in cafe.themas) {
+          if (!_idList.contains(id)) {
+            _idList.add(id);
+          }
+        }
+        continue;
+      }
+    }
     for (var thema in _fullThemaList) {
       if (thema.name.contains(_searchString)) {
-        _selectedThemaList.add(thema);
+        if (!_idList.contains(thema.id)) {
+          _idList.add(thema.id);
+        }
         continue;
       }
       if (thema.description.contains(_searchString)) {
-        _selectedThemaList.add(thema);
+        if (!_idList.contains(thema.id)) {
+          _idList.add(thema.id);
+        }
         continue;
       }
       if (thema.genre.contains(_searchString)) {
-        _selectedThemaList.add(thema);
+        if (!_idList.contains(thema.id)) {
+          _idList.add(thema.id);
+        }
         continue;
+      }
+    }
+    for (var thema in _fullThemaList) {
+      if (_idList.contains(thema.id)) {
+        _selectedThemaList.add(thema);
       }
     }
     return Scaffold(
@@ -60,7 +90,7 @@ class _SearchResultViewState extends State<SearchResultView> {
               child: TextField(
                 controller: textController,
                 keyboardType: TextInputType.text,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     hintText: "테마 검색",
                     border: InputBorder.none,
                     icon: Padding(
@@ -77,7 +107,7 @@ class _SearchResultViewState extends State<SearchResultView> {
               ),
             ),
             _selectedThemaList.isEmpty ? Center(child: Text("검색 결과가 없습니다."),):
-                ThemaGridViewWidget(themaList: _selectedThemaList, viewHeight: MediaQuery.of(context).size.height*0.85, viewText: "검색 결과",)
+                ThemaGridViewWidget(themaList: _selectedThemaList, viewHeight: MediaQuery.of(context).size.height*0.85, viewText: "${_searchString} 에 대한 검색 결과",)
           ],
         ),
       ),
