@@ -46,18 +46,14 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
           backgroundColor: Colors.grey,
           body : Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text(selectedThema.name, style: themaTitleStyle, overflow: TextOverflow.ellipsis,),
-                    ),
-                  ),
+              Container(
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
+                    Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+                  ],
                 ),
               ),
               Expanded(
@@ -75,6 +71,20 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
+                              Padding(
+                                padding: const EdgeInsets.all(6.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white
+                                  ),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(selectedThema.name, style: themaTitleStyle, overflow: TextOverflow.ellipsis,),
+                                    ),
+                                  ),
+                                ),
+                              ),
                               Padding(
                                 padding: imagePadding,
                                 child: Center(

@@ -26,6 +26,16 @@ class _UserProfileViewState extends State<UserProfileView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
+                    Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+                  ],
+                ),
+              ),
+              Container(
                   height: MediaQuery.of(context).size.height*0.2,
                   child: const Text("로그인 정보가 없습니다.")
               ),
@@ -50,11 +60,25 @@ class _UserProfileViewState extends State<UserProfileView> {
     }
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "닉네임 : ${userLoginStatusProvider.getNickName}",
-            style: const TextStyle(
-              fontSize: 30,
+          Container(
+            height: 40,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
+                Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "닉네임 : ${userLoginStatusProvider.getNickName}",
+              style: const TextStyle(
+                fontSize: 30,
+              ),
             ),
           ),
           TextButton(

@@ -29,19 +29,14 @@ class _SearchConditionMenuWidgetState extends State<SearchConditionMenuWidget> {
           },
           body: Container(
                 height: 200,
-                child: ListView.builder(
-                  itemCount: regionList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(regionList[index]),
-                      tileColor: _selectedIndex == index? Colors.blue : null,
-                      onTap: () {
-                        setState(() {
-                          _selectedIndex = index;
-                        });
-                      },
-                    );
-                  }
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+
+                      ],
+                    )
+                  ],
                 ),
               ),
           isExpanded: _expanded,
