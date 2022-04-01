@@ -112,7 +112,7 @@ class _ReservationViewState extends State<ReservationView> {
                               ),
                               child: Text("알림 설정", style: TextStyle(color: Colors.white),),
                               onPressed: () {
-                                
+
                               },
                             ),
                           ),
