@@ -28,5 +28,5 @@ role : 데이터 수집, AWS 서버 관리
 소스코드제출시 설치법이나 사용법을 작성하세요.
 
 ### 5. 기타
-구조도(이후 Update 예정)
+구조도
 ![drawing](pages_src/structure.jpg)
