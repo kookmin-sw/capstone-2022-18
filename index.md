@@ -11,7 +11,7 @@ Escape-room game is one of the play culture that escape a secret room in a limit
 Bangmoa Application is application for providing information about escape-room game. This application serve information about escape-room cafe and game, notification system as an aid for reservation, and customized game reccomend system.
 
 ## 3. 소개영상
-
+- [YouTube link](https://youtu.be/ABwturBCkWY)
 
 ## 4. 팀 소개
 ### **박정규** (----1624)
