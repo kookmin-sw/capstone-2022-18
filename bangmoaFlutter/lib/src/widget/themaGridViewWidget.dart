@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 
 class ThemaGridViewWidget extends StatefulWidget {
   final List<Thema> themaList;
-  const ThemaGridViewWidget({Key? key, required this.themaList}) : super(key: key);
+  final double viewHeight;
+  final String viewText;
+  const ThemaGridViewWidget({Key? key, required this.themaList, required double this.viewHeight, required this.viewText}) : super(key: key);
 
   @override
   _ThemaGridViewWidgetState createState() => _ThemaGridViewWidgetState();
@@ -17,18 +19,19 @@ class _ThemaGridViewWidgetState extends State<ThemaGridViewWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 6.0, left: 6.0, right: 6.0),
+      padding: const EdgeInsets.all(6.0),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
+        height: widget.viewHeight,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Text("전체 테마", style: TextStyle(fontSize: 15),),
+              child: Text(widget.viewText, style: TextStyle(fontSize: 15),),
             ),
             Expanded(
               child: GridView.builder(
