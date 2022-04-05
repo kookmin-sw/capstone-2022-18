@@ -8,7 +8,7 @@
 
 
 ## 3. 소개영상
-
+- [YouTube link](https://youtu.be/ABwturBCkWY)
 
 ## 4. 팀 소개
 ### **박정규** (----1624)
