@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bangmoa/src/models/alarm.dart';
 import 'package:bangmoa/src/models/cafeModel.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/cafeProvider.dart';
@@ -75,7 +76,6 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip) a
   );
   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
 
-  // initialise channel platform for both Android and iOS device.
   var platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics
@@ -131,6 +131,15 @@ class MyApp extends StatelessWidget {
                             if (userDataSnapshot.data!.exists) {
                               Provider.of<UserLoginStatusProvider>(context, listen: false).setUserID(userAuthSnapshot.data!.uid);
                               Provider.of<UserLoginStatusProvider>(context, listen: false).setUserNickName(userDataSnapshot.data!["nickname"]);
+                              List<String> alarmIdList = List<String>.from(userDataSnapshot.data!["alarms"]);
+                              List<Alarm> alarmList = [];
+                              for (var alarmID in alarmIdList) {
+                                var alarmCollection = FirebaseFirestore.instance.collection("alarm").doc(alarmID);
+                                alarmCollection.get().then(
+                                      (value) => alarmList.add(Alarm.fromDocument(value))
+                                );
+                              }
+                              Provider.of<UserLoginStatusProvider>(context, listen: false).setAlarm(alarmList);
                             } else {
                               Provider.of<UserLoginStatusProvider>(context).setUserID(userAuthSnapshot.data!.uid);
                               return MaterialApp(

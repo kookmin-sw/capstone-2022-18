@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bangmoa/src/models/alarm.dart';
 import 'package:bangmoa/src/models/cafeModel.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
@@ -56,7 +57,6 @@ class _ReservationViewState extends State<ReservationView> {
     SelectedThemaProvider themaProvider = Provider.of<SelectedThemaProvider>(context);
     ThemaCafeListProvider cafeListProvider = Provider.of<ThemaCafeListProvider>(context);
     UserLoginStatusProvider userLoginStatusProvider = Provider.of<UserLoginStatusProvider>(context);
-    CollectionReference alarm = FirebaseFirestore.instance.collection('alarm');
     _thema = themaProvider.getSelectedThema;
     _cafeList = cafeListProvider.getCafeList;
     if (userLoginStatusProvider.getLogin) {
@@ -119,19 +119,21 @@ class _ReservationViewState extends State<ReservationView> {
 
                               ),
                               child: Text("알림 설정", style: TextStyle(color: Colors.white),),
-                              onPressed: () {
+                              onPressed: () async {
                                 if (userLoginStatusProvider.getLogin) {
-                                  String id = _thema.id + _userID;
+                                  String id = _thema.id + "-" + _userID;
                                   if (!userLoginStatusProvider.getAlarms.contains(id)){
                                     DocumentReference user = FirebaseFirestore.instance.collection('user').doc(_userID);
-                                    alarm.doc(id).set(
+                                    CollectionReference alarm = FirebaseFirestore.instance.collection('alarm');
+                                    await alarm.doc(id).set(
                                         {
-                                          "thema" : _thema.id,
-                                          "date" : DateFormat('yyyy-MM-dd').format(_currentDate)
+                                          "themaID" : _thema.id,
+                                          "themaName" : _thema.name,
+                                          "date" : DateFormat('yyyy-MM-dd').format(_currentDate).toString(),
                                         }
                                     );
-                                    user.update({"alarms" : FieldValue.arrayUnion([id])});
-                                    userLoginStatusProvider.addAlarm(id);
+                                    await user.update({"alarms" : FieldValue.arrayUnion([id])});
+                                    userLoginStatusProvider.addAlarm(Alarm(_thema.id, _thema.name, DateFormat('yyyy-MM-dd').format(_currentDate).toString()));
                                   }
                                 }
                               },
