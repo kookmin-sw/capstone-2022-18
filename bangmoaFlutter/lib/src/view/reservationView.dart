@@ -4,6 +4,8 @@ import 'package:bangmoa/src/models/cafeModel.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
 import 'package:bangmoa/src/provider/themaCafeListProvider.dart';
+import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:intl/intl.dart';
@@ -21,6 +23,7 @@ class _ReservationViewState extends State<ReservationView> {
   DateTime _currentDate = DateTime.now();
   late Thema _thema;
   late List<Cafe> _cafeList;
+  late String _userID;
   List<Map<String, Map<String, dynamic>>> reserveList = [];
 
   void _requestReserve(DateTime date) async {
@@ -52,8 +55,13 @@ class _ReservationViewState extends State<ReservationView> {
   Widget build(BuildContext context) {
     SelectedThemaProvider themaProvider = Provider.of<SelectedThemaProvider>(context);
     ThemaCafeListProvider cafeListProvider = Provider.of<ThemaCafeListProvider>(context);
+    UserLoginStatusProvider userLoginStatusProvider = Provider.of<UserLoginStatusProvider>(context);
+    CollectionReference alarm = FirebaseFirestore.instance.collection('alarm');
     _thema = themaProvider.getSelectedThema;
     _cafeList = cafeListProvider.getCafeList;
+    if (userLoginStatusProvider.getLogin) {
+      _userID = userLoginStatusProvider.getUserID;
+    }
 
     return Scaffold(
       backgroundColor: Colors.grey,
@@ -112,7 +120,20 @@ class _ReservationViewState extends State<ReservationView> {
                               ),
                               child: Text("알림 설정", style: TextStyle(color: Colors.white),),
                               onPressed: () {
-
+                                if (userLoginStatusProvider.getLogin) {
+                                  String id = _thema.id + _userID;
+                                  if (!userLoginStatusProvider.getAlarms.contains(id)){
+                                    DocumentReference user = FirebaseFirestore.instance.collection('user').doc(_userID);
+                                    alarm.doc(id).set(
+                                        {
+                                          "thema" : _thema.id,
+                                          "date" : DateFormat('yyyy-MM-dd').format(_currentDate)
+                                        }
+                                    );
+                                    user.update({"alarms" : FieldValue.arrayUnion([id])});
+                                    userLoginStatusProvider.addAlarm(id);
+                                  }
+                                }
                               },
                             ),
                           ),

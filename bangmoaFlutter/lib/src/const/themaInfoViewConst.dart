@@ -38,10 +38,10 @@ double getReviewListBoxWidth(BuildContext context) {
 }
 
 // Const used in reviewTile
-Color reviewTileColor = Color.fromRGBO(22, 32, 45, 1);
+Color reviewTileColor = Colors.white;
 EdgeInsetsGeometry tileRowPadding = const EdgeInsets.only(top: 8.0);
 TextStyle reviewTextStyle = const TextStyle(
-    color: Colors.white
+    color: Colors.black
 );
 
 double getNickNameBoxWidth(BuildContext context) {

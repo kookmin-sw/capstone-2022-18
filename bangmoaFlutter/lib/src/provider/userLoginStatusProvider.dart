@@ -5,12 +5,19 @@ import 'package:flutter/material.dart';
 
 class UserLoginStatusProvider extends ChangeNotifier{
   late bool _isLogin;
-  late String? _userID;
+  late String _userID;
   late String _nickName;
+  late List<String> _alarms;
 
-  String? get getUserID => _userID;
+  String get getUserID => _userID;
   bool get getLogin => _isLogin;
   String get getNickName => _nickName;
+  List<String> get getAlarms => _alarms;
+
+  void addAlarm(String id) {
+    _alarms.add(id);
+    notifyListeners();
+  }
 
   void setUserID(String userID) {
     _userID = userID;
