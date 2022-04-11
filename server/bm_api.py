@@ -1,6 +1,8 @@
+import sys
+
 from flask import Flask, request, jsonify
 
-from bm_util import BangMoaFireStroe
+from util import BangMoaFireStroe
 
 from cafe_website.beat_phobia import BeatPhobia
 from cafe_website.next_edition import NextEdition
@@ -13,7 +15,7 @@ url_class = {
 }
 
 app = Flask(__name__)
-bmfs = BangMoaFireStroe()
+bmfs = BangMoaFireStroe(sys.argv[1])
 
 @app.route('/')
 def hello_world():
@@ -39,6 +41,36 @@ def recommendation():
     user_id = input_data['id']
 
     return get_similar_theme(user_id)
+
+@app.route('/login/manager', methods=['POST'])
+def login_manager():
+    input_data = request.get_json()
+    user_id, user_pw = input_data['id'], input_data['pw']
+
+    output_data = {}
+    if user_id == user_pw:
+        output_data['result'] = 'true'
+    else:
+        output_data['result'] = 'false'
+    return jsonify(output_data)
+
+@app.route('/signup/manager', methods=['POST'])
+def signup_manager():
+    input_data = request.get_json()
+    user_id, user_pw = input_data['id'], input_data['pw']
+
+    output_data = {}
+    doc = bmfs.db.collection(u'manager').document(input_data['id'])
+    if doc.get().exists:
+        output_data['result'] = 'false'
+    else:
+        data = {
+            u'pw': input_data['pw']
+        }
+        doc.set(data)
+        output_data['result'] = 'true'
+    return jsonify(output_data)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
