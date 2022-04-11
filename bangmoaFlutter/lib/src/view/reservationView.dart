@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:bangmoa/src/models/alarm.dart';
 import 'package:bangmoa/src/models/cafeModel.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
+import 'package:bangmoa/src/provider/reserveInfoProvider.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
 import 'package:bangmoa/src/provider/themaCafeListProvider.dart';
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
+import 'package:bangmoa/src/view/reserveInfoInputView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
@@ -25,6 +27,7 @@ class _ReservationViewState extends State<ReservationView> {
   late Thema _thema;
   late List<Cafe> _cafeList;
   late String _userID;
+  List <Cafe> _cafeCountList = [];
   List<Map<String, Map<String, dynamic>>> reserveList = [];
 
   void _requestReserve(DateTime date) async {
@@ -39,9 +42,11 @@ class _ReservationViewState extends State<ReservationView> {
       headers: {"Content-Type": "application/json"}
     );
     var body = json.decode(_res.body);
+    print(body);
     for (var element in _cafeList) {
       var timeTable = body[element.name] as Map;
       timeTable.keys.forEach((key) {
+        _cafeCountList.add(element);
         Map<String, Map<String, dynamic>> table = {};
         table.addAll({element.name+ " " +key : timeTable[key]});
         reserveList.add(table);
@@ -162,73 +167,74 @@ class _ReservationViewState extends State<ReservationView> {
                 ),
               ),
             ),
-            reserveList.isEmpty? Container() : Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(6.0),
-                child: Column(
-                  children: List.generate(
-                    reserveList.length*2,
-                    (index1) {
-                      String searchKey = reserveList[(index1/2).floor()].keys.first;
-                      if (index1 == reserveList.length*2+1) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.indigo,
-                          ),
-                          child: TextButton(
-                            child: Text("예약 알림설정하기"),
-                            onPressed: () {
-
-                            },
-                          ),
-                        );
+            Padding(
+              padding: const EdgeInsets.all(6.0),
+              child: reserveList.isEmpty? Container() : Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(6.0),
+                  child: Column(
+                    children: List.generate(
+                      reserveList.length*2,
+                      (index1) {
+                        String searchKey = reserveList[(index1/2).floor()].keys.first;
+                        if (index1%2 != 0) {
+                          List<bool> boolList = List<bool>.from(reserveList[(index1/2).floor()][searchKey]!.values.toList());
+                          return SizedBox(
+                            height: 150,
+                            child: GridView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: reserveList[(index1/2).floor()][searchKey]!.length,
+                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 5,
+                                  childAspectRatio: 1.5,
+                                  mainAxisSpacing: 10.0,
+                                  crossAxisSpacing: 10.0,
+                                ),
+                                itemBuilder: (context, index) {
+                                  return boolList[index] ? InkWell(
+                                    onTap: () {
+                                      var reserveInfoProvider = Provider.of<ReserveInfoProvider>(context, listen: false);
+                                      reserveInfoProvider.setThema(_thema);
+                                      reserveInfoProvider.setCafe(_cafeCountList[(index1/2).floor()]);
+                                      reserveInfoProvider.setDate(DateFormat('yyyy-MM-dd').format(_currentDate).toString());
+                                      reserveInfoProvider.setTime(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index));
+                                      reserveInfoProvider.setCost(10000);
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ReserveInfoInputView()));
+                                    },
+                                    child: Container(
+                                      height: 10,
+                                      width: 20,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.black12,
+                                          )
+                                      ),
+                                      child: Center(child: Text(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index))),
+                                    ),
+                                  ) : Container(
+                                    height: 10,
+                                    width: 20,
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                        border: Border.all(
+                                          color: Colors.black12,
+                                        )
+                                    ),
+                                    child: Center(child: Text(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index))),
+                                  );
+                                }
+                            ),
+                          );
+                        } else {
+                          return Text(searchKey);
+                        }
                       }
-                      else if (index1%2 != 0) {
-                        List<bool> boolList = List<bool>.from(reserveList[(index1/2).floor()][searchKey]!.values.toList());
-                        return SizedBox(
-                          height: 150,
-                          child: GridView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: reserveList[(index1/2).floor()][searchKey]!.length,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 5,
-                                childAspectRatio: 1.5,
-                                mainAxisSpacing: 10.0,
-                                crossAxisSpacing: 10.0,
-                              ),
-                              itemBuilder: (context, index) {
-                                return boolList[index] ? Container(
-                                  height: 10,
-                                  width: 20,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.black12,
-                                      )
-                                  ),
-                                  child: Center(child: Text(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index))),
-                                ) : Container(
-                                  height: 10,
-                                  width: 20,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                      border: Border.all(
-                                        color: Colors.black12,
-                                      )
-                                  ),
-                                  child: Center(child: Text(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index))),
-                                );
-                              }
-                          ),
-                        );
-                      } else {
-                        return Text(searchKey);
-                      }
-                    }
-                  )
+                    )
+                  ),
                 ),
               ),
             ),

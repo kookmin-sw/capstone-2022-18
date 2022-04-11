@@ -2,14 +2,12 @@
 // 하단 NavigationBar 도 포함.
 // 상단 검색조건은 searchConditionMenuWidget 으로, 중간의 그리드뷰는 themaGridViewWidget 으로 연결.
 
-import 'package:bangmoa/src/const/mainViewConst.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/serchTextProvider.dart';
 import 'package:bangmoa/src/provider/themaProvider.dart';
 import 'package:bangmoa/src/view/searchResultView.dart';
 import 'package:bangmoa/src/view/userProfileView.dart';
 import 'package:bangmoa/src/widget/recommendThemaWidget.dart';
-import 'package:bangmoa/src/widget/searchConditionMenuWidget.dart';
 import 'package:bangmoa/src/widget/themaGridViewWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +28,7 @@ class _mainViewState extends State<mainView> {
   Widget build(BuildContext context) {
     List<Thema> _themaList = Provider.of<ThemaProvider>(context).getThemaList;
     var rng = Random();
-    for (var i = 0; i < 7; i++) {
+    for (var i = 0; i < 6; i++) {
       recommendList.add(_themaList[rng.nextInt(_themaList.length)]);
     }
     return Scaffold(

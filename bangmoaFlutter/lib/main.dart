@@ -1,9 +1,10 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:bangmoa/src/models/alarm.dart';
 import 'package:bangmoa/src/models/cafeModel.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
 import 'package:bangmoa/src/provider/cafeProvider.dart';
+import 'package:bangmoa/src/provider/reserveInfoProvider.dart';
 import 'package:bangmoa/src/provider/reviewProvider.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
 import 'package:bangmoa/src/provider/serchTextProvider.dart';
@@ -19,19 +20,20 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:workmanager/workmanager.dart';
 import 'src/provider/themaProvider.dart';
+import 'package:http/http.dart' as http;
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Workmanager().initialize(
-    callbackDispatcher,
-    isInDebugMode: true
-  );
-  Workmanager().registerPeriodicTask(
-    "2",
-    "simplePeriodicTask",
-    frequency: Duration(minutes: 15),
-  );
   await Firebase.initializeApp();
+  // Workmanager().initialize(
+  //   callbackDispatcher,
+  //   isInDebugMode: true
+  // );
+  // Workmanager().registerPeriodicTask(
+  //   "2",
+  //   "simplePeriodicTask",
+  //   frequency: Duration(minutes: 15),
+  // );
   runApp(
     MultiProvider(
       providers: [
@@ -42,13 +44,14 @@ void main() async{
         ChangeNotifierProvider<ReviewProvider>(create: (BuildContext context) => ReviewProvider()),
         ChangeNotifierProvider<ThemaCafeListProvider>(create: (BuildContext context) => ThemaCafeListProvider()),
         ChangeNotifierProvider<SearchTextProvider>(create: (BuildContext context) => SearchTextProvider()),
+        ChangeNotifierProvider<ReserveInfoProvider>(create: (BuildContext context) => ReserveInfoProvider()),
       ],
         child : MyApp()
     )
   );
 }
 
-void callbackDispatcher() {
+void callbackDispatcher() async {
   Workmanager().executeTask((task, inputData) {
     FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
     var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -67,24 +70,42 @@ void callbackDispatcher() {
 }
 
 Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip) async {
-  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+  var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       'your channel id',
       'your channel name',
       channelDescription: 'your channel description',
       importance: Importance.max,
       priority: Priority.high,
   );
-  var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+  var iOSPlatformChannelSpecifics = const IOSNotificationDetails();
 
   var platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics
   );
-  sleep(Duration(seconds: 20));
-  await flip.show(0, '방탈출모아',
-      '[엘도라도] 2022-04-05 예약 가능 알림',
-      platformChannelSpecifics, payload: 'Default_Sound'
-  );
+  print("테스트");
+  print(FirebaseAuth.instance.currentUser!.uid);
+  if (FirebaseAuth.instance.currentUser!.uid.isNotEmpty) {
+    print("uid 존재");
+    var userDoc = await FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).get();
+    var alarmData = userDoc.data()!["alarms"];
+    print(alarmData);
+    http.Response _res = await http.post(
+        Uri.parse("http://3.39.80.150:5000/reservation"),
+        body: json.encode(
+            {
+              "id" : alarmData[0].themaID,
+              "date" : alarmData[0].date,
+            }
+        ),
+        headers: {"Content-Type": "application/json"}
+    );
+    var body = json.decode(_res.body);
+    await flip.show(0, '방탈출모아',
+        body.toString(),
+        platformChannelSpecifics, payload: 'Default_Sound'
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
