@@ -20,56 +20,84 @@ class _UserProfileViewState extends State<UserProfileView> {
     UserLoginStatusProvider userLoginStatusProvider = Provider.of<UserLoginStatusProvider>(context);
     _loginStatus = Provider.of<UserLoginStatusProvider>(context).getLogin;
     if (!_loginStatus) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height*0.2,
-              child: const Text("로그인 정보가 없습니다.")
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width*0.85,
-              height: MediaQuery.of(context).size.height*0.1,
-              decoration: BoxDecoration(
-                color: Colors.indigo,
-                borderRadius: BorderRadius.circular(20)
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
+                    Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+                  ],
+                ),
               ),
-              child: TextButton(
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginView()));
-                },
-                child: const Text("로그인", style: TextStyle(fontSize: 20, color: Colors.black)),
+              Container(
+                  height: MediaQuery.of(context).size.height*0.2,
+                  child: const Text("로그인 정보가 없습니다.")
               ),
-            )
-          ],
+              Container(
+                width: MediaQuery.of(context).size.width*0.85,
+                height: MediaQuery.of(context).size.height*0.1,
+                decoration: BoxDecoration(
+                    color: Colors.indigo,
+                    borderRadius: BorderRadius.circular(20)
+                ),
+                child: TextButton(
+                  onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => LoginView()));
+                  },
+                  child: const Text("로그인", style: TextStyle(fontSize: 20, color: Colors.black)),
+                ),
+              )
+            ],
+          ),
         ),
       );
     }
-    return Column(
-      children: [
-        Text(
-          "닉네임 : ${userLoginStatusProvider.getNickName}",
-          style: TextStyle(
-            fontSize: 30,
+    return Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 40,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
+                Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+              ],
+            ),
           ),
-        ),
-        TextButton(
-          onPressed: () {
-
-          },
-          child: SizedBox(
-            child: const Text(
-              "로그아웃",
-              style: TextStyle(
-                fontSize: 30
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "닉네임 : ${userLoginStatusProvider.getNickName}",
+              style: const TextStyle(
+                fontSize: 30,
               ),
             ),
-            height: MediaQuery.of(context).size.height*0.1,
-            width: MediaQuery.of(context).size.width,
           ),
-        )
-      ],
+          TextButton(
+            onPressed: () {
+
+            },
+            child: SizedBox(
+              child: const Text(
+                "로그아웃",
+                style: TextStyle(
+                    fontSize: 30
+                ),
+              ),
+              height: MediaQuery.of(context).size.height*0.1,
+              width: MediaQuery.of(context).size.width,
+            ),
+          )
+        ],
+      ),
     );
   }
 }

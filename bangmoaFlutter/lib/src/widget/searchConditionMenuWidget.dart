@@ -20,27 +20,23 @@ class _SearchConditionMenuWidgetState extends State<SearchConditionMenuWidget> {
     return ExpansionPanelList(
       children: [
         ExpansionPanel(
+          backgroundColor: Colors.white38,
           headerBuilder: (BuildContext context, bool isOpen) {
             return const Padding(
-                padding: EdgeInsets.only(left: 10.0),
-                child: Text("지역 검색", style: TextStyle(fontSize: 30),),
+                padding: EdgeInsets.all(10.0),
+                child: Text("검색", style: TextStyle(fontSize: 20),),
               );
           },
           body: Container(
                 height: 200,
-                child: ListView.builder(
-                  itemCount: regionList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(regionList[index]),
-                      tileColor: _selectedIndex == index? Colors.blue : null,
-                      onTap: () {
-                        setState(() {
-                          _selectedIndex = index;
-                        });
-                      },
-                    );
-                  }
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+
+                      ],
+                    )
+                  ],
                 ),
               ),
           isExpanded: _expanded,

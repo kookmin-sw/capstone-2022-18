@@ -4,9 +4,7 @@
 
 import 'package:bangmoa/src/const/themaInfoViewConst.dart';
 import 'package:bangmoa/src/models/cafeModel.dart';
-import 'package:bangmoa/src/models/reviewModel.dart';
 import 'package:bangmoa/src/models/themaModel.dart';
-import 'package:bangmoa/src/provider/reviewProvider.dart';
 import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
 import 'package:bangmoa/src/provider/themaCafeListProvider.dart';
 import 'package:bangmoa/src/view/reservationView.dart';
@@ -31,115 +29,142 @@ class _ThemaInfoViewState extends State<ThemaInfoView> {
   Widget build(BuildContext context) {
     selectedThema = Provider.of<SelectedThemaProvider>(context).getSelectedThema;
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('review').where("themaID", isEqualTo: selectedThema.id).snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> reviewSnapshot) {
-        return StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('cafe').where("themes", arrayContains: selectedThema.id).snapshots(),
-          builder: (context, AsyncSnapshot<QuerySnapshot> cafeSnapshot) {
-            if (reviewSnapshot.hasError) {
-              return Text('Error : ${reviewSnapshot.error}');
-            }
-            if (cafeSnapshot.hasError) {
-              return Text('Error : ${cafeSnapshot.error}');
-            }
-            if (reviewSnapshot.connectionState == ConnectionState.waiting) {
-              return themaInfoViewLoadingIndicator();
-            }
-            if (cafeSnapshot.connectionState == ConnectionState.waiting) {
-              return themaInfoViewLoadingIndicator();
-            }
-            cafeSnapshot.data?.docs.forEach((element) {
-              cafeList.add(Cafe.fromDocument(element));
-            });
-            Provider.of<ThemaCafeListProvider>(context).setCafeList(cafeList);
-            reviewSnapshot.data?.docs.forEach((QueryDocumentSnapshot element) async {
-              late String writerNickName;
-              await FirebaseFirestore.instance.collection('user').doc(element.get("writerID")).get().then((value) => writerNickName = value["nickname"]);
-              if(Provider.of<ReviewProvider>(context, listen: false).reviewIDCheck(element.id)) {
-                Provider.of<ReviewProvider>(context, listen: false).addReview(ReviewModel(element.id, element["text"], element["themaID"], element["writerID"], writerNickName, element["rating"].toDouble()));
-              }
-            });
-            return Scaffold(
-              backgroundColor: Colors.white,
-              body : Stack(
-                children: [
-                  Column(
+      stream: FirebaseFirestore.instance.collection('cafe').where("themes", arrayContains: selectedThema.id).snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> cafeSnapshot) {
+        cafeList = [];
+        if (cafeSnapshot.hasError) {
+          return Text('Error : ${cafeSnapshot.error}');
+        }
+        if (cafeSnapshot.connectionState == ConnectionState.waiting) {
+          return themaInfoViewLoadingIndicator();
+        }
+        cafeSnapshot.data?.docs.forEach((element) {
+          cafeList.add(Cafe.fromDocument(element));
+        });
+        Provider.of<ThemaCafeListProvider>(context).setCafeList(cafeList);
+        return Scaffold(
+          backgroundColor: Colors.grey,
+          body : Column(
+            children: [
+              Container(
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
+                    Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
                     children: [
-                      Center(
-                        child: Text(selectedThema.name, style: themaTitleStyle),
-                      ),
                       Padding(
-                        padding: imagePadding,
-                        child: Center(
-                            child: Image.network(
-                              selectedThema.poster,
-                              height: getPosterImageHeight(context),
-                              width: getPosterImageWidth(context),
-                            )
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: List.generate(cafeList.length+1,
-                              (index) {
-                                if (index == 0) {
-                                  return const Padding(
-                                    padding: EdgeInsets.only(right: 8.0),
-                                    child: Text("지점 :"),
-                                  );
-                                }
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: Text(cafeList[index-1].name),
-                                );
-                              }
-                        ),
-                      ),
-                      Padding(
-                        padding: genreAndDifficultyPadding,
+                        padding: const EdgeInsets.all(6.0),
                         child: Container(
-                          child: Text("장르 : ${selectedThema.genre}"),
-                          alignment: Alignment.centerRight,
-                        ),
-                      ),
-                      Padding(
-                        padding: genreAndDifficultyPadding,
-                        child: Container(
-                          child: Text("난이도 : ${selectedThema.difficulty.toString()}"),
-                          alignment: Alignment.centerRight,
-                        ),
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding: descriptionPadding,
-                            child: Text(selectedThema.description),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(6.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white
+                                  ),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(selectedThema.name, style: themaTitleStyle, overflow: TextOverflow.ellipsis,),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: imagePadding,
+                                child: Center(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Image.network(
+                                        selectedThema.poster,
+                                        height: getPosterImageHeight(context),
+                                        width: getPosterImageWidth(context),
+                                        fit: BoxFit.fill,
+                                      ),
+                                    )
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: List.generate(cafeList.length+1,
+                                        (index) {
+                                      if (index == 0) {
+                                        return const Padding(
+                                          padding: EdgeInsets.only(right: 8.0),
+                                          child: Text("지점 :"),
+                                        );
+                                      }
+                                      return Padding(
+                                        padding: const EdgeInsets.only(right: 8.0),
+                                        child: Text(cafeList[index-1].name),
+                                      );
+                                    }
+                                ),
+                              ),
+                              Padding(
+                                padding: genreAndDifficultyPadding,
+                                child: Container(
+                                  child: Text("장르 : ${selectedThema.genre}"),
+                                  alignment: Alignment.centerRight,
+                                ),
+                              ),
+                              Padding(
+                                padding: genreAndDifficultyPadding,
+                                child: Container(
+                                  child: Text("난이도 : ${selectedThema.difficulty.toString()}"),
+                                  alignment: Alignment.centerRight,
+                                ),
+                              ),
+                              Center(
+                                child: Padding(
+                                  padding: descriptionPadding,
+                                  child: Text(selectedThema.description),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(20)
+                                  ),
+                                  height: 35,
+                                  width: 80,
+                                  alignment: Alignment.center,
+                                  child: TextButton(
+                                    child: Text("예약 확인", style: TextStyle(color: Colors.white),),
+                                    onPressed: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ReservationView()));
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10.0),
-                        child: Container(
-                          height: 50,
-                          alignment: Alignment.bottomRight,
-                          child: IconButton(
-                            icon: Icon(Icons.calendar_today),
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => ReservationView()));
-                            },
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: getBottomPaddingHeight(context),
-                      ),
+                      reviewBottomSheet(context),
                     ],
                   ),
-                  ReviewBottomSheet(),
-                ],
+                ),
               ),
-            );
-          }
+            ],
+          ),
         );
       }
     );
