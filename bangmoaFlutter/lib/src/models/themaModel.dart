@@ -11,8 +11,9 @@ class Thema {
   late String genre;
   late int difficulty;
   late String poster;
+  late String url;
 
-  Thema(this.id, this.name, this.description, this.genre, this.difficulty, this.poster);
+  Thema(this.id, this.name, this.description, this.genre, this.difficulty, this.poster, this.url);
 
   factory Thema.fromDocument(DocumentSnapshot doc) {
     return Thema(
@@ -22,6 +23,7 @@ class Thema {
       doc.get("genre").toString(),
       doc.get("difficulty"),
       doc.get("poster").toString(),
+      doc.get("url").toString(),
     );
   }
 }

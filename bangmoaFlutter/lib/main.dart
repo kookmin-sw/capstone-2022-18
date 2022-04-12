@@ -25,15 +25,16 @@ import 'package:http/http.dart' as http;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // Workmanager().initialize(
-  //   callbackDispatcher,
-  //   isInDebugMode: true
-  // );
-  // Workmanager().registerPeriodicTask(
-  //   "2",
-  //   "simplePeriodicTask",
-  //   frequency: Duration(minutes: 15),
-  // );
+  Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: true
+  );
+
+  Workmanager().registerPeriodicTask(
+    "2",
+    "simplePeriodicTask",
+    frequency: Duration(minutes: 15),
+  );
   runApp(
     MultiProvider(
       providers: [
@@ -83,7 +84,10 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip) a
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics
   );
+  print("파이어베이스");
+  await Firebase.initializeApp();
   print("테스트");
+  print(FirebaseAuth.instance.authStateChanges().toString());
   print(FirebaseAuth.instance.currentUser!.uid);
   if (FirebaseAuth.instance.currentUser!.uid.isNotEmpty) {
     print("uid 존재");
