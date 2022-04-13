@@ -26,8 +26,8 @@ Widget RecommendThemaWidget(BuildContext context, List<Thema> recommendThema) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
+              const Padding(
+                padding: EdgeInsets.only(left: 8.0),
                 child: Text("추천 테마", style: TextStyle(fontSize: 15)),
               ),
               Padding(
@@ -42,7 +42,7 @@ Widget RecommendThemaWidget(BuildContext context, List<Thema> recommendThema) {
                           Provider.of<SelectedThemaProvider>(context, listen: false).setSelectedThema(recommendThema[index]);
                           Provider.of<ReviewProvider>(context, listen: false).setThemaID(recommendThema[index].id);
                           loadReviewData(context, recommendThema[index]);
-                          sleep(Duration(milliseconds: 100));
+                          sleep(const Duration(milliseconds: 100));
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const ThemaInfoView()));
                         },
                         child: Padding(

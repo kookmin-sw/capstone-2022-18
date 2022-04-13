@@ -27,7 +27,7 @@ class _ReservationViewState extends State<ReservationView> {
   late Thema _thema;
   late List<Cafe> _cafeList;
   late String _userID;
-  List <Cafe> _cafeCountList = [];
+  List<Cafe> cafeCountList = [];
   List<Map<String, Map<String, dynamic>>> reserveList = [];
 
   void _requestReserve(DateTime date) async {
@@ -46,10 +46,11 @@ class _ReservationViewState extends State<ReservationView> {
     for (var element in _cafeList) {
       var timeTable = body[element.name] as Map;
       timeTable.keys.forEach((key) {
-        _cafeCountList.add(element);
+        cafeCountList.add(element);
         Map<String, Map<String, dynamic>> table = {};
         table.addAll({element.name+ " " +key : timeTable[key]});
         reserveList.add(table);
+        print(table);
       });
     }
     setState(() {
@@ -199,7 +200,7 @@ class _ReservationViewState extends State<ReservationView> {
                                     onTap: () {
                                       var reserveInfoProvider = Provider.of<ReserveInfoProvider>(context, listen: false);
                                       reserveInfoProvider.setThema(_thema);
-                                      reserveInfoProvider.setCafe(_cafeCountList[(index1/2).floor()]);
+                                      reserveInfoProvider.setCafe(cafeCountList[(index1/2).floor()]);
                                       reserveInfoProvider.setDate(DateFormat('yyyy-MM-dd').format(_currentDate).toString());
                                       reserveInfoProvider.setTime(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index));
                                       reserveInfoProvider.setCost(10000);

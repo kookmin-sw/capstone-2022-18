@@ -1,6 +1,8 @@
 // 테마의 리뷰를 모아서 보여주는 BottomSheet
 // 테마 상세정보 페이지 내부에서 활용.
 
+import 'dart:convert';
+
 import 'package:bangmoa/src/const/themaInfoViewConst.dart';
 import 'package:bangmoa/src/models/reviewModel.dart';
 import 'package:bangmoa/src/provider/reviewProvider.dart';
@@ -12,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 
 Widget reviewBottomSheet(BuildContext context) {
   List<ReviewModel> reviewList = Provider.of<ReviewProvider>(context).getReviewList;
@@ -74,12 +77,19 @@ Widget reviewBottomSheet(BuildContext context) {
                         decoration: InputDecoration(
                             suffixIcon: IconButton(
                                 onPressed: () async {
-                                  await review.add({
-                                    'text' : _textEditingController.text,
-                                    'themaID' : Provider.of<SelectedThemaProvider>(context, listen: false).getSelectedThema.id,
-                                    'writerID' : Provider.of<UserLoginStatusProvider>(context, listen: false).getUserID,
-                                    'rating' : _rating,
-                                  });
+                                  http.Response _res = await http.post(
+                                      Uri.parse("http://3.39.80.150:5000/reservation"),
+                                      body: json.encode(
+                                          {
+                                            'text' : _textEditingController.text,
+                                            'themaID' : Provider.of<SelectedThemaProvider>(context, listen: false).getSelectedThema.id,
+                                            'writerID' : Provider.of<UserLoginStatusProvider>(context, listen: false).getUserID,
+                                            'rating' : _rating,
+                                          }
+                                      ),
+                                      headers: {"Content-Type": "application/json"}
+                                  );
+                                  print(_res.body.toString());
                                   _textEditingController.clear();
                                   loadReviewData(context, Provider.of<SelectedThemaProvider>(context, listen: false).getSelectedThema);
                                 },

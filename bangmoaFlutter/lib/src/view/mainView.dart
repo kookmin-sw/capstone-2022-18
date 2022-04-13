@@ -48,7 +48,7 @@ class _mainViewState extends State<mainView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
-                  Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+                  const Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
                 ],
               ),
             ),
@@ -86,7 +86,7 @@ class _mainViewState extends State<mainView> {
               ),
             ),
             RecommendThemaWidget(context, recommendList),
-            ThemaGridViewWidget(themaList: _themaList, viewHeight: MediaQuery.of(context).size.height*0.8, viewText: "전체 테마"),
+            ThemaGridViewWidget(themaList: _themaList, viewHeight: MediaQuery.of(context).size.height*0.9, viewText: "전체 테마"),
           ],
         ),
         scrollDirection: Axis.vertical,

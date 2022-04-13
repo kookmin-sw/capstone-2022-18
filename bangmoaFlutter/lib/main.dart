@@ -27,7 +27,7 @@ void main() async {
   await Firebase.initializeApp();
   Workmanager().initialize(
     callbackDispatcher,
-    isInDebugMode: true
+    isInDebugMode: true,
   );
 
   Workmanager().registerPeriodicTask(
@@ -53,7 +53,15 @@ void main() async {
 }
 
 void callbackDispatcher() async {
-  Workmanager().executeTask((task, inputData) {
+  List<Alarm> alarmList = [];
+  Workmanager().executeTask((task, inputData) async {
+    await Firebase.initializeApp();
+    var userDoc = await FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).get();
+    List<String> alarmData = userDoc.data()!["alarms"]?.cast<String>();
+    for (var element in alarmData) {
+      var alarmDoc = await FirebaseFirestore.instance.collection("alarm").doc(element).get();
+      alarmList.add(Alarm.fromDocument(alarmDoc));
+    }
     FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
     var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
     var IOS = const IOSInitializationSettings(
@@ -62,15 +70,14 @@ void callbackDispatcher() async {
       requestSoundPermission: false,
     );
 
-    // initialise settings for both Android and iOS device.
     var settings = InitializationSettings(android: android, iOS: IOS);
     flip.initialize(settings);
-    _showNotificationWithDefaultSound(flip);
+    await _showNotificationWithDefaultSound(flip, alarmList);
     return Future.value(true);
   });
 }
 
-Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip) async {
+Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip, List<Alarm> alarmList) async {
   var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       'your channel id',
       'your channel name',
@@ -84,31 +91,46 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip) a
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics
   );
-  print("파이어베이스");
-  await Firebase.initializeApp();
-  print("테스트");
-  print(FirebaseAuth.instance.authStateChanges().toString());
-  print(FirebaseAuth.instance.currentUser!.uid);
-  if (FirebaseAuth.instance.currentUser!.uid.isNotEmpty) {
-    print("uid 존재");
-    var userDoc = await FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).get();
-    var alarmData = userDoc.data()!["alarms"];
-    print(alarmData);
-    http.Response _res = await http.post(
-        Uri.parse("http://3.39.80.150:5000/reservation"),
-        body: json.encode(
-            {
-              "id" : alarmData[0].themaID,
-              "date" : alarmData[0].date,
+  if (alarmList.isNotEmpty) {
+    int availableCount = 0;
+    String game = "";
+    for (var alarm in alarmList) {
+      List<Cafe> cafeList = [];
+      var cafe = await FirebaseFirestore.instance.collection("cafe").where("themes", arrayContains: alarm.themaID).get();
+      for (var cafeDoc in cafe.docs) {
+        cafeList.add(Cafe.fromDocument(cafeDoc));
+      }
+      http.Response _res = await http.post(
+          Uri.parse("http://3.39.80.150:5000/reservation"),
+          body: json.encode(
+              {
+                "id" : alarm.themaID,
+                "date" : alarm.date,
+              }
+          ),
+          headers: {"Content-Type": "application/json"}
+      );
+      var body = json.decode(_res.body);
+
+      for (var element in cafeList) {
+        if (body.toString() != "{}") {
+          var timeTable = body[element.name] as Map;
+          for (var key in timeTable.keys) {
+            List<bool> boolList = List<bool>.from(timeTable[key].values.toList());
+            if (boolList.contains(true)) {
+              availableCount++;
+              game = alarm.themaName;
             }
-        ),
-        headers: {"Content-Type": "application/json"}
-    );
-    var body = json.decode(_res.body);
-    await flip.show(0, '방탈출모아',
-        body.toString(),
-        platformChannelSpecifics, payload: 'Default_Sound'
-    );
+          }
+        }
+      }
+    }
+    if (availableCount > 0) {
+      await flip.show(0, '방탈출모아',
+          "$game 등${availableCount.toString()}개 테마 예약 가능",
+          platformChannelSpecifics, payload: 'Default_Sound'
+      );
+    }
   }
 }
 
@@ -141,50 +163,10 @@ class MyApp extends StatelessWidget {
               Provider.of<CafeProvider>(context).initCafeList(_cafeList);
               Provider.of<ThemaProvider>(context).initThemaList(_themaList);
               return StreamBuilder(
-                  stream: FirebaseAuth.instance.authStateChanges(),
-                  builder: (BuildContext context, AsyncSnapshot<User?> userAuthSnapshot) {
-                    if (userAuthSnapshot.data == null) {
-                      Provider.of<UserLoginStatusProvider>(context).logout();
-                    } else {
-                      Provider.of<UserLoginStatusProvider>(context).login();
-                      return FutureBuilder(
-                          future : FirebaseFirestore.instance.collection('user').doc(userAuthSnapshot.data?.uid).get(),
-                          builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userDataSnapshot) {
-                            if (userDataSnapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: CircularProgressIndicator(),);
-                            }
-                            if (userDataSnapshot.data!.exists) {
-                              Provider.of<UserLoginStatusProvider>(context, listen: false).setUserID(userAuthSnapshot.data!.uid);
-                              Provider.of<UserLoginStatusProvider>(context, listen: false).setUserNickName(userDataSnapshot.data!["nickname"]);
-                              List<String> alarmIdList = List<String>.from(userDataSnapshot.data!["alarms"]);
-                              List<Alarm> alarmList = [];
-                              for (var alarmID in alarmIdList) {
-                                var alarmCollection = FirebaseFirestore.instance.collection("alarm").doc(alarmID);
-                                alarmCollection.get().then(
-                                      (value) => alarmList.add(Alarm.fromDocument(value))
-                                );
-                              }
-                              Provider.of<UserLoginStatusProvider>(context, listen: false).setAlarm(alarmList);
-                            } else {
-                              Provider.of<UserLoginStatusProvider>(context).setUserID(userAuthSnapshot.data!.uid);
-                              return MaterialApp(
-                                title: 'BangMoa',
-                                theme: ThemeData(
-                                  primarySwatch: Colors.grey,
-                                ),
-                                home: const RegisterNicknameView(),
-                              );
-                            }
-                            return MaterialApp(
-                              title: 'BangMoa',
-                              theme: ThemeData(
-                                primarySwatch: Colors.grey,
-                              ),
-                              home: const mainView(),
-                            );
-                          }
-                      );
-                    }
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (BuildContext context, AsyncSnapshot<User?> userAuthSnapshot) {
+                  if (userAuthSnapshot.data == null) {
+                    Provider.of<UserLoginStatusProvider>(context).logout();
                     return MaterialApp(
                       title: 'BangMoa',
                       theme: ThemeData(
@@ -192,7 +174,47 @@ class MyApp extends StatelessWidget {
                       ),
                       home: const mainView(),
                     );
+                  } else {
+                    Provider.of<UserLoginStatusProvider>(context).login();
+                    return FutureBuilder(
+                      future : FirebaseFirestore.instance.collection('user').doc(userAuthSnapshot.data?.uid).get(),
+                      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userDataSnapshot) {
+                        if (userDataSnapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator(),);
+                        }
+                        if (userDataSnapshot.data!.exists) {
+                          Provider.of<UserLoginStatusProvider>(context, listen: false).setUserID(userAuthSnapshot.data!.uid);
+                          Provider.of<UserLoginStatusProvider>(context, listen: false).setUserNickName(userDataSnapshot.data!["nickname"]);
+                          List<String> alarmIdList = List<String>.from(userDataSnapshot.data!["alarms"]);
+                          List<Alarm> alarmList = [];
+                          for (var alarmID in alarmIdList) {
+                            var alarmCollection = FirebaseFirestore.instance.collection("alarm").doc(alarmID);
+                            alarmCollection.get().then(
+                                  (value) => alarmList.add(Alarm.fromDocument(value))
+                            );
+                          }
+                          Provider.of<UserLoginStatusProvider>(context, listen: false).setAlarm(alarmList);
+                          return MaterialApp(
+                            title: 'BangMoa',
+                            theme: ThemeData(
+                              primarySwatch: Colors.grey,
+                            ),
+                            home: const mainView(),
+                          );
+                        } else {
+                          Provider.of<UserLoginStatusProvider>(context).setUserID(userAuthSnapshot.data!.uid);
+                          return MaterialApp(
+                            title: 'BangMoa',
+                            theme: ThemeData(
+                              primarySwatch: Colors.grey,
+                            ),
+                            home: const RegisterNicknameView(),
+                          );
+                        }
+                      }
+                    );
                   }
+                }
               );
             }
           }
