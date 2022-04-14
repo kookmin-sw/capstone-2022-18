@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 
 class LoginStatusProvider extends ChangeNotifier {
+  static const String baseURL = 'http://3.39.80.150:5000';
+
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
+
+  String _statusText = '';
+  String get statusText => _statusText;
 
   void login(){
     _isLoggedIn = true;
@@ -12,6 +17,11 @@ class LoginStatusProvider extends ChangeNotifier {
 
   void logout() {
     _isLoggedIn = false;
+    notifyListeners();
+  }
+
+  void setStatusText(String text) {
+    _statusText = text;
     notifyListeners();
   }
 }
