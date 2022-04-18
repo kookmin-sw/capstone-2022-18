@@ -21,6 +21,7 @@ class _UserProfileViewState extends State<UserProfileView> {
     _loginStatus = Provider.of<UserLoginStatusProvider>(context).getLogin;
     if (!_loginStatus) {
       return Scaffold(
+        backgroundColor: Colors.black,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -31,13 +32,13 @@ class _UserProfileViewState extends State<UserProfileView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
-                    Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+                    const Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP', color: Colors.white),),
                   ],
                 ),
               ),
               Container(
                   height: MediaQuery.of(context).size.height*0.2,
-                  child: const Text("로그인 정보가 없습니다.")
+                  child: const Text("로그인 정보가 없습니다.", style: TextStyle(color: Colors.white),)
               ),
               Container(
                 width: MediaQuery.of(context).size.width*0.85,
@@ -50,7 +51,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                   onPressed: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context) => LoginView()));
                   },
-                  child: const Text("로그인", style: TextStyle(fontSize: 20, color: Colors.black)),
+                  child: const Text("로그인", style: TextStyle(fontSize: 20, color: Colors.white)),
                 ),
               )
             ],
@@ -59,44 +60,83 @@ class _UserProfileViewState extends State<UserProfileView> {
       );
     }
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 40,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
-                Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "닉네임 : ${userLoginStatusProvider.getNickName}",
-              style: const TextStyle(
-                fontSize: 30,
+      backgroundColor: Colors.black,
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
+                  const Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP', color: Colors.white),),
+                ],
               ),
             ),
-          ),
-          TextButton(
-            onPressed: () {
-
-            },
-            child: SizedBox(
-              child: const Text(
-                "로그아웃",
-                style: TextStyle(
-                    fontSize: 30
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "닉네임 : ${userLoginStatusProvider.getNickName}",
+                style: const TextStyle(
+                  fontSize: 30,
+                  color: Colors.white
                 ),
               ),
-              height: MediaQuery.of(context).size.height*0.1,
-              width: MediaQuery.of(context).size.width,
             ),
-          )
-        ],
+            TextButton(
+              onPressed: () {
+
+              },
+              child: SizedBox(
+                child: const Text(
+                  "로그아웃",
+                  style: TextStyle(
+                      fontSize: 30,
+                    color: Colors.white
+                  ),
+                ),
+                height: MediaQuery.of(context).size.height*0.1,
+                width: MediaQuery.of(context).size.width,
+              ),
+            ),
+            userLoginStatusProvider.getAlarms.isEmpty?Container() : SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: List.generate(userLoginStatusProvider.getAlarms.length, (index) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey)
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Text("알람 ${index+1}", style: TextStyle(color: Colors.white)),
+                          Row(
+                            children: [
+                              const Text("예약 테마 : " ,style: TextStyle(color: Colors.white)),
+                              Text(userLoginStatusProvider.getAlarms[index].themeName ,style: TextStyle(color: Colors.white)),
+                            ],
+                          ),
+                          Row(
+                            children: [const Text("예약 날짜 : " ,style: TextStyle(color: Colors.white)),
+                              Text(userLoginStatusProvider.getAlarms[index].date ,style: TextStyle(color: Colors.white)),
+                            ]
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

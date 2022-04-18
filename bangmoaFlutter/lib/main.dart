@@ -1,12 +1,14 @@
-import 'dart:io';
+import 'dart:convert';
 
+import 'package:bangmoa/src/models/alarm.dart';
 import 'package:bangmoa/src/models/cafeModel.dart';
-import 'package:bangmoa/src/models/themaModel.dart';
+import 'package:bangmoa/src/models/BMTheme.dart';
 import 'package:bangmoa/src/provider/cafeProvider.dart';
+import 'package:bangmoa/src/provider/reserveInfoProvider.dart';
 import 'package:bangmoa/src/provider/reviewProvider.dart';
-import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
+import 'package:bangmoa/src/provider/selectedThemeProvider.dart';
 import 'package:bangmoa/src/provider/serchTextProvider.dart';
-import 'package:bangmoa/src/provider/themaCafeListProvider.dart';
+import 'package:bangmoa/src/provider/themeCafeListProvider.dart';
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/mainView.dart';
 import 'package:bangmoa/src/view/registerNicknameView.dart';
@@ -17,75 +19,119 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:workmanager/workmanager.dart';
-import 'src/provider/themaProvider.dart';
+import 'src/provider/themeProvider.dart';
+import 'package:http/http.dart' as http;
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   Workmanager().initialize(
     callbackDispatcher,
-    isInDebugMode: true
+    isInDebugMode: true,
   );
+
   Workmanager().registerPeriodicTask(
     "2",
     "simplePeriodicTask",
     frequency: Duration(minutes: 15),
   );
-  await Firebase.initializeApp();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<ThemaProvider>(create: (BuildContext context) => ThemaProvider()),
-        ChangeNotifierProvider<SelectedThemaProvider>(create: (BuildContext context) => SelectedThemaProvider()),
+        ChangeNotifierProvider<ThemeProvider>(create: (BuildContext context) => ThemeProvider()),
+        ChangeNotifierProvider<SelectedThemeProvider>(create: (BuildContext context) => SelectedThemeProvider()),
         ChangeNotifierProvider<UserLoginStatusProvider>(create: (BuildContext context) => UserLoginStatusProvider()),
         ChangeNotifierProvider<CafeProvider>(create: (BuildContext context) => CafeProvider()),
         ChangeNotifierProvider<ReviewProvider>(create: (BuildContext context) => ReviewProvider()),
-        ChangeNotifierProvider<ThemaCafeListProvider>(create: (BuildContext context) => ThemaCafeListProvider()),
+        ChangeNotifierProvider<ThemeCafeListProvider>(create: (BuildContext context) => ThemeCafeListProvider()),
         ChangeNotifierProvider<SearchTextProvider>(create: (BuildContext context) => SearchTextProvider()),
+        ChangeNotifierProvider<ReserveInfoProvider>(create: (BuildContext context) => ReserveInfoProvider()),
       ],
         child : MyApp()
     )
   );
 }
 
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) {
+void callbackDispatcher() async {
+  List<Alarm> alarmList = [];
+  Workmanager().executeTask((task, inputData) async {
+    await Firebase.initializeApp();
+    var userDoc = await FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).get();
+    List<String> alarmData = userDoc.data()!["alarms"]?.cast<String>();
+    for (var element in alarmData) {
+      var alarmDoc = await FirebaseFirestore.instance.collection("alarm").doc(element).get();
+      alarmList.add(Alarm.fromDocument(alarmDoc));
+    }
+    FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
+    var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
+    var IOS = const IOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
 
-    // initialise the plugin of flutterlocalnotifications.
-    FlutterLocalNotificationsPlugin flip = new FlutterLocalNotificationsPlugin();
-
-    // app_icon needs to be a added as a drawable
-    // resource to the Android head project.
-    var android = new AndroidInitializationSettings('@mipmap/ic_launcher');
-    var IOS = new IOSInitializationSettings();
-
-    // initialise settings for both Android and iOS device.
-    var settings = new InitializationSettings(android: android, iOS: IOS);
+    var settings = InitializationSettings(android: android, iOS: IOS);
     flip.initialize(settings);
-    _showNotificationWithDefaultSound(flip);
+    await _showNotificationWithDefaultSound(flip, alarmList);
     return Future.value(true);
   });
 }
 
-Future _showNotificationWithDefaultSound(flip) async {
-  var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip, List<Alarm> alarmList) async {
+  var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       'your channel id',
       'your channel name',
       channelDescription: 'your channel description',
       importance: Importance.max,
       priority: Priority.high,
   );
-  var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+  var iOSPlatformChannelSpecifics = const IOSNotificationDetails();
 
-  // initialise channel platform for both Android and iOS device.
-  var platformChannelSpecifics = new NotificationDetails(
+  var platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics
   );
-  sleep(Duration(seconds: 20));
-  await flip.show(0, '방탈출모아',
-      '[엘도라도] 2022-04-05 예약 가능 알림',
-      platformChannelSpecifics, payload: 'Default_Sound'
-  );
+  if (alarmList.isNotEmpty) {
+    int availableCount = 0;
+    String game = "";
+    for (var alarm in alarmList) {
+      List<Cafe> cafeList = [];
+      var cafe = await FirebaseFirestore.instance.collection("cafe").where("themes", arrayContains: alarm.themeID).get();
+      for (var cafeDoc in cafe.docs) {
+        cafeList.add(Cafe.fromDocument(cafeDoc));
+      }
+      http.Response _res = await http.post(
+          Uri.parse("http://3.39.80.150:5000/reservation"),
+          body: json.encode(
+              {
+                "id" : alarm.themeID,
+                "date" : alarm.date,
+              }
+          ),
+          headers: {"Content-Type": "application/json"}
+      );
+      var body = json.decode(_res.body);
+
+      for (var element in cafeList) {
+        if (body.toString() != "{}") {
+          var timeTable = body[element.name] as Map;
+          for (var key in timeTable.keys) {
+            List<bool> boolList = List<bool>.from(timeTable[key].values.toList());
+            if (boolList.contains(true)) {
+              availableCount++;
+              game = alarm.themeName;
+            }
+          }
+        }
+      }
+    }
+    if (availableCount > 0) {
+      await flip.show(0, '방탈출모아',
+          "$game 등${availableCount.toString()}개 테마 예약 가능",
+          platformChannelSpecifics, payload: 'Default_Sound'
+      );
+    }
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -94,7 +140,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Cafe> _cafeList = [];
-    List<Thema> _themaList = [];
+    List<BMTheme> _themaList = [];
     return StreamBuilder(
       stream: FirebaseFirestore.instance.collection('cafe').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> cafeSnapshot) {
@@ -112,46 +158,15 @@ class MyApp extends StatelessWidget {
                 _cafeList.add(Cafe.fromDocument(doc));
               });
               themaSnapshot.data!.docs.forEach((doc) {
-                _themaList.add(Thema.fromDocument(doc));
+                _themaList.add(BMTheme.fromDocument(doc));
               });
               Provider.of<CafeProvider>(context).initCafeList(_cafeList);
-              Provider.of<ThemaProvider>(context).initThemaList(_themaList);
+              Provider.of<ThemeProvider>(context).initThemeList(_themaList);
               return StreamBuilder(
-                  stream: FirebaseAuth.instance.authStateChanges(),
-                  builder: (BuildContext context, AsyncSnapshot<User?> userAuthSnapshot) {
-                    if (userAuthSnapshot.data == null) {
-                      Provider.of<UserLoginStatusProvider>(context).logout();
-                    } else {
-                      Provider.of<UserLoginStatusProvider>(context).login();
-                      return FutureBuilder(
-                          future : FirebaseFirestore.instance.collection('user').doc(userAuthSnapshot.data?.uid).get(),
-                          builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userDataSnapshot) {
-                            if (userDataSnapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: CircularProgressIndicator(),);
-                            }
-                            if (userDataSnapshot.data!.exists) {
-                              Provider.of<UserLoginStatusProvider>(context, listen: false).setUserID(userAuthSnapshot.data!.uid);
-                              Provider.of<UserLoginStatusProvider>(context, listen: false).setUserNickName(userDataSnapshot.data!["nickname"]);
-                            } else {
-                              Provider.of<UserLoginStatusProvider>(context).setUserID(userAuthSnapshot.data!.uid);
-                              return MaterialApp(
-                                title: 'BangMoa',
-                                theme: ThemeData(
-                                  primarySwatch: Colors.grey,
-                                ),
-                                home: const RegisterNicknameView(),
-                              );
-                            }
-                            return MaterialApp(
-                              title: 'BangMoa',
-                              theme: ThemeData(
-                                primarySwatch: Colors.grey,
-                              ),
-                              home: const mainView(),
-                            );
-                          }
-                      );
-                    }
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (BuildContext context, AsyncSnapshot<User?> userAuthSnapshot) {
+                  if (userAuthSnapshot.data == null) {
+                    Provider.of<UserLoginStatusProvider>(context).logout();
                     return MaterialApp(
                       title: 'BangMoa',
                       theme: ThemeData(
@@ -159,7 +174,47 @@ class MyApp extends StatelessWidget {
                       ),
                       home: const mainView(),
                     );
+                  } else {
+                    Provider.of<UserLoginStatusProvider>(context).login();
+                    return FutureBuilder(
+                      future : FirebaseFirestore.instance.collection('user').doc(userAuthSnapshot.data?.uid).get(),
+                      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userDataSnapshot) {
+                        if (userDataSnapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator(),);
+                        }
+                        if (userDataSnapshot.data!.exists) {
+                          Provider.of<UserLoginStatusProvider>(context, listen: false).setUserID(userAuthSnapshot.data!.uid);
+                          Provider.of<UserLoginStatusProvider>(context, listen: false).setUserNickName(userDataSnapshot.data!["nickname"]);
+                          List<String> alarmIdList = List<String>.from(userDataSnapshot.data!["alarms"]);
+                          List<Alarm> alarmList = [];
+                          for (var alarmID in alarmIdList) {
+                            var alarmCollection = FirebaseFirestore.instance.collection("alarm").doc(alarmID);
+                            alarmCollection.get().then(
+                                  (value) => alarmList.add(Alarm.fromDocument(value))
+                            );
+                          }
+                          Provider.of<UserLoginStatusProvider>(context, listen: false).setAlarm(alarmList);
+                          return MaterialApp(
+                            title: 'BangMoa',
+                            theme: ThemeData(
+                              primarySwatch: Colors.grey,
+                            ),
+                            home: const mainView(),
+                          );
+                        } else {
+                          Provider.of<UserLoginStatusProvider>(context).setUserID(userAuthSnapshot.data!.uid);
+                          return MaterialApp(
+                            title: 'BangMoa',
+                            theme: ThemeData(
+                              primarySwatch: Colors.grey,
+                            ),
+                            home: const RegisterNicknameView(),
+                          );
+                        }
+                      }
+                    );
                   }
+                }
               );
             }
           }
