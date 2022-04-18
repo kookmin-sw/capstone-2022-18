@@ -1,4 +1,4 @@
-from bm_util import get_bs_obj, get_hash, BMCafe, BMThema, BMWebsite
+from util import get_bs_obj, get_hash, BMCafe, BMThema, BMWebsite
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
