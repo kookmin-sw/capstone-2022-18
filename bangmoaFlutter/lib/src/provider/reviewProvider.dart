@@ -2,11 +2,11 @@ import 'package:bangmoa/src/models/reviewModel.dart';
 import 'package:flutter/material.dart';
 
 class ReviewProvider extends ChangeNotifier{
-  String _themaID = "";
+  String _themeID = "";
   List<ReviewModel> _reviewList = [];
 
   List<ReviewModel> get getReviewList => _reviewList;
-  String get getThemaID => _themaID;
+  String get getThemeID => _themeID;
 
   bool reviewIDCheck(String id) {
     for (var element in _reviewList) {
@@ -17,12 +17,12 @@ class ReviewProvider extends ChangeNotifier{
     return true;
   }
 
-  void setThemaID(String themaID) {
-    _themaID = themaID;
+  void setThemeID(String themeID) {
+    _themeID = themeID;
   }
 
-  void changeThemaID(String themaID) {
-    _themaID = themaID;
+  void changeThemeID(String themeID) {
+    _themeID = themeID;
     notifyListeners();
   }
 
