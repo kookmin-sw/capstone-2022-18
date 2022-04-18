@@ -7,15 +7,13 @@ class Cafe {
   late String id;
   late String name;
   late String destination;
-  late List<String> themas;
+  late List<String> themes;
   late String phone;
   late String description;
 
-  Cafe(this.id, this.name, this.destination, this.phone, this.themas, this.description);
+  Cafe(this.id, this.name, this.destination, this.phone, this.themes, this.description);
 
   factory Cafe.fromDocument(DocumentSnapshot doc) {
-    String dest = doc["destination"];
-
     return Cafe(
       doc.id,
       doc["name"],

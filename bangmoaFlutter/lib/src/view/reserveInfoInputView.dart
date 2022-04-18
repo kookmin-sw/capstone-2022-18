@@ -50,7 +50,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                             padding: const EdgeInsets.all(6.0),
                             child: SizedBox(
                               child: ClipRRect(
-                                child: Image.network(infoProvider.getThema.poster, fit: BoxFit.fill),
+                                child: Image.network(infoProvider.getTheme.poster, fit: BoxFit.fill),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               height: 200,
@@ -145,7 +145,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                                 height: 50,
                               ),
                               Container(
-                                child: Text(infoProvider.getThema.name, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                                child: Text(infoProvider.getTheme.name, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
                                 alignment: Alignment.center,
                                 width: (MediaQuery.of(context).size.width-30.0)*0.7,
                                 height: 50,

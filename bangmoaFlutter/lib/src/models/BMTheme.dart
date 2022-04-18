@@ -4,7 +4,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Thema {
+class BMTheme {
   late String id;
   late String name;
   late String description;
@@ -13,10 +13,10 @@ class Thema {
   late String poster;
   late String url;
 
-  Thema(this.id, this.name, this.description, this.genre, this.difficulty, this.poster, this.url);
+  BMTheme(this.id, this.name, this.description, this.genre, this.difficulty, this.poster, this.url);
 
-  factory Thema.fromDocument(DocumentSnapshot doc) {
-    return Thema(
+  factory BMTheme.fromDocument(DocumentSnapshot doc) {
+    return BMTheme(
       doc.id,
       doc.get("name").toString(),
       doc.get("description").toString(),

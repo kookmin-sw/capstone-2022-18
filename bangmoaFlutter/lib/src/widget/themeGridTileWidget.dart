@@ -4,17 +4,17 @@ import 'dart:io';
 
 import 'package:bangmoa/src/const/mainViewConst.dart';
 import 'package:bangmoa/src/models/reviewModel.dart';
-import 'package:bangmoa/src/models/themaModel.dart';
+import 'package:bangmoa/src/models/BMTheme.dart';
 import 'package:bangmoa/src/provider/reviewProvider.dart';
-import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
-import 'package:bangmoa/src/view/themaInfoView.dart';
+import 'package:bangmoa/src/provider/selectedThemeProvider.dart';
+import 'package:bangmoa/src/view/themeInfoView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ThemaGridTileWidget extends StatelessWidget {
-  final Thema thema;
-  const ThemaGridTileWidget({Key? key, required this.thema}) : super(key: key);
+class ThemeGridTileWidget extends StatelessWidget {
+  final BMTheme thema;
+  const ThemeGridTileWidget({Key? key, required this.thema}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,35 +23,35 @@ class ThemaGridTileWidget extends StatelessWidget {
       child: InkWell(
         child: Column(
           children: [
-            Center(child: Image.network(thema.poster, height: imageHeight, width: 150, fit: BoxFit.fill,)),
+            Center(child: Image.network(thema.poster, height: imageHeight, width: 175, fit: BoxFit.fill,)),
             Padding(
-              padding: themaTextPadding,
-              child: Text(thema.name,style: themaTitleStyle,overflow: TextOverflow.ellipsis),
+              padding: themeTextPadding,
+              child: Text(thema.name,style: TextStyle(fontSize: 20, color: themeGridViewStringColor),overflow: TextOverflow.ellipsis),
             ),
             Padding(
-              padding: themaTextPadding,
-              child: Text(thema.genre),
+              padding: themeTextPadding,
+              child: Text(thema.genre, style: TextStyle(color: themeGridViewStringColor)),
             ),
             Padding(
-              padding: themaTextPadding,
-              child: Text("난이도 : ${thema.difficulty.toString()}"),
+              padding: themeTextPadding,
+              child: Text("난이도 : ${thema.difficulty.toString()}", style: TextStyle(color: themeGridViewStringColor)),
             )
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         ),
         onTap: () {
-          Provider.of<SelectedThemaProvider>(context, listen: false).setSelectedThema(thema);
-          Provider.of<ReviewProvider>(context, listen: false).setThemaID(thema.id);
+          Provider.of<SelectedThemeProvider>(context, listen: false).setSelectedTheme(thema);
+          Provider.of<ReviewProvider>(context, listen: false).setThemeID(thema.id);
           loadReviewData(context, thema);
           sleep(Duration(milliseconds: 100));
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const ThemaInfoView()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const ThemeInfoView()));
         },
       ),
     );
   }
 }
 
-void loadReviewData(BuildContext context, Thema thema) async {
+void loadReviewData(BuildContext context, BMTheme thema) async {
   Provider.of<ReviewProvider>(context, listen: false).initList();
   await FirebaseFirestore.instance.collection('review').where("themaID", isEqualTo: thema.id).get().then((QuerySnapshot querySnapshot) {
     querySnapshot.docs.forEach((document) async {

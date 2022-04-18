@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Alarm {
-  late String themaID;
-  late String themaName;
+  late String themeID;
+  late String themeName;
   late String date;
 
-  Alarm(this.themaID, this.themaName, this.date);
+  Alarm(this.themeID, this.themeName, this.date);
 
   factory Alarm.fromDocument(DocumentSnapshot doc) {
     return Alarm(
-      doc["themaID"],
-      doc["themaName"],
+      doc["themeID"],
+      doc["themeName"],
       doc["date"]
     );
   }

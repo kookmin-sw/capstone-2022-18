@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
-// Const used in themaInfo
-Widget themaInfoViewLoadingIndicator() {
+// Const used in themeInfo
+Widget themeInfoViewLoadingIndicator() {
   return const CircularProgressIndicator();
 }
-TextStyle themaTitleStyle = const TextStyle(fontSize: 25);
 EdgeInsetsGeometry imagePadding = const EdgeInsets.all(8.0);
 EdgeInsetsGeometry genreAndDifficultyPadding = const EdgeInsets.only(right: 10.0);
 EdgeInsetsGeometry descriptionPadding = const EdgeInsets.all(8.0);
 
 double getPosterImageHeight(BuildContext context) {
-  return MediaQuery.of(context).size.height*0.3;
+  return MediaQuery.of(context).size.height*0.5;
 }
 
 double getPosterImageWidth(BuildContext context) {
@@ -27,7 +26,6 @@ double sheetMaxSize = 1;
 double sheetBorderLineWidth = 1;
 BorderRadiusGeometry sheetBorderRadius = const BorderRadius.vertical(top: Radius.circular(20));
 EdgeInsetsGeometry sheetDragBarPadding = const EdgeInsets.all(8.0);
-Text sheetDragBarText = const Text("댓글", style: TextStyle(fontSize: 18),);
 
 double getReviewListBoxHeight(BuildContext context) {
   return MediaQuery.of(context).size.height*0.92;

@@ -1,22 +1,22 @@
 import 'package:bangmoa/src/models/cafeModel.dart';
-import 'package:bangmoa/src/models/themaModel.dart';
+import 'package:bangmoa/src/models/BMTheme.dart';
 import 'package:flutter/material.dart';
 
 class ReserveInfoProvider extends ChangeNotifier{
-  late Thema _thema;
+  late BMTheme _theme;
   late Cafe _cafe;
   late String _date;
   late String _time;
   late int _cost;
 
-  Thema get getThema => _thema;
+  BMTheme get getTheme => _theme;
   Cafe get getCafe => _cafe;
   String get getDate => _date;
   String get getTime => _time;
   int get getCost => _cost;
 
-  void setThema(Thema thema) {
-    _thema = thema;
+  void setTheme(BMTheme theme) {
+    _theme = theme;
   }
 
   void setCafe(Cafe cafe) {

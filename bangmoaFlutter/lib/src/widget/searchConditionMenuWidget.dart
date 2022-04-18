@@ -24,7 +24,7 @@ class _SearchConditionMenuWidgetState extends State<SearchConditionMenuWidget> {
           headerBuilder: (BuildContext context, bool isOpen) {
             return const Padding(
                 padding: EdgeInsets.all(10.0),
-                child: Text("검색", style: TextStyle(fontSize: 20),),
+                child: Text("검색", style: TextStyle(fontSize: 20, color: Colors.white),),
               );
           },
           body: Container(

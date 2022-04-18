@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:bangmoa/src/models/alarm.dart';
 import 'package:bangmoa/src/models/cafeModel.dart';
-import 'package:bangmoa/src/models/themaModel.dart';
+import 'package:bangmoa/src/models/BMTheme.dart';
 import 'package:bangmoa/src/provider/cafeProvider.dart';
 import 'package:bangmoa/src/provider/reserveInfoProvider.dart';
 import 'package:bangmoa/src/provider/reviewProvider.dart';
-import 'package:bangmoa/src/provider/selectedThemaProvider.dart';
+import 'package:bangmoa/src/provider/selectedThemeProvider.dart';
 import 'package:bangmoa/src/provider/serchTextProvider.dart';
-import 'package:bangmoa/src/provider/themaCafeListProvider.dart';
+import 'package:bangmoa/src/provider/themeCafeListProvider.dart';
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/mainView.dart';
 import 'package:bangmoa/src/view/registerNicknameView.dart';
@@ -19,7 +19,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:workmanager/workmanager.dart';
-import 'src/provider/themaProvider.dart';
+import 'src/provider/themeProvider.dart';
 import 'package:http/http.dart' as http;
 
 void main() async {
@@ -38,12 +38,12 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<ThemaProvider>(create: (BuildContext context) => ThemaProvider()),
-        ChangeNotifierProvider<SelectedThemaProvider>(create: (BuildContext context) => SelectedThemaProvider()),
+        ChangeNotifierProvider<ThemeProvider>(create: (BuildContext context) => ThemeProvider()),
+        ChangeNotifierProvider<SelectedThemeProvider>(create: (BuildContext context) => SelectedThemeProvider()),
         ChangeNotifierProvider<UserLoginStatusProvider>(create: (BuildContext context) => UserLoginStatusProvider()),
         ChangeNotifierProvider<CafeProvider>(create: (BuildContext context) => CafeProvider()),
         ChangeNotifierProvider<ReviewProvider>(create: (BuildContext context) => ReviewProvider()),
-        ChangeNotifierProvider<ThemaCafeListProvider>(create: (BuildContext context) => ThemaCafeListProvider()),
+        ChangeNotifierProvider<ThemeCafeListProvider>(create: (BuildContext context) => ThemeCafeListProvider()),
         ChangeNotifierProvider<SearchTextProvider>(create: (BuildContext context) => SearchTextProvider()),
         ChangeNotifierProvider<ReserveInfoProvider>(create: (BuildContext context) => ReserveInfoProvider()),
       ],
@@ -96,7 +96,7 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip, L
     String game = "";
     for (var alarm in alarmList) {
       List<Cafe> cafeList = [];
-      var cafe = await FirebaseFirestore.instance.collection("cafe").where("themes", arrayContains: alarm.themaID).get();
+      var cafe = await FirebaseFirestore.instance.collection("cafe").where("themes", arrayContains: alarm.themeID).get();
       for (var cafeDoc in cafe.docs) {
         cafeList.add(Cafe.fromDocument(cafeDoc));
       }
@@ -104,7 +104,7 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip, L
           Uri.parse("http://3.39.80.150:5000/reservation"),
           body: json.encode(
               {
-                "id" : alarm.themaID,
+                "id" : alarm.themeID,
                 "date" : alarm.date,
               }
           ),
@@ -119,7 +119,7 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip, L
             List<bool> boolList = List<bool>.from(timeTable[key].values.toList());
             if (boolList.contains(true)) {
               availableCount++;
-              game = alarm.themaName;
+              game = alarm.themeName;
             }
           }
         }
@@ -140,7 +140,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Cafe> _cafeList = [];
-    List<Thema> _themaList = [];
+    List<BMTheme> _themaList = [];
     return StreamBuilder(
       stream: FirebaseFirestore.instance.collection('cafe').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> cafeSnapshot) {
@@ -158,10 +158,10 @@ class MyApp extends StatelessWidget {
                 _cafeList.add(Cafe.fromDocument(doc));
               });
               themaSnapshot.data!.docs.forEach((doc) {
-                _themaList.add(Thema.fromDocument(doc));
+                _themaList.add(BMTheme.fromDocument(doc));
               });
               Provider.of<CafeProvider>(context).initCafeList(_cafeList);
-              Provider.of<ThemaProvider>(context).initThemaList(_themaList);
+              Provider.of<ThemeProvider>(context).initThemeList(_themaList);
               return StreamBuilder(
                 stream: FirebaseAuth.instance.authStateChanges(),
                 builder: (BuildContext context, AsyncSnapshot<User?> userAuthSnapshot) {

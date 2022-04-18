@@ -1,7 +1,7 @@
 import 'package:bangmoa/src/models/cafeModel.dart';
 import 'package:flutter/material.dart';
 
-class ThemaCafeListProvider extends ChangeNotifier{
+class ThemeCafeListProvider extends ChangeNotifier{
   List<Cafe> _cafeList = [];
 
   List<Cafe> get getCafeList => _cafeList;

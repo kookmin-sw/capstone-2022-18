@@ -1,14 +1,14 @@
 // 앱의 메인이 되는 방탈출 테마 리스트를 그리드형태로 보여주는 페이지
 // 하단 NavigationBar 도 포함.
-// 상단 검색조건은 searchConditionMenuWidget 으로, 중간의 그리드뷰는 themaGridViewWidget 으로 연결.
+// 상단 검색조건은 searchConditionMenuWidget 으로, 중간의 그리드뷰는 themeGridViewWidget 으로 연결.
 
-import 'package:bangmoa/src/models/themaModel.dart';
+import 'package:bangmoa/src/models/BMTheme.dart';
 import 'package:bangmoa/src/provider/serchTextProvider.dart';
-import 'package:bangmoa/src/provider/themaProvider.dart';
+import 'package:bangmoa/src/provider/themeProvider.dart';
 import 'package:bangmoa/src/view/searchResultView.dart';
 import 'package:bangmoa/src/view/userProfileView.dart';
-import 'package:bangmoa/src/widget/recommendThemaWidget.dart';
-import 'package:bangmoa/src/widget/themaGridViewWidget.dart';
+import 'package:bangmoa/src/widget/recommendThemeWidget.dart';
+import 'package:bangmoa/src/widget/themeGridViewWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
@@ -21,24 +21,24 @@ class mainView extends StatefulWidget {
 }
 
 class _mainViewState extends State<mainView> {
-  List<Thema> recommendList = [];
+  List<BMTheme> recommendList = [];
   final textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    List<Thema> _themaList = Provider.of<ThemaProvider>(context).getThemaList;
+    List<BMTheme> _themeList = Provider.of<ThemeProvider>(context).getThemeList;
     var rng = Random();
     for (var i = 0; i < 6; i++) {
-      recommendList.add(_themaList[rng.nextInt(_themaList.length)]);
+      recommendList.add(_themeList[rng.nextInt(_themeList.length)]);
     }
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfileView()));
         },
-        child: Icon(Icons.person),
+        child: const Icon(Icons.person),
       ),
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.black,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -48,7 +48,7 @@ class _mainViewState extends State<mainView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
-                  const Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+                  const Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP', color: Colors.white),),
                 ],
               ),
             ),
@@ -56,12 +56,13 @@ class _mainViewState extends State<mainView> {
               child: TextField(
                 controller: textController,
                 keyboardType: TextInputType.text,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "테마 검색",
+                  hintStyle: TextStyle(color: Colors.white),
                   border: InputBorder.none,
                   icon: Padding(
                     padding: EdgeInsets.only(left: 13),
-                    child: Icon(Icons.search),
+                    child: Icon(Icons.search, color: Colors.white),
                   )
                 ),
                 onEditingComplete: () {
@@ -70,23 +71,23 @@ class _mainViewState extends State<mainView> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          content: Text("정확한 검색어를 입력해주세요."),
+                          content: const Text("정확한 검색어를 입력해주세요."),
                           actions: [
-                            TextButton(onPressed: () {Navigator.pop(context);}, child: Text("close"))
+                            TextButton(onPressed: () {Navigator.pop(context);}, child: const Text("close"))
                           ],
                         );
                       }
                     );
                   } else {
                     Provider.of<SearchTextProvider>(context, listen: false).setSearchText(textController.value.text);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultView(),));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchResultView(),));
                     textController.clear();
                   }
                 },
               ),
             ),
-            RecommendThemaWidget(context, recommendList),
-            ThemaGridViewWidget(themaList: _themaList, viewHeight: MediaQuery.of(context).size.height*0.9, viewText: "전체 테마"),
+            recommendThemeWidget(context, recommendList),
+            ThemeGridViewWidget(themeList: _themeList, viewHeight: 274*_themeList.length/2, viewText: "전체 테마"),
           ],
         ),
         scrollDirection: Axis.vertical,
