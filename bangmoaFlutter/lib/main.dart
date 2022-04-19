@@ -33,8 +33,12 @@ void main() async {
   Workmanager().registerPeriodicTask(
     "2",
     "simplePeriodicTask",
-    frequency: Duration(minutes: 15),
+    frequency: const Duration(minutes: 15),
   );
+
+  cafeList = await loadFirebaseCafeList();
+  themeList = await loadFirebaseThemeList();
+
   runApp(
     MultiProvider(
       providers: [
@@ -47,10 +51,13 @@ void main() async {
         ChangeNotifierProvider<SearchTextProvider>(create: (BuildContext context) => SearchTextProvider()),
         ChangeNotifierProvider<ReserveInfoProvider>(create: (BuildContext context) => ReserveInfoProvider()),
       ],
-        child : MyApp()
+        child : const MyApp()
     )
   );
 }
+
+List<Cafe> cafeList = [];
+List<BMTheme> themeList = [];
 
 void callbackDispatcher() async {
   List<Alarm> alarmList = [];
@@ -134,92 +141,86 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip, L
   }
 }
 
+Future<List<BMTheme>> loadFirebaseThemeList() async {
+  List<BMTheme> themeList = [];
+  await FirebaseFirestore.instance.collection('thema').get().then((snapshot) {
+    for (var doc in snapshot.docs) {
+      themeList.add(BMTheme.fromDocument(doc));
+    }
+  });
+  return themeList;
+}
+
+Future<List<Cafe>> loadFirebaseCafeList() async {
+  List<Cafe> cafeList = [];
+  await FirebaseFirestore.instance.collection('cafe').get().then((snapshot) {
+    for (var doc in snapshot.docs) {
+      cafeList.add(Cafe.fromDocument(doc));
+    }
+  });
+  return cafeList;
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<Cafe> _cafeList = [];
-    List<BMTheme> _themaList = [];
+    Provider.of<CafeProvider>(context).initCafeList(cafeList);
+    Provider.of<ThemeProvider>(context).initThemeList(themeList);
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('cafe').snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> cafeSnapshot) {
-        return StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('thema').snapshots(),
-          builder: (context, AsyncSnapshot<QuerySnapshot> themaSnapshot) {
-            if (cafeSnapshot.connectionState == ConnectionState.waiting || themaSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator(),);
-            } else if (cafeSnapshot.hasError) {
-              return Text(cafeSnapshot.error.toString());
-            } else if (themaSnapshot.hasError) {
-              return Text(themaSnapshot.error.toString());
-            } else {
-              cafeSnapshot.data!.docs.forEach((doc) {
-                _cafeList.add(Cafe.fromDocument(doc));
-              });
-              themaSnapshot.data!.docs.forEach((doc) {
-                _themaList.add(BMTheme.fromDocument(doc));
-              });
-              Provider.of<CafeProvider>(context).initCafeList(_cafeList);
-              Provider.of<ThemeProvider>(context).initThemeList(_themaList);
-              return StreamBuilder(
-                stream: FirebaseAuth.instance.authStateChanges(),
-                builder: (BuildContext context, AsyncSnapshot<User?> userAuthSnapshot) {
-                  if (userAuthSnapshot.data == null) {
-                    Provider.of<UserLoginStatusProvider>(context).logout();
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (BuildContext context, AsyncSnapshot<User?> userAuthSnapshot) {
+          if (userAuthSnapshot.data == null) {
+            Provider.of<UserLoginStatusProvider>(context).logout();
+            return MaterialApp(
+              title: 'BangMoa',
+              theme: ThemeData(
+                primarySwatch: Colors.grey,
+              ),
+              home: const MainView(),
+            );
+          } else {
+            Provider.of<UserLoginStatusProvider>(context).login();
+            return FutureBuilder(
+                future : FirebaseFirestore.instance.collection('user').doc(userAuthSnapshot.data?.uid).get(),
+                builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userDataSnapshot) {
+                  if (userDataSnapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator(),);
+                  }
+                  if (userDataSnapshot.data!.exists) {
+                    Provider.of<UserLoginStatusProvider>(context, listen: false).setUserID(userAuthSnapshot.data!.uid);
+                    Provider.of<UserLoginStatusProvider>(context, listen: false).setUserNickName(userDataSnapshot.data!["nickname"]);
+                    List<String> alarmIdList = List<String>.from(userDataSnapshot.data!["alarms"]);
+                    List<Alarm> alarmList = [];
+                    for (var alarmID in alarmIdList) {
+                      var alarmCollection = FirebaseFirestore.instance.collection("alarm").doc(alarmID);
+                      alarmCollection.get().then(
+                              (value) => alarmList.add(Alarm.fromDocument(value))
+                      );
+                    }
+                    Provider.of<UserLoginStatusProvider>(context, listen: false).setAlarm(alarmList);
                     return MaterialApp(
                       title: 'BangMoa',
                       theme: ThemeData(
                         primarySwatch: Colors.grey,
                       ),
-                      home: const mainView(),
+                      home: const MainView(),
                     );
                   } else {
-                    Provider.of<UserLoginStatusProvider>(context).login();
-                    return FutureBuilder(
-                      future : FirebaseFirestore.instance.collection('user').doc(userAuthSnapshot.data?.uid).get(),
-                      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> userDataSnapshot) {
-                        if (userDataSnapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator(),);
-                        }
-                        if (userDataSnapshot.data!.exists) {
-                          Provider.of<UserLoginStatusProvider>(context, listen: false).setUserID(userAuthSnapshot.data!.uid);
-                          Provider.of<UserLoginStatusProvider>(context, listen: false).setUserNickName(userDataSnapshot.data!["nickname"]);
-                          List<String> alarmIdList = List<String>.from(userDataSnapshot.data!["alarms"]);
-                          List<Alarm> alarmList = [];
-                          for (var alarmID in alarmIdList) {
-                            var alarmCollection = FirebaseFirestore.instance.collection("alarm").doc(alarmID);
-                            alarmCollection.get().then(
-                                  (value) => alarmList.add(Alarm.fromDocument(value))
-                            );
-                          }
-                          Provider.of<UserLoginStatusProvider>(context, listen: false).setAlarm(alarmList);
-                          return MaterialApp(
-                            title: 'BangMoa',
-                            theme: ThemeData(
-                              primarySwatch: Colors.grey,
-                            ),
-                            home: const mainView(),
-                          );
-                        } else {
-                          Provider.of<UserLoginStatusProvider>(context).setUserID(userAuthSnapshot.data!.uid);
-                          return MaterialApp(
-                            title: 'BangMoa',
-                            theme: ThemeData(
-                              primarySwatch: Colors.grey,
-                            ),
-                            home: const RegisterNicknameView(),
-                          );
-                        }
-                      }
+                    Provider.of<UserLoginStatusProvider>(context).setUserID(userAuthSnapshot.data!.uid);
+                    return MaterialApp(
+                      title: 'BangMoa',
+                      theme: ThemeData(
+                        primarySwatch: Colors.grey,
+                      ),
+                      home: const RegisterNicknameView(),
                     );
                   }
                 }
-              );
-            }
+            );
           }
-        );
-      }
+        }
     );
   }
 }

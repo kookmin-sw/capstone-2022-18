@@ -13,14 +13,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
-class mainView extends StatefulWidget {
-  const mainView({Key? key}) : super(key: key);
+class MainView extends StatefulWidget {
+  const MainView({Key? key}) : super(key: key);
 
   @override
-  _mainViewState createState() => _mainViewState();
+  _MainViewState createState() => _MainViewState();
 }
 
-class _mainViewState extends State<mainView> {
+class _MainViewState extends State<MainView> {
   List<BMTheme> recommendList = [];
   final textController = TextEditingController();
 
@@ -34,7 +34,7 @@ class _mainViewState extends State<mainView> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfileView()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const UserProfileView()));
         },
         child: const Icon(Icons.person),
       ),
@@ -42,7 +42,7 @@ class _mainViewState extends State<mainView> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: 40,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -52,39 +52,37 @@ class _mainViewState extends State<mainView> {
                 ],
               ),
             ),
-            Container(
-              child: TextField(
-                controller: textController,
-                keyboardType: TextInputType.text,
-                decoration: const InputDecoration(
-                  hintText: "테마 검색",
-                  hintStyle: TextStyle(color: Colors.white),
-                  border: InputBorder.none,
-                  icon: Padding(
-                    padding: EdgeInsets.only(left: 13),
-                    child: Icon(Icons.search, color: Colors.white),
-                  )
-                ),
-                onEditingComplete: () {
-                  if (textController.value.text.isEmpty) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          content: const Text("정확한 검색어를 입력해주세요."),
-                          actions: [
-                            TextButton(onPressed: () {Navigator.pop(context);}, child: const Text("close"))
-                          ],
-                        );
-                      }
-                    );
-                  } else {
-                    Provider.of<SearchTextProvider>(context, listen: false).setSearchText(textController.value.text);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchResultView(),));
-                    textController.clear();
-                  }
-                },
+            TextField(
+              controller: textController,
+              keyboardType: TextInputType.text,
+              decoration: const InputDecoration(
+                hintText: "테마 검색",
+                hintStyle: TextStyle(color: Colors.white),
+                border: InputBorder.none,
+                icon: Padding(
+                  padding: EdgeInsets.only(left: 13),
+                  child: Icon(Icons.search, color: Colors.white),
+                )
               ),
+              onEditingComplete: () {
+                if (textController.value.text.isEmpty) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        content: const Text("정확한 검색어를 입력해주세요."),
+                        actions: [
+                          TextButton(onPressed: () {Navigator.pop(context);}, child: const Text("close"))
+                        ],
+                      );
+                    }
+                  );
+                } else {
+                  Provider.of<SearchTextProvider>(context, listen: false).setSearchText(textController.value.text);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchResultView(),));
+                  textController.clear();
+                }
+              },
             ),
             recommendThemeWidget(context, recommendList),
             ThemeGridViewWidget(themeList: _themeList, viewHeight: 274*_themeList.length/2, viewText: "전체 테마"),
