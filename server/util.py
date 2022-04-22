@@ -83,7 +83,7 @@ class BMWebsite(metaclass=ABCMeta):
         options.add_argument('headless')
         options.add_argument('window-size=1920x1080')
         options.add_argument("disable-gpu")
-        return webdriver.Chrome('../confidential/chromedriver', options=options)
+        return webdriver.Chrome('./chromedriver', options=options)
 
 
 class BMObject(metaclass=ABCMeta):

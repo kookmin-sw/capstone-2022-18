@@ -1,6 +1,7 @@
 import sys
 
 from flask import Flask, request, jsonify
+from google.cloud import storage
 
 from util import BangMoaFireStroe
 
@@ -16,6 +17,8 @@ url_class = {
 
 app = Flask(__name__)
 bmfs = BangMoaFireStroe(sys.argv[1])
+gcs = storage.Client()
+bucket = gcs.get_bucket('capstone-2022-18.appspot.com')
 
 @app.route('/')
 def hello_world():
@@ -45,32 +48,55 @@ def recommendation():
 @app.route('/login/manager', methods=['POST'])
 def login_manager():
     input_data = request.get_json()
-    user_id, user_pw = input_data['id'], input_data['pw']
 
     output_data = {}
-    if user_id == user_pw:
-        output_data['result'] = 'true'
-    else:
-        output_data['result'] = 'false'
+    doc = bmfs.db.collection(u'manager').document(input_data['id'])
+    if doc.get().exists:
+        doc_dict = doc.get().to_dict()
+        if input_data['pw'] == doc_dict['pw']:
+            output_data['result'] = 'true'
+            return jsonify(output_data)
+    output_data['result'] = 'false'
     return jsonify(output_data)
 
 @app.route('/signup/manager', methods=['POST'])
 def signup_manager():
     input_data = request.get_json()
-    user_id, user_pw = input_data['id'], input_data['pw']
+    output_data = {'result': 'false'}
 
-    output_data = {}
     doc = bmfs.db.collection(u'manager').document(input_data['id'])
     if doc.get().exists:
-        output_data['result'] = 'false'
-    else:
-        data = {
-            u'pw': input_data['pw']
-        }
-        doc.set(data)
-        output_data['result'] = 'true'
+        return jsonify(output_data)
+    data = {
+        u'pw': input_data['pw']
+        u'name': input_data['name']
+        u'address': input_data['address']
+        u'phone': input_data['phone']
+    }
+    doc.set(data)
+    output_data['result'] = 'true'
     return jsonify(output_data)
 
+@app.route('/theme/add', methods=['POST'])
+def signup_manager():
+    input_data = request.get_json()
+    print(input_data)
+    output_data = {'result': 'false'}
+    doc_ref = bmfs.db.collection(u'theme').document()
+
+    doc_ref.add(input_data)
+    poster_file = request.files.get('poster')
+    if not poster_file:
+        return output_data
+
+    filename = doc_ref.id + poster_file.filename.split('.')[1]
+    blob = bucket.blob('theme/' + filename)
+    blob.upload_from_string(
+        poster_file.read(),
+        content_type=poster_file.content_type
+    )
+
+    return jsonify(output_data)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
