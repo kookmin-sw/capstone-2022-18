@@ -4,24 +4,26 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Thema {
+class BMTheme {
   late String id;
   late String name;
   late String description;
   late String genre;
   late int difficulty;
   late String poster;
+  late String url;
 
-  Thema(this.id, this.name, this.description, this.genre, this.difficulty, this.poster);
+  BMTheme(this.id, this.name, this.description, this.genre, this.difficulty, this.poster, this.url);
 
-  factory Thema.fromDocument(DocumentSnapshot doc) {
-    return Thema(
+  factory BMTheme.fromDocument(DocumentSnapshot doc) {
+    return BMTheme(
       doc.id,
       doc.get("name").toString(),
       doc.get("description").toString(),
       doc.get("genre").toString(),
       doc.get("difficulty"),
       doc.get("poster").toString(),
+      doc.get("url").toString(),
     );
   }
 }

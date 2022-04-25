@@ -4,19 +4,19 @@ Widget mainViewLoadingIndicator() {
   return const CircularProgressIndicator();
 }
 
-// Const used in Thema Grid View
-SliverGridDelegate themaGridViewDelegate = const SliverGridDelegateWithFixedCrossAxisCount(
+// Const used in Theme Grid View
+Color themeGridViewStringColor = Colors.white;
+SliverGridDelegate themeGridViewDelegate = const SliverGridDelegateWithFixedCrossAxisCount(
   crossAxisCount: 2,
   crossAxisSpacing: 10,
   mainAxisSpacing: 5,
   childAspectRatio: 0.75,
 );
 
-// Const used in Thema Grid Tile
+// Const used in Theme Grid Tile
 EdgeInsetsGeometry tilePadding = const EdgeInsets.all(8.0);
-double imageHeight = 150;
-EdgeInsetsGeometry themaTextPadding = const EdgeInsets.only(left: 5.0);
-TextStyle themaTitleStyle = const TextStyle(fontSize: 20);
+double imageHeight = 175;
+EdgeInsetsGeometry themeTextPadding = const EdgeInsets.only(left: 5.0);
 
 // Const used in Bottom Navigation Bar
 double bottomNavigationSelectedFontSize = 15;

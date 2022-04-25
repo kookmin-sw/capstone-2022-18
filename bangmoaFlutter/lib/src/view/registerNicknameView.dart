@@ -61,9 +61,9 @@ class _RegisterNicknameViewState extends State<RegisterNicknameView> {
               }
               else {
                 Provider.of<UserLoginStatusProvider>(context, listen: false).setUserNickName(_textController.text);
-                users.doc(_userID).set({"nickname" : _textController.text});
+                users.doc(_userID).set({"nickname" : _textController.text, "alarms" : []});
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => mainView()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MainView()));
               }
             },
             child: registerButtonText,
