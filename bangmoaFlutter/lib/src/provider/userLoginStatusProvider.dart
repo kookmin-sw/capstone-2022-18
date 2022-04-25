@@ -20,6 +20,11 @@ class UserLoginStatusProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void removeAlarm(int index) {
+    _alarms.removeAt(index);
+    notifyListeners();
+  }
+
   void setAlarm(List<Alarm> alarms) {
     _alarms = alarms;
   }

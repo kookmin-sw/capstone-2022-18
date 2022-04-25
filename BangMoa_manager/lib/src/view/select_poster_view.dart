@@ -43,6 +43,17 @@ class _SelectPosterViewState extends State<SelectPosterView> {
     }
   }
 
+  void posterSelectAction(int index) {
+    Provider.of<SelectedImageProvider>(context, listen: false).selectImage(photoFiles[index]);
+    print(photoFiles[index].absolute);
+    Provider.of<SelectedImageProvider>(context, listen: false).select();
+    Navigator.pop(context);
+  }
+
+  void cancelButtonClickedAction() {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -58,9 +69,7 @@ class _SelectPosterViewState extends State<SelectPosterView> {
             children: [
               const Text('포스터 선택'),
               IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: cancelButtonClickedAction,
                 icon: const Icon(Icons.clear),
               )
             ],
@@ -77,8 +86,7 @@ class _SelectPosterViewState extends State<SelectPosterView> {
                       return InkWell(
                         child: Image.memory(snapshot.data!, fit: BoxFit.fill,),
                         onTap: () {
-                          Provider.of<SelectedImageProvider>(context, listen: false).selectImage(photoFiles[index]);
-                          Provider.of<SelectedImageProvider>(context, listen: false).select();
+                          posterSelectAction(index);
                         },
                       );
                     }

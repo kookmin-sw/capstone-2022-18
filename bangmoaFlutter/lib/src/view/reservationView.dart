@@ -136,7 +136,7 @@ class _ReservationViewState extends State<ReservationView> {
                                       }
                                   );
                                   await user.update({"alarms" : FieldValue.arrayUnion([id])});
-                                  userLoginStatusProvider.addAlarm(Alarm(_theme.id, _theme.name, DateFormat('yyyy-MM-dd').format(_currentDate).toString()));
+                                  userLoginStatusProvider.addAlarm(Alarm(id, _theme.id, _theme.name, DateFormat('yyyy-MM-dd').format(_currentDate).toString()));
                                 }
                               }
                             },

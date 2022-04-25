@@ -196,7 +196,11 @@ class MyApp extends StatelessWidget {
                     for (var alarmID in alarmIdList) {
                       var alarmCollection = FirebaseFirestore.instance.collection("alarm").doc(alarmID);
                       alarmCollection.get().then(
-                              (value) => alarmList.add(Alarm.fromDocument(value))
+                        (value) {
+                          if(value.exists) {
+                            alarmList.add(Alarm.fromDocument(value));
+                          }
+                        }
                       );
                     }
                     Provider.of<UserLoginStatusProvider>(context, listen: false).setAlarm(alarmList);

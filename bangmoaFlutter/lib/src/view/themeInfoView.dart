@@ -46,7 +46,7 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
           backgroundColor: Colors.black,
           body : Column(
             children: [
-              Container(
+              SizedBox(
                 height: 40,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -133,9 +133,9 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                                 width: 80,
                                 alignment: Alignment.center,
                                 child: TextButton(
-                                  child: Text("예약 확인", style: TextStyle(color: Colors.white),),
+                                  child: const Text("예약 확인", style: TextStyle(color: Colors.white),),
                                   onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ReservationView()));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ReservationView()));
                                   },
                                 ),
                               ),
@@ -143,7 +143,7 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       reviewBottomSheet(context),

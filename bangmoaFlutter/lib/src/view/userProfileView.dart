@@ -3,6 +3,7 @@
 
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/loginView.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +16,15 @@ class UserProfileView extends StatefulWidget {
 
 class _UserProfileViewState extends State<UserProfileView> {
   late bool _loginStatus;
+
+  void removeButtonAction(int index) {
+    FirebaseFirestore.instance.collection('alarm').doc(context.read<UserLoginStatusProvider>().getAlarms[index].id).delete();
+    Provider.of<UserLoginStatusProvider>(context,listen: false).removeAlarm(index);
+    setState(() {
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     UserLoginStatusProvider userLoginStatusProvider = Provider.of<UserLoginStatusProvider>(context);
@@ -115,17 +125,29 @@ class _UserProfileViewState extends State<UserProfileView> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
-                          Text("알람 ${index+1}", style: TextStyle(color: Colors.white)),
+                          Text("알람 ${index+1}", style: const TextStyle(color: Colors.white)),
                           Row(
                             children: [
                               const Text("예약 테마 : " ,style: TextStyle(color: Colors.white)),
-                              Text(userLoginStatusProvider.getAlarms[index].themeName ,style: TextStyle(color: Colors.white)),
+                              Text(userLoginStatusProvider.getAlarms[index].themeName ,style: const TextStyle(color: Colors.white)),
                             ],
                           ),
                           Row(
-                            children: [const Text("예약 날짜 : " ,style: TextStyle(color: Colors.white)),
-                              Text(userLoginStatusProvider.getAlarms[index].date ,style: TextStyle(color: Colors.white)),
+                            children: [
+                              const Text("예약 날짜 : " ,style: TextStyle(color: Colors.white)),
+                              Text(userLoginStatusProvider.getAlarms[index].date ,style: const TextStyle(color: Colors.white)),
                             ]
+                          ),
+                          Row(
+                            children: [
+                              Expanded(child: Container()),
+                              TextButton(
+                                onPressed: () {
+                                  removeButtonAction(index);
+                                },
+                                child: const Text("삭제", style: TextStyle(color: Colors.white),)
+                              )
+                            ],
                           )
                         ],
                       ),

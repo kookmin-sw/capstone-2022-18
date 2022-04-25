@@ -16,7 +16,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
   Widget build(BuildContext context) {
     ReserveInfoProvider infoProvider = Provider.of<ReserveInfoProvider>(context);
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.black,
       body: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Column(
@@ -27,21 +27,20 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
-                  Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP'),),
+                  const Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP', color: Colors.white),),
                 ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(6.0),
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
                 ),
                 width: MediaQuery.of(context).size.width-12.0,
                 child: Column(
                   children: [
-                   Text("예약정보", style: TextStyle(fontSize: 20),),
+                   const Text("예약정보", style: TextStyle(fontSize: 20),),
                     Padding(
                       padding: const EdgeInsets.all(6.0),
                       child: Column(
@@ -60,7 +59,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                           Row(
                             children: [
                               Container(
-                                child: Text("예약일", textAlign: TextAlign.center),
+                                child: const Text("예약일", textAlign: TextAlign.center),
                                 alignment: Alignment.center,
                                 width: (MediaQuery.of(context).size.width-30.0)*0.3,
                                 height: 50,
@@ -85,7 +84,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                           Row(
                             children: [
                               Container(
-                                child: Text("지점", textAlign: TextAlign.center),
+                                child: const Text("지점", textAlign: TextAlign.center),
                                 alignment: Alignment.center,
                                 width: (MediaQuery.of(context).size.width-30.0)*0.3,
                                 height: 50,
@@ -110,7 +109,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                           Row(
                             children: [
                               Container(
-                                child: Text("예약시간", textAlign: TextAlign.center,),
+                                child: const Text("예약시간", textAlign: TextAlign.center,),
                                 alignment: Alignment.center,
                                 width: (MediaQuery.of(context).size.width-30.0)*0.3,
                                 height: 50,
@@ -139,7 +138,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                                   color: Colors.grey,
                                   border: Border.all(color: Colors.black),
                                 ),
-                                child: Text("예약테마", textAlign: TextAlign.center,),
+                                child: const Text("예약테마", textAlign: TextAlign.center,),
                                 alignment: Alignment.center,
                                 width: (MediaQuery.of(context).size.width-30.0)*0.3,
                                 height: 50,
