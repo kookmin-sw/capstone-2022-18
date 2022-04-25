@@ -62,7 +62,7 @@ Widget reviewBottomSheet(BuildContext context) {
                       suffixIcon: IconButton(
                           onPressed: () async {
                             http.Response _res = await http.post(
-                              Uri.parse("http://3.39.80.150:5000/reservation"),
+                              Uri.parse("http://3.39.80.150:5000/review/add"),
                               body: json.encode(
                                   {
                                     'text' : _textEditingController.text,

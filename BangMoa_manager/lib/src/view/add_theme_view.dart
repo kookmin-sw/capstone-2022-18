@@ -17,6 +17,7 @@ class _AddThemeViewState extends State<AddThemeView> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _genreController = TextEditingController();
+  final TextEditingController _costController = TextEditingController();
   int _difficulty = 1;
   int _minPlayer = 1;
   int _maxPlayer = 6;
@@ -60,15 +61,19 @@ class _AddThemeViewState extends State<AddThemeView> {
 
   Future<void> submitButtonAction() async {
     var request = http.MultipartRequest("POST", Uri.parse(LoginStatusProvider.baseURL + "/theme/add"));
+
     request.fields['name'] = _nameController.text;
     request.fields['genre'] = _genreController.text;
     request.fields['description'] = _descriptionController.text;
+    request.fields['cost'] = _costController.text;
     request.fields['players'] = _minPlayer.toString() + "~" + _maxPlayer.toString() + " players";
     request.fields['difficulty'] = _difficulty.toString();
     request.fields['timetable'] = timeList.toString();
     request.files.add(await http.MultipartFile.fromPath('poster' ,context.read<SelectedImageProvider>().getImage.path, contentType: MediaType('image', context.read<SelectedImageProvider>().getImage.path.split('.').last)));
     var response = await request.send();
-    print(response.reasonPhrase);
+    if (response.statusCode == 200) {
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -126,6 +131,7 @@ class _AddThemeViewState extends State<AddThemeView> {
             buildTextInputField("테마 이름", _nameController),
             buildTextInputField("설명", _descriptionController),
             buildTextInputField("장르", _genreController),
+            buildTextInputField("가격", _costController),
             const Text('추천인원'),
             Row(
               children: [

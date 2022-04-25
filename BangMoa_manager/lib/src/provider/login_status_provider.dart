@@ -10,6 +10,13 @@ class LoginStatusProvider extends ChangeNotifier {
   String _statusText = '';
   String get statusText => _statusText;
 
+  late String _id;
+  String get getId => _id;
+
+  void setID(String id) {
+    _id = id;
+  }
+
   void login(){
     _isLoggedIn = true;
     notifyListeners();
