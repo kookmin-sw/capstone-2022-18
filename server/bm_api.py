@@ -1,4 +1,5 @@
 import sys
+import json
 
 from flask import Flask, request, jsonify
 from google.cloud import storage
@@ -9,6 +10,7 @@ from cafe_website.beat_phobia import BeatPhobia
 from cafe_website.next_edition import NextEdition
 
 from recommendation import get_similar_theme
+
 
 url_class = {
     'https://www.xphobia.net/': BeatPhobia,
@@ -59,6 +61,7 @@ def login_manager():
     output_data['result'] = 'false'
     return jsonify(output_data)
 
+
 @app.route('/signup/manager', methods=['POST'])
 def signup_manager():
     input_data = request.get_json()
@@ -68,28 +71,30 @@ def signup_manager():
     if doc.get().exists:
         return jsonify(output_data)
     data = {
-        u'pw': input_data['pw']
-        u'name': input_data['name']
-        u'address': input_data['address']
+        u'pw': input_data['pw'], 
+        u'name': input_data['name'], 
+        u'address': input_data['address'], 
         u'phone': input_data['phone']
     }
     doc.set(data)
     output_data['result'] = 'true'
     return jsonify(output_data)
 
+
 @app.route('/theme/add', methods=['POST'])
-def signup_manager():
-    input_data = request.get_json()
-    print(input_data)
+def theme_add():
+    input_data = request.form.to_dict()
+    input_data['difficulty'] = int(input_data['difficulty'])
+    input_data['timetable'] = input_data['timetable'][1:-1].split(', ')
     output_data = {'result': 'false'}
     doc_ref = bmfs.db.collection(u'theme').document()
 
-    doc_ref.add(input_data)
+    doc_ref.set(input_data)
     poster_file = request.files.get('poster')
     if not poster_file:
         return output_data
 
-    filename = doc_ref.id + poster_file.filename.split('.')[1]
+    filename = doc_ref.id + '.' + poster_file.filename.split('.')[1]
     blob = bucket.blob('theme/' + filename)
     blob.upload_from_string(
         poster_file.read(),
@@ -97,6 +102,47 @@ def signup_manager():
     )
 
     return jsonify(output_data)
+
+
+@app.route('/review/add', methods=['POST'])
+def review_add():
+    input_data = request.get_json()
+    doc_ref = bmfs.db.collection(u'review').document()
+    output_data = {'result': 'false'}
+
+    doc_ref.set(input_data)
+    output_data = {'result': 'true'}
+    return jsonify(output_data)
+
+
+@app.route('/reservation/add', methods=['POST'])
+def reservation_add():
+    input_data = request.get_json()
+    doc_ref = bmfs.db.collection(u'reservation').document()
+    doc_ref.set(input_data)
+
+    return jsonify({'result': 'true'})
+
+
+@app.route('/reservation/status', methods=['POST'])
+def reservation_status():
+    input_data = request.get_json()
+    timetable = bmfs.db.collection(u'theme').document(input_data['theme_id']).get().to_dict()['timetable']
+    output_data = {}
+    for slot in timetable:
+        output_data[slot] = True
+
+    booked = bmfs.db.collection(u'reservation').where(
+        u'theme_id', u'==', input_data['theme_id']).where(
+        u'date', u'==', input_data['date']).where(
+        ).stream()
+    for r in booked:
+        output_data[r.to_dict()['time']] = False
+    print(output_data)
+
+    return jsonify(output_data)
+
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
