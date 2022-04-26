@@ -63,24 +63,28 @@ void callbackDispatcher() async {
   List<Alarm> alarmList = [];
   Workmanager().executeTask((task, inputData) async {
     await Firebase.initializeApp();
-    var userDoc = await FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).get();
-    List<String> alarmData = userDoc.data()!["alarms"]?.cast<String>();
-    for (var element in alarmData) {
-      var alarmDoc = await FirebaseFirestore.instance.collection("alarm").doc(element).get();
-      alarmList.add(Alarm.fromDocument(alarmDoc));
-    }
-    FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
-    var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
-    var IOS = const IOSInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-    );
+    if (FirebaseAuth.instance.currentUser != null) {
+      var userDoc = await FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).get();
+      List<String> alarmData = userDoc.data()!["alarms"]?.cast<String>();
+      for (var element in alarmData) {
+        var alarmDoc = await FirebaseFirestore.instance.collection("alarm").doc(element).get();
+        alarmList.add(Alarm.fromDocument(alarmDoc));
+      }
+      FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
+      var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
+      var IOS = const IOSInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+      );
 
-    var settings = InitializationSettings(android: android, iOS: IOS);
-    flip.initialize(settings);
-    await _showNotificationWithDefaultSound(flip, alarmList);
-    return Future.value(true);
+      var settings = InitializationSettings(android: android, iOS: IOS);
+      flip.initialize(settings);
+      await _showNotificationWithDefaultSound(flip, alarmList);
+      return Future.value(true);
+    } else {
+      return Future.value(false);
+    }
   });
 }
 
