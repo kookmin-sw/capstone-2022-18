@@ -19,22 +19,22 @@ class ThemeGridTileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: tilePadding,
+      padding: const EdgeInsets.all(8.0),
       child: InkWell(
         child: Column(
           children: [
-            Center(child: Image.network(thema.poster, height: imageHeight, width: 175, fit: BoxFit.fill,)),
+            Center(child: Image.network(thema.poster, height: posterHeight, width: posterWidth, fit: BoxFit.fill,)),
             Padding(
-              padding: themeTextPadding,
-              child: Text(thema.name,style: TextStyle(fontSize: 20, color: themeGridViewStringColor),overflow: TextOverflow.ellipsis),
+              padding: const EdgeInsets.only(left: 5.0),
+              child: Text(thema.name,style: const TextStyle(fontSize: themeTitleFontSize, color: Colors.white),overflow: TextOverflow.ellipsis),
             ),
             Padding(
-              padding: themeTextPadding,
-              child: Text(thema.genre, style: TextStyle(color: themeGridViewStringColor)),
+              padding: const EdgeInsets.only(left: 5.0),
+              child: Text(thema.genre, style: const TextStyle(color: Colors.white)),
             ),
             Padding(
-              padding: themeTextPadding,
-              child: Text("난이도 : ${thema.difficulty.toString()}", style: TextStyle(color: themeGridViewStringColor)),
+              padding: const EdgeInsets.only(left: 5.0),
+              child: Text("난이도 : ${thema.difficulty.toString()}", style: const TextStyle(color: Colors.white)),
             )
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +43,7 @@ class ThemeGridTileWidget extends StatelessWidget {
           Provider.of<SelectedThemeProvider>(context, listen: false).setSelectedTheme(thema);
           Provider.of<ReviewProvider>(context, listen: false).setThemeID(thema.id);
           loadReviewData(context, thema);
-          sleep(Duration(milliseconds: 100));
+          sleep(const Duration(milliseconds: 100));
           Navigator.push(context, MaterialPageRoute(builder: (context) => const ThemeInfoView()));
         },
       ),

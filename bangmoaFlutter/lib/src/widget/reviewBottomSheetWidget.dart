@@ -13,13 +13,69 @@ import 'package:bangmoa/src/widget/themeGridTileWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 
 Widget reviewBottomSheet(BuildContext context) {
   List<ReviewModel> reviewList = Provider.of<ReviewProvider>(context).getReviewList;
   final TextEditingController _textEditingController = TextEditingController();
   double _rating = 3.0;
+
+  void reviewWriteButtonAction() async {
+    if (context.read<UserLoginStatusProvider>().getLogin) {
+      http.Response _res = await http.post(
+          Uri.parse("http://3.39.80.150:5000/review/add"),
+          body: json.encode(
+              {
+                'text' : _textEditingController.text,
+                'themaID' : Provider.of<SelectedThemeProvider>(context, listen: false).getSelectedTheme.id,
+                'writerID' : Provider.of<UserLoginStatusProvider>(context, listen: false).getUserID,
+                'rating' : _rating,
+                'time' : DateTime.now().toString(),
+              }
+          ),
+          headers: {"Content-Type": "application/json"}
+      );
+      var body = json.decode(_res.body);
+      if (body["result"] == "true") {
+        _textEditingController.clear();
+        loadReviewData(context, Provider.of<SelectedThemeProvider>(context, listen: false).getSelectedTheme);
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: const Text("댓글 작성에 실패하였습니다. 잠시 후 다시 시도해주세요."),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("ok"),
+                  )
+                ],
+              );
+            }
+        );
+      }
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text("댓글을 작성하시려면 로그인을 진행해야 합니다."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("ok"),
+                )
+              ],
+            );
+          }
+      );
+    }
+  }
 
   return Container(
     color: Colors.white,
@@ -29,9 +85,9 @@ Widget reviewBottomSheet(BuildContext context) {
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
           child: Column(
             children: [
-              Padding(
-                padding: sheetDragBarPadding,
-                child: const Text("댓글", style: TextStyle(fontSize: 18, color: Colors.black),),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("댓글", style: TextStyle(fontSize: 18, color: Colors.black),),
               ),
               Container(
                 height: 1,
@@ -60,24 +116,7 @@ Widget reviewBottomSheet(BuildContext context) {
                   maxLines: 2,
                   decoration: InputDecoration(
                       suffixIcon: IconButton(
-                          onPressed: () async {
-                            http.Response _res = await http.post(
-                              Uri.parse("http://3.39.80.150:5000/review/add"),
-                              body: json.encode(
-                                  {
-                                    'text' : _textEditingController.text,
-                                    'themaID' : Provider.of<SelectedThemeProvider>(context, listen: false).getSelectedTheme.id,
-                                    'writerID' : Provider.of<UserLoginStatusProvider>(context, listen: false).getUserID,
-                                    'rating' : _rating,
-                                    'time' : DateTime.now().toString(),
-                                  }
-                              ),
-                              headers: {"Content-Type": "application/json"}
-                            );
-                            print(_res.body.toString());
-                            _textEditingController.clear();
-                            loadReviewData(context, Provider.of<SelectedThemeProvider>(context, listen: false).getSelectedTheme);
-                          },
+                          onPressed: reviewWriteButtonAction,
                           icon: const Icon(Icons.arrow_forward_ios_rounded)
                       ),
                       border: const OutlineInputBorder()
@@ -89,7 +128,7 @@ Widget reviewBottomSheet(BuildContext context) {
           ),
         ),
         SizedBox(
-          height: 75.0*reviewList.length,
+          height: 75.5*reviewList.length,
           width: getReviewListBoxWidth(context),
           child: ListView.builder(
               physics: const NeverScrollableScrollPhysics(),

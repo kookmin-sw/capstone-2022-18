@@ -25,13 +25,18 @@ class _ThemeGridViewWidgetState extends State<ThemeGridViewWidget> {
         children: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Text(widget.viewText, style: TextStyle(fontSize: 15, color: themeGridViewStringColor),),
+            child: Text(widget.viewText, style: const TextStyle(fontSize: subheadTextSize, color: Colors.white),),
           ),
           Expanded(
             child: GridView.builder(
               itemCount: widget.themeList.length,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: themeGridViewDelegate,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 5,
+                childAspectRatio: 0.75,
+              ),
               itemBuilder: (BuildContext context, int index) {
                 return ThemeGridTileWidget(thema: widget.themeList[index]);
               }

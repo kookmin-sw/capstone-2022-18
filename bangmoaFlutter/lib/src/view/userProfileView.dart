@@ -4,6 +4,7 @@
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/loginView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +26,17 @@ class _UserProfileViewState extends State<UserProfileView> {
     });
   }
 
+  void logOutButtonAction() async {
+    try {
+      context.read<UserLoginStatusProvider>().logout();
+      return await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      print('sign out failed');
+      print(e.toString());
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     UserLoginStatusProvider userLoginStatusProvider = Provider.of<UserLoginStatusProvider>(context);
@@ -36,7 +48,7 @@ class _UserProfileViewState extends State<UserProfileView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
+              SizedBox(
                 height: 40,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -46,7 +58,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                   ],
                 ),
               ),
-              Container(
+              SizedBox(
                   height: MediaQuery.of(context).size.height*0.2,
                   child: const Text("로그인 정보가 없습니다.", style: TextStyle(color: Colors.white),)
               ),
@@ -76,7 +88,7 @@ class _UserProfileViewState extends State<UserProfileView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               height: 40,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -97,9 +109,7 @@ class _UserProfileViewState extends State<UserProfileView> {
               ),
             ),
             TextButton(
-              onPressed: () {
-
-              },
+              onPressed: logOutButtonAction,
               child: SizedBox(
                 child: const Text(
                   "로그아웃",

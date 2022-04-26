@@ -2,6 +2,7 @@
 // 하단 NavigationBar 도 포함.
 // 상단 검색조건은 searchConditionMenuWidget 으로, 중간의 그리드뷰는 themeGridViewWidget 으로 연결.
 
+import 'package:bangmoa/src/const/commonConst.dart';
 import 'package:bangmoa/src/models/BMTheme.dart';
 import 'package:bangmoa/src/provider/serchTextProvider.dart';
 import 'package:bangmoa/src/provider/themeProvider.dart';
@@ -12,6 +13,8 @@ import 'package:bangmoa/src/widget/themeGridViewWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
+
+import '../const/mainViewConst.dart';
 
 class MainView extends StatefulWidget {
   const MainView({Key? key}) : super(key: key);
@@ -43,12 +46,12 @@ class _MainViewState extends State<MainView> {
         child: Column(
           children: [
             SizedBox(
-              height: 40,
+              height: appBarSize,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
-                  const Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP', color: Colors.white),),
+                  Image.asset("asset/image/bangmoaLogo.png", height: logoHeight, width: logoWidth, fit: BoxFit.fill,),
+                  const Text("방탈출 모아", style: TextStyle(fontSize: titleSize, fontFamily: 'POP', color: Colors.white),),
                 ],
               ),
             ),

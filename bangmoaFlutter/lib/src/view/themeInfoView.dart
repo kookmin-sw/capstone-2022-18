@@ -2,6 +2,7 @@
 // 테마 설명부분과 하단 댓글 Bottom Sheet 로 구성되어 있음.
 // 하단 Bottom Sheet 은 reviewBottomSheet 위젯 사용.
 
+import 'package:bangmoa/src/const/commonConst.dart';
 import 'package:bangmoa/src/const/themeInfoViewConst.dart';
 import 'package:bangmoa/src/models/cafeModel.dart';
 import 'package:bangmoa/src/models/BMTheme.dart';
@@ -47,12 +48,12 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
           body : Column(
             children: [
               SizedBox(
-                height: 40,
+                height: appBarSize,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
-                    const Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP', color: Colors.white),),
+                    Image.asset("asset/image/bangmoaLogo.png", height: logoHeight, width: logoWidth, fit: BoxFit.fill,),
+                    const Text("방탈출 모아", style: TextStyle(fontSize: titleSize, fontFamily: 'POP', color: Colors.white),),
                   ],
                 ),
               ),
@@ -81,7 +82,7 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                               child: Center(
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
-                                  child: Text(selectedTheme.name, style: const TextStyle(fontSize: 25,), overflow: TextOverflow.ellipsis, ),
+                                  child: Text(selectedTheme.name, style: const TextStyle(fontSize: themeTitleSize), overflow: TextOverflow.ellipsis, ),
                                 ),
                               ),
                             ),
@@ -103,14 +104,14 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                               ),
                             ),
                             Padding(
-                              padding: genreAndDifficultyPadding,
+                              padding: const EdgeInsets.only(right: 10.0),
                               child: Container(
                                 child: Text("장르 : ${selectedTheme.genre}"),
                                 alignment: Alignment.centerRight,
                               ),
                             ),
                             Padding(
-                              padding: genreAndDifficultyPadding,
+                              padding: const EdgeInsets.only(right: 10.0),
                               child: Container(
                                 child: Text("난이도 : ${selectedTheme.difficulty.toString()}"),
                                 alignment: Alignment.centerRight,
@@ -118,7 +119,7 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                             ),
                             Center(
                               child: Padding(
-                                padding: descriptionPadding,
+                                padding: const EdgeInsets.all(8.0),
                                 child: Text(selectedTheme.description),
                               ),
                             ),
@@ -127,10 +128,10 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(20)
+                                  borderRadius: BorderRadius.circular(5)
                                 ),
-                                height: 35,
-                                width: 80,
+                                height: reservationButtonHeight,
+                                width: reservationButtonWidth,
                                 alignment: Alignment.center,
                                 child: TextButton(
                                   child: const Text("예약 확인", style: TextStyle(color: Colors.white),),
@@ -144,7 +145,7 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                         ),
                       ),
                       const SizedBox(
-                        height: 15,
+                        height: intervalSize,
                       ),
                       reviewBottomSheet(context),
                     ],

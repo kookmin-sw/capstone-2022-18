@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bangmoa/src/const/mainViewConst.dart';
 import 'package:bangmoa/src/models/reviewModel.dart';
 import 'package:bangmoa/src/models/BMTheme.dart';
 import 'package:bangmoa/src/provider/reviewProvider.dart';
@@ -21,12 +22,12 @@ Widget recommendThemeWidget(BuildContext context, List<BMTheme> recommendTheme) 
         children: [
           const Padding(
             padding: EdgeInsets.only(left: 8.0),
-            child: Text("추천 테마", style: TextStyle(fontSize: 15, color: Colors.white)),
+            child: Text("추천 테마", style: TextStyle(fontSize: subheadTextSize, color: Colors.white)),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
-              height: 120,
+              height: recommendThemeListViewHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
@@ -40,7 +41,7 @@ Widget recommendThemeWidget(BuildContext context, List<BMTheme> recommendTheme) 
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Image.network(recommendTheme[index].poster, height: 100, width: 70, fit: BoxFit.fill,),
+                      child: Image.network(recommendTheme[index].poster, height: recommendThemePosterHeight, width: recommendThemePosterWidth, fit: BoxFit.fill,),
                     ),
                   );
                 },

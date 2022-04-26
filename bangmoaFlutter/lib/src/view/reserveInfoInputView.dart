@@ -33,7 +33,27 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
         headers: {"Content-Type": "application/json"}
     );
     var body = json.decode(_res.body);
-    print(body);
+    if (body["result"] == "true") {
+      Navigator.pop(context);
+    }
+    else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: const Text("예약에 실패하였습니다."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("ok"),
+              )
+            ],
+          );
+        }
+      );
+    }
   }
 
   @override
