@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:bangmoa/src/provider/reserveInfoProvider.dart';
+import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class ReserveInfoInputView extends StatefulWidget {
   const ReserveInfoInputView({Key? key}) : super(key: key);
@@ -11,6 +15,26 @@ class ReserveInfoInputView extends StatefulWidget {
 
 class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
   String dropdownValue = '2';
+
+  void reserveButtonAction() async {
+    ReserveInfoProvider infoProvider = Provider.of<ReserveInfoProvider>(context, listen: false);
+    UserLoginStatusProvider userProvider = Provider.of<UserLoginStatusProvider>(context, listen: false);
+    http.Response _res = await http.post(
+        Uri.parse("http://3.39.80.150:5000/reservation/add"),
+        body: json.encode(
+            {
+              "theme_id" : infoProvider.getTheme.id,
+              "user_id" : userProvider.getUserID,
+              "date" : infoProvider.getDate,
+              "time" : infoProvider.getTime,
+              "user_count" : dropdownValue,
+            }
+        ),
+        headers: {"Content-Type": "application/json"}
+    );
+    var body = json.decode(_res.body);
+    print(body);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -247,6 +271,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                           ),
                           child: const Text("예약하기", style: TextStyle(color: Colors.white),),
                           onPressed: () {
+                            reserveButtonAction();
                             Navigator.pop(context);
                           },
                         ),

@@ -58,6 +58,35 @@ class _ReservationViewState extends State<ReservationView> {
     });
   }
 
+  void reservationBoxClickAction(int index, int index1, String searchKey) {
+    if(context.read<UserLoginStatusProvider>().getLogin) {
+      var reserveInfoProvider = Provider.of<ReserveInfoProvider>(context, listen: false);
+      reserveInfoProvider.setTheme(_theme);
+      reserveInfoProvider.setCafe(cafeCountList[(index1/2).floor()]);
+      reserveInfoProvider.setDate(DateFormat('yyyy-MM-dd').format(_currentDate).toString());
+      reserveInfoProvider.setTime(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index));
+      reserveInfoProvider.setCost(10000);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const ReserveInfoInputView()));
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: const Text("예약을 진행하시려면 로그인을 해야합니다."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("ok"),
+              )
+            ],
+          );
+        }
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SelectedThemeProvider themeProvider = Provider.of<SelectedThemeProvider>(context);
@@ -194,13 +223,7 @@ class _ReservationViewState extends State<ReservationView> {
                               itemBuilder: (context, index) {
                                 return boolList[index] ? InkWell(
                                   onTap: () {
-                                    var reserveInfoProvider = Provider.of<ReserveInfoProvider>(context, listen: false);
-                                    reserveInfoProvider.setTheme(_theme);
-                                    reserveInfoProvider.setCafe(cafeCountList[(index1/2).floor()]);
-                                    reserveInfoProvider.setDate(DateFormat('yyyy-MM-dd').format(_currentDate).toString());
-                                    reserveInfoProvider.setTime(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index));
-                                    reserveInfoProvider.setCost(10000);
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ReserveInfoInputView()));
+                                    reservationBoxClickAction(index, index1, searchKey);
                                   },
                                   child: Container(
                                     height: 10,
