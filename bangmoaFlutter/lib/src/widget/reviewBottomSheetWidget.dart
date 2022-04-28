@@ -12,6 +12,7 @@ import 'package:bangmoa/src/widget/reviewTileWidget.dart';
 import 'package:bangmoa/src/widget/themeGridTileWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,7 +31,7 @@ Widget reviewBottomSheet(BuildContext context) {
                 'themaID' : Provider.of<SelectedThemeProvider>(context, listen: false).getSelectedTheme.id,
                 'writerID' : Provider.of<UserLoginStatusProvider>(context, listen: false).getUserID,
                 'rating' : _rating,
-                'time' : DateTime.now().toString(),
+                'time' : DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()).toString(),
               }
           ),
           headers: {"Content-Type": "application/json"}
@@ -128,7 +129,7 @@ Widget reviewBottomSheet(BuildContext context) {
           ),
         ),
         SizedBox(
-          height: 75.5*reviewList.length,
+          height: 82.0*reviewList.length,
           width: getReviewListBoxWidth(context),
           child: ListView.builder(
               physics: const NeverScrollableScrollPhysics(),

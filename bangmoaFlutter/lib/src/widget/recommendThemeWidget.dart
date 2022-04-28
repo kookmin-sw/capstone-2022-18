@@ -61,7 +61,7 @@ void loadReviewData(BuildContext context, BMTheme theme) async {
     querySnapshot.docs.forEach((document) async {
       String writerNickName = "";
       await FirebaseFirestore.instance.collection('user').doc(document["writerID"]).get().then((value) => writerNickName = value["nickname"]);
-      Provider.of<ReviewProvider>(context,listen: false).addReview(ReviewModel(document.id, document["text"], document["themaID"], document["writerID"], writerNickName, document["rating"].toDouble()));
+      Provider.of<ReviewProvider>(context,listen: false).addReview(ReviewModel(document.id, document["text"], document["themaID"], document["writerID"], writerNickName, document["rating"].toDouble(), document["time"]));
     });
   });
 }

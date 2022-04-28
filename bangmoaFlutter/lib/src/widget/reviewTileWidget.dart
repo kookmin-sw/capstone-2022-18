@@ -47,19 +47,25 @@ Widget reviewTileWidget(BuildContext context, ReviewModel reviewModel) {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Row(
-                          children: List.generate(5, (index) {
-                            return Icon(
-                              index < reviewModel.rating ? Icons.star : Icons.star_border,
-                              color: Colors.yellow,
-                            );
-                          }),
-                        ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Row(
+                              children: List.generate(5, (index) {
+                                return Icon(
+                                  index < reviewModel.rating ? Icons.star : Icons.star_border,
+                                  color: Colors.yellow,
+                                );
+                              }),
+                            ),
+                          ),
+                          Text(reviewModel.time,textAlign: TextAlign.end),
+                        ],
                       ),
                       Expanded(
                           child: Text(reviewModel.text,
+                            textAlign: TextAlign.start,
                             style: const TextStyle(
                                 color: Colors.black
                             ),
