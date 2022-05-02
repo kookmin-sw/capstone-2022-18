@@ -3,7 +3,17 @@ import sys
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 
-from util import BangMoaFireStroe
+
+def init_rating_dataframe(bmfs):
+    df = pd.DataFrame()
+
+    users = bmfs.db.collection('user').stream()
+    for user in users:
+        df[user.id] = pd.Series(dtype=int)
+
+    themes = bmfs.db.collection('theme').stream()
+    for theme in themes:
+        df = df.append(pd.Series(name=theme.id, dtype=int))
 
 
 def init_rating_dataframe(key_file):

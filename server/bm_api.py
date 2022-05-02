@@ -15,38 +15,29 @@ bucket = gcs.get_bucket('capstone-2022-18.appspot.com')
 @app.route('/login/manager', methods=['POST'])
 def login_manager():
     input_data = request.get_json()
+    manager = bmfs.db.collection(u'manager').where(u'id', u'==', input_data['id']).stream()
 
-    output_data = {}
-    doc = bmfs.db.collection(u'manager').document(input_data['id'])
-    if doc.get().exists:
-        doc_dict = doc.get().to_dict()
+    for doc in manager:
+        doc_dict = doc.to_dict()
         if input_data['pw'] == doc_dict['pw']:
-            output_data['result'] = 'true'
-            return jsonify(output_data)
-    output_data['result'] = 'false'
-    return jsonify(output_data)
+            return jsonify({'result': 'true'})
+
+    return jsonify({'result': 'false'})
 
 
 @app.route('/signup/manager', methods=['POST'])
 def signup_manager():
     input_data = request.get_json()
-    doc_ref = bmfs.db.collection(u'review').document()
-    output_data = {'result': 'false'}
-
-    doc = bmfs.db.collection(u'manager').document(input_data['id'])
-    if doc.get().exists:
-        return jsonify(output_data)
-
-    doc_ref.set(input_data)
-    output_data = {'result': 'true'}
-    return jsonify(output_data)
+    input_data['themes'] = []
+    bmfs.write('manager', input_data)
+    return jsonify({'result': 'true'})
 
 
 @app.route('/theme/add', methods=['POST'])
 def theme_add():
-    doc_ref = bmfs.write('theme', request.form.to_dict())
-
+    input_data = request.form.to_dict()
     poster_file = request.files.get('poster')
+    doc_ref = bmfs.db.collection(u'theme').document()
 
     filename = doc_ref.id + '.' + poster_file.filename.split('.')[-1]
     blob = bucket.blob('theme/' + filename)
@@ -54,6 +45,9 @@ def theme_add():
         poster_file.read(),
         content_type=poster_file.content_type
     )
+    blob.make_public()
+    input_data['poster'] = blob.public_url
+    bmfs.write('theme', input_data, doc_ref.id)
 
     return jsonify({'result': 'true'})
 
@@ -86,6 +80,31 @@ def reservation_add():
     bmfs.write('reservation', request.get_json())
     return jsonify({'result': 'true'})
 
+
+@app.route('/reservation/manager/status', methods=['POST'])
+def reservation_manager_status():
+    input_data = request.get_json()
+    output_data = {'result': []}
+    themes = bmfs.db.collection(u'theme').where(u'manager_id', u'==', input_data['id']).stream()
+
+    for theme_doc in themes:
+        theme = theme_doc.to_dict()
+        reservations = bmfs.db.collection(u'reservation').where(
+            u'theme_id', u'==', theme_doc.id).where(
+            u'date', u'==', input_data['date']).stream()
+        for reservation_doc in reservations:
+            reservation = reservation_doc.to_dict()
+            user_name = bmfs.db.collection(u'user').document(reservation['user_id']).get().to_dict()['nickname']
+            output_data['result'].append({
+                'date': reservation['date'], 
+                'time': reservation['time'], 
+                'user_count': reservation['user_count'], 
+                'theme_name': theme['name'], 
+                'user_name': user_name
+            })
+    
+    output_data['result'].sort(key=lambda x : (x['date'], x['time']))
+    return jsonify(output_data)
 
 
 if __name__ == '__main__':
