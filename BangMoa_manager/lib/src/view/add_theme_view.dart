@@ -18,6 +18,7 @@ class _AddThemeViewState extends State<AddThemeView> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _genreController = TextEditingController();
   final TextEditingController _costController = TextEditingController();
+  final TextEditingController _runningTimeController = TextEditingController();
   int _difficulty = 1;
   int _minPlayer = 1;
   int _maxPlayer = 6;
@@ -32,6 +33,17 @@ class _AddThemeViewState extends State<AddThemeView> {
       child: TextField(
         controller: controller,
         decoration: InputDecoration(border: const OutlineInputBorder(), labelText: name),
+      ),
+    );
+  }
+
+  Widget buildNumberInputField(String name, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: TextField(
+        keyboardType: TextInputType.number,
+        controller: controller,
+        decoration: InputDecoration(labelText: name),
       ),
     );
   }
@@ -69,6 +81,8 @@ class _AddThemeViewState extends State<AddThemeView> {
     request.fields['players'] = _minPlayer.toString() + "~" + _maxPlayer.toString() + " players";
     request.fields['difficulty'] = _difficulty.toString();
     request.fields['timetable'] = timeList.toString();
+    request.fields['runningtime'] = _runningTimeController.text;
+    request.fields['manager_id'] = context.read<LoginStatusProvider>().getId;
     request.files.add(await http.MultipartFile.fromPath('poster' ,context.read<SelectedImageProvider>().getImage.path, contentType: MediaType('image', context.read<SelectedImageProvider>().getImage.path.split('.').last)));
     var response = await request.send();
     if (response.statusCode == 200) {
@@ -131,7 +145,24 @@ class _AddThemeViewState extends State<AddThemeView> {
             buildTextInputField("테마 이름", _nameController),
             buildTextInputField("설명", _descriptionController),
             buildTextInputField("장르", _genreController),
-            buildTextInputField("가격", _costController),
+            Row(
+              children: [
+                Flexible(child: buildNumberInputField("가격", _costController)),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text("원", style: TextStyle(fontSize: 30)),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Flexible(child: buildNumberInputField("진행시간", _runningTimeController)),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text("분", style: TextStyle(fontSize: 30)),
+                ),
+              ],
+            ),
             const Text('추천인원'),
             Row(
               children: [

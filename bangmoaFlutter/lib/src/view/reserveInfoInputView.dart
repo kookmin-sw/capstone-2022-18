@@ -138,7 +138,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                                 ),
                               ),
                               Container(
-                                child: Text(infoProvider.getCafe.name, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                                child: Text(infoProvider.getManager.name, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
                                 alignment: Alignment.center,
                                 width: (MediaQuery.of(context).size.width-30.0)*0.7,
                                 height: 50,

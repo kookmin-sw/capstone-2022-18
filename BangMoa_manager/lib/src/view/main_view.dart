@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bangmoa_manager/src/provider/login_status_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:crypto/crypto.dart';
 
@@ -19,6 +20,11 @@ class MainView extends StatefulWidget{
 class _MainViewState extends State<MainView> {
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _pwController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void onClickLoginButton() async {
     // ID와 PW 모두 입력하지 않은 경우 종료
@@ -41,6 +47,7 @@ class _MainViewState extends State<MainView> {
     // 성공한 경우 로그인
     if(json.decode(response.body)['result'] == 'true') {
       context.read<LoginStatusProvider>().login();
+      context.read<LoginStatusProvider>().setID(_idController.text);
     }
     // 실패한 경우 메시지 출력
     else {
@@ -91,25 +98,45 @@ class _MainViewState extends State<MainView> {
   );
 
   // 로그인 이후 메인 화면
-  Widget _mainView() => Scaffold(
-    appBar: AppBar(
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          ElevatedButton(
-            child: const Text('logout'),
-            onPressed: () => onClickLogoutButton(),
-          )
-        ],
-      ),
+  Widget _mainView() => FutureBuilder(
+    future: http.post(
+        Uri.parse(LoginStatusProvider.baseURL + '/reservation/manager/status'),
+        headers: <String, String> {'Content-Type': 'application/json'},
+        body: json.encode({
+          'id' : context.read<LoginStatusProvider>().getId,
+          'date' : DateFormat('yyyy-MM-dd').format(DateTime.now())
+        })
     ),
-    body: ListView(
-      children: [],
-    ),
-    floatingActionButton: FloatingActionButton(
-      child: const Icon(Icons.add),
-      onPressed: () => Navigator.pushNamed(context, '/addtheme'),
-    ),
+    builder: (BuildContext context, AsyncSnapshot<http.Response> response) {
+      if (response.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (response.hasError) {
+        print(response.error);
+        return Text(response.error.toString());
+      } else {
+        print(json.decode(response.data!.body));
+        return Scaffold(
+          appBar: AppBar(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  child: const Text('logout'),
+                  onPressed: () => onClickLogoutButton(),
+                )
+              ],
+            ),
+          ),
+          body: ListView(
+            children: [],
+          ),
+          floatingActionButton: FloatingActionButton(
+            child: const Icon(Icons.add),
+            onPressed: () => Navigator.pushNamed(context, '/addtheme'),
+          ),
+        );
+      }
+    }
   );
 
   @override

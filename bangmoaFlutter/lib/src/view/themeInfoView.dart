@@ -4,10 +4,9 @@
 
 import 'package:bangmoa/src/const/commonConst.dart';
 import 'package:bangmoa/src/const/themeInfoViewConst.dart';
-import 'package:bangmoa/src/models/cafeModel.dart';
 import 'package:bangmoa/src/models/BMTheme.dart';
+import 'package:bangmoa/src/models/manager.dart';
 import 'package:bangmoa/src/provider/selectedThemeProvider.dart';
-import 'package:bangmoa/src/provider/themeCafeListProvider.dart';
 import 'package:bangmoa/src/view/reservationView.dart';
 import 'package:bangmoa/src/widget/reviewBottomSheetWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24,25 +23,21 @@ class ThemeInfoView extends StatefulWidget {
 
 class _ThemeInfoViewState extends State<ThemeInfoView> {
   late BMTheme selectedTheme;
-  List<Cafe> cafeList = [];
+  late Manager manager;
 
   @override
   Widget build(BuildContext context) {
     selectedTheme = Provider.of<SelectedThemeProvider>(context).getSelectedTheme;
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('cafe').where("themes", arrayContains: selectedTheme.id).snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> cafeSnapshot) {
-        cafeList = [];
-        if (cafeSnapshot.hasError) {
-          return Text('Error : ${cafeSnapshot.error}');
+    return StreamBuilder<QuerySnapshot>(
+      stream : FirebaseFirestore.instance.collection('manager').where("id", isEqualTo: selectedTheme.manager_id).snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> managerSnapshot) {
+        if (managerSnapshot.hasError) {
+          return Text('Error : ${managerSnapshot.error}');
         }
-        if (cafeSnapshot.connectionState == ConnectionState.waiting) {
+        if (managerSnapshot.connectionState == ConnectionState.waiting) {
           return themeInfoViewLoadingIndicator();
         }
-        cafeSnapshot.data?.docs.forEach((element) {
-          cafeList.add(Cafe.fromDocument(element));
-        });
-        Provider.of<ThemeCafeListProvider>(context).setCafeList(cafeList);
+        manager = Manager.fromDocument(managerSnapshot.data!.docs.first);
         return Scaffold(
           backgroundColor: Colors.black,
           body : Column(
@@ -86,23 +81,7 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                                 ),
                               ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: List.generate(cafeList.length+1,
-                                      (index) {
-                                    if (index == 0) {
-                                      return const Padding(
-                                        padding: EdgeInsets.only(right: 8.0),
-                                        child: Text("지점 :"),
-                                      );
-                                    }
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 8.0),
-                                      child: Text(cafeList[index-1].name),
-                                    );
-                                  }
-                              ),
-                            ),
+                            Text("지점 : "),
                             Padding(
                               padding: const EdgeInsets.only(right: 10.0),
                               child: Container(
@@ -136,6 +115,7 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                                 child: TextButton(
                                   child: const Text("예약 확인", style: TextStyle(color: Colors.white),),
                                   onPressed: () {
+                                    Provider.of<SelectedThemeProvider>(context, listen: false).setManager(manager);
                                     Navigator.push(context, MaterialPageRoute(builder: (context) => const ReservationView()));
                                   },
                                 ),

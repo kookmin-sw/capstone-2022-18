@@ -14,8 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
-import '../const/mainViewConst.dart';
-
 class MainView extends StatefulWidget {
   const MainView({Key? key}) : super(key: key);
 
@@ -88,7 +86,7 @@ class _MainViewState extends State<MainView> {
               },
             ),
             recommendThemeWidget(context, recommendList),
-            ThemeGridViewWidget(themeList: _themeList, viewHeight: 274*_themeList.length/2, viewText: "전체 테마"),
+            ThemeGridViewWidget(themeList: _themeList, viewHeight: 290, viewText: "전체 테마"),
           ],
         ),
         scrollDirection: Axis.vertical,

@@ -1,11 +1,10 @@
 import 'dart:convert';
 
 import 'package:bangmoa/src/models/alarm.dart';
-import 'package:bangmoa/src/models/cafeModel.dart';
 import 'package:bangmoa/src/models/BMTheme.dart';
+import 'package:bangmoa/src/models/manager.dart';
 import 'package:bangmoa/src/provider/reserveInfoProvider.dart';
 import 'package:bangmoa/src/provider/selectedThemeProvider.dart';
-import 'package:bangmoa/src/provider/themeCafeListProvider.dart';
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/reserveInfoInputView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,14 +24,14 @@ class ReservationView extends StatefulWidget {
 class _ReservationViewState extends State<ReservationView> {
   DateTime _currentDate = DateTime.now();
   late BMTheme _theme;
-  late List<Cafe> _cafeList;
+  late Manager _manager;
   late String _userID;
-  List<Cafe> cafeCountList = [];
+  List<Manager> managerCountList = [];
   List<Map<String, Map<String, dynamic>>> reserveList = [];
 
   void _requestReserve(DateTime date) async {
     http.Response _res = await http.post(
-      Uri.parse("http://3.39.80.150:5000/reservation"),
+      Uri.parse("http://3.39.80.150:5000/theme/status"),
       body: json.encode(
         {
           "id" : _theme.id,
@@ -43,16 +42,7 @@ class _ReservationViewState extends State<ReservationView> {
     );
     var body = json.decode(_res.body);
     print(body);
-    for (var element in _cafeList) {
-      var timeTable = body[element.name] as Map;
-      timeTable.keys.forEach((key) {
-        cafeCountList.add(element);
-        Map<String, Map<String, dynamic>> table = {};
-        table.addAll({element.name+ " " +key : timeTable[key]});
-        reserveList.add(table);
-        print(table);
-      });
-    }
+
     setState(() {
 
     });
@@ -62,10 +52,10 @@ class _ReservationViewState extends State<ReservationView> {
     if(context.read<UserLoginStatusProvider>().getLogin) {
       var reserveInfoProvider = Provider.of<ReserveInfoProvider>(context, listen: false);
       reserveInfoProvider.setTheme(_theme);
-      reserveInfoProvider.setCafe(cafeCountList[(index1/2).floor()]);
+      reserveInfoProvider.setManager(managerCountList[(index1/2).floor()]);
       reserveInfoProvider.setDate(DateFormat('yyyy-MM-dd').format(_currentDate).toString());
       reserveInfoProvider.setTime(reserveList[(index1/2).floor()][searchKey]!.keys.elementAt(index));
-      reserveInfoProvider.setCost(10000);
+      reserveInfoProvider.setCost(_theme.cost);
       Navigator.push(context, MaterialPageRoute(builder: (context) => const ReserveInfoInputView()));
     } else {
       showDialog(
@@ -90,10 +80,9 @@ class _ReservationViewState extends State<ReservationView> {
   @override
   Widget build(BuildContext context) {
     SelectedThemeProvider themeProvider = Provider.of<SelectedThemeProvider>(context);
-    ThemeCafeListProvider cafeListProvider = Provider.of<ThemeCafeListProvider>(context);
     UserLoginStatusProvider userLoginStatusProvider = Provider.of<UserLoginStatusProvider>(context);
     _theme = themeProvider.getSelectedTheme;
-    _cafeList = cafeListProvider.getCafeList;
+    _manager = themeProvider.getManager;
     if (userLoginStatusProvider.getLogin) {
       _userID = userLoginStatusProvider.getUserID;
     }
@@ -115,7 +104,7 @@ class _ReservationViewState extends State<ReservationView> {
               ),
             ),
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
               ),
               child: Column(

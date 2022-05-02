@@ -15,6 +15,7 @@ class LoginStatusProvider extends ChangeNotifier {
 
   void setID(String id) {
     _id = id;
+    notifyListeners();
   }
 
   void login(){

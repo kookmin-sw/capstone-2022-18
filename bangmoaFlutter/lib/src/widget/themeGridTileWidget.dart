@@ -13,8 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ThemeGridTileWidget extends StatelessWidget {
-  final BMTheme thema;
-  const ThemeGridTileWidget({Key? key, required this.thema}) : super(key: key);
+  final BMTheme theme;
+  const ThemeGridTileWidget({Key? key, required this.theme}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,26 +23,35 @@ class ThemeGridTileWidget extends StatelessWidget {
       child: InkWell(
         child: Column(
           children: [
-            Center(child: Image.network(thema.poster, height: posterHeight, width: posterWidth, fit: BoxFit.fill,)),
+            Center(child: Image.network(theme.poster, height: posterHeight, width: posterWidth, fit: BoxFit.fill,)),
             Padding(
               padding: const EdgeInsets.only(left: 5.0),
-              child: Text(thema.name,style: const TextStyle(fontSize: themeTitleFontSize, color: Colors.white),overflow: TextOverflow.ellipsis),
+              child: Text(theme.name,style: const TextStyle(fontSize: themeTitleFontSize, color: Colors.white),overflow: TextOverflow.ellipsis),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 5.0),
-              child: Text(thema.genre, style: const TextStyle(color: Colors.white)),
+              child: Text(theme.genre, style: const TextStyle(color: Colors.white)),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: Text("난이도 : ${thema.difficulty.toString()}", style: const TextStyle(color: Colors.white)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 5.0),
+                  child: Text("난이도 : ${theme.difficulty.toString()}", style: const TextStyle(color: Colors.white)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 5.0),
+                  child: Text("${theme.runningtime.toString()}분", style: const TextStyle(color: Colors.white)),
+                ),
+              ],
             )
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         ),
         onTap: () {
-          Provider.of<SelectedThemeProvider>(context, listen: false).setSelectedTheme(thema);
-          Provider.of<ReviewProvider>(context, listen: false).setThemeID(thema.id);
-          loadReviewData(context, thema);
+          Provider.of<SelectedThemeProvider>(context, listen: false).setSelectedTheme(theme);
+          Provider.of<ReviewProvider>(context, listen: false).setThemeID(theme.id);
+          loadReviewData(context, theme);
           sleep(const Duration(milliseconds: 100));
           Navigator.push(context, MaterialPageRoute(builder: (context) => const ThemeInfoView()));
         },
