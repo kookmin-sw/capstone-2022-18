@@ -28,7 +28,9 @@ def login_manager():
 @app.route('/signup/manager', methods=['POST'])
 def signup_manager():
     input_data = request.get_json()
-    input_data['themes'] = []
+    query = bmfs.db.collection(u'theme').where(u'manager_id', u'==', input_data['id']).stream()
+    for doc in query:
+        return jsonify({'result': 'false'})
     bmfs.write('manager', input_data)
     return jsonify({'result': 'true'})
 
@@ -55,13 +57,13 @@ def theme_add():
 @app.route('/theme/status', methods=['POST'])
 def reservation_status():
     input_data = request.get_json()
-    timetable = bmfs.db.collection(u'theme').document(input_data['theme_id']).get().to_dict()['timetable']
+    timetable = bmfs.db.collection(u'theme').document(input_data['id']).get().to_dict()['timetable']
     output_data = {}
     for slot in timetable:
         output_data[slot] = True
 
     booked = bmfs.db.collection(u'reservation').where(
-        u'theme_id', u'==', input_data['theme_id']).where(
+        u'theme_id', u'==', input_data['id']).where(
         u'date', u'==', input_data['date']).stream()
     for r in booked:
         output_data[r.to_dict()['time']] = False
@@ -77,6 +79,13 @@ def review_add():
 
 @app.route('/reservation/add', methods=['POST'])
 def reservation_add():
+    input_data = request.get_json()
+    docs = bmfs.db.collection(u'reservation').where(
+        u'theme_id', u'==', input_data['theme_id']).where(
+        u'date', u'==', input_data['date']).where(
+        u'time', u'==', input_data['time']).stream()
+    for doc in docs:
+        return jsonify({'result', 'false'})
     bmfs.write('reservation', request.get_json())
     return jsonify({'result': 'true'})
 
