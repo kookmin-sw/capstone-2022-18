@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bangmoa/src/provider/reserveInfoProvider.dart';
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,7 +16,52 @@ class ReserveInfoInputView extends StatefulWidget {
 
 class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
   String dropdownValue = '2';
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
 
+  void reserveButtonCheck() {
+    if (_nameController.text.isEmpty) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text(
+                  "예약자 성함을 입력해주세요."
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("ok"),
+                )
+              ],
+            );
+          }
+      );
+    } else if (_phoneController.text.isEmpty) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text(
+                  "전화번호를 입력해주세요."
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("ok"),
+                )
+              ],
+            );
+          }
+      );
+    } else {
+      reserveButtonAction();
+    }
+  }
   void reserveButtonAction() async {
     ReserveInfoProvider infoProvider = Provider.of<ReserveInfoProvider>(context, listen: false);
     UserLoginStatusProvider userProvider = Provider.of<UserLoginStatusProvider>(context, listen: false);
@@ -28,6 +74,8 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
               "date" : infoProvider.getDate,
               "time" : infoProvider.getTime,
               "user_count" : dropdownValue,
+              "user_name" : _nameController.text,
+              "user_phone" : _phoneController.text,
             }
         ),
         headers: {"Content-Type": "application/json"}
@@ -38,22 +86,23 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
     }
     else {
       showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: const Text("예약에 실패하였습니다."),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("ok"),
-              )
-            ],
-          );
-        }
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: const Text("예약에 실패하였습니다."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("ok"),
+                )
+              ],
+            );
+          }
       );
     }
+    Navigator.pop(context);
   }
 
   @override
@@ -62,7 +111,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
+        scrollDirection: Axis.vertical,
         child: Column(
           children: [
             SizedBox(
@@ -81,7 +130,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                 decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
-                width: MediaQuery.of(context).size.width-12.0,
+                width: MediaQuery.of(context).size.width,
                 child: Column(
                   children: [
                    const Text("예약정보", style: TextStyle(fontSize: 20),),
@@ -254,6 +303,70 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                           Row(
                             children: [
                               Container(
+                                child: const Text("예약자 성함", textAlign: TextAlign.center,),
+                                alignment: Alignment.center,
+                                width: (MediaQuery.of(context).size.width-30.0)*0.3,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  border: Border.all(color: Colors.black),
+                                ),
+                              ),
+                              Container(
+                                child: TextField(
+                                  controller: _nameController,
+                                  decoration: const InputDecoration(
+                                    hintText: "예약자 성함을 입력해주세요."
+                                  ),
+                                ),
+                                alignment: Alignment.center,
+                                width: (MediaQuery.of(context).size.width-30.0)*0.7,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.black),
+                                ),
+                              ),
+                            ],
+                            mainAxisAlignment : MainAxisAlignment.center,
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                child: const Text("전화번호", textAlign: TextAlign.center,),
+                                alignment: Alignment.center,
+                                width: (MediaQuery.of(context).size.width-30.0)*0.3,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  border: Border.all(color: Colors.black),
+                                ),
+                              ),
+                              Container(
+                                child: TextField(
+                                  controller: _phoneController,
+                                  decoration: const InputDecoration(
+                                      hintText: "전화번호를 입력해주세요."
+                                  ),
+                                  inputFormatters: [
+                                    MaskedInputFormatter('###-####-####')
+                                  ],
+                                  keyboardType: TextInputType.number,
+                                ),
+                                alignment: Alignment.center,
+                                width: (MediaQuery.of(context).size.width-30.0)*0.7,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.black),
+                                ),
+                              ),
+                            ],
+                            mainAxisAlignment : MainAxisAlignment.center,
+                          ),
+                          Row(
+                            children: [
+                              Container(
                                 decoration: BoxDecoration(
                                   color: Colors.grey,
                                   border: Border.all(color: Colors.black),
@@ -291,8 +404,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                           ),
                           child: const Text("예약하기", style: TextStyle(color: Colors.white),),
                           onPressed: () {
-                            reserveButtonAction();
-                            Navigator.pop(context);
+                            reserveButtonCheck();
                           },
                         ),
                       ),
