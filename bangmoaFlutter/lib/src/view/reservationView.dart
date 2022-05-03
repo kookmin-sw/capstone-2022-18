@@ -142,7 +142,7 @@ class _ReservationViewState extends State<ReservationView> {
                             child: const Text("알림 설정", style: TextStyle(color: Colors.white),),
                             onPressed: () async {
                               if (userLoginStatusProvider.getLogin) {
-                                String id = _theme.id + "-" + _userID;
+                                String id = _theme.id + "-" + _userID + DateFormat('yyyy-MM-dd').format(_currentDate).toString();
                                 if (!userLoginStatusProvider.getAlarms.contains(id)){
                                   DocumentReference user = FirebaseFirestore.instance.collection('user').doc(_userID);
                                   CollectionReference alarm = FirebaseFirestore.instance.collection('alarm');

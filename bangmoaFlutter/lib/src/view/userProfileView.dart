@@ -19,7 +19,13 @@ class _UserProfileViewState extends State<UserProfileView> {
   late bool _loginStatus;
 
   void removeButtonAction(int index) {
-    FirebaseFirestore.instance.collection('alarm').doc(context.read<UserLoginStatusProvider>().getAlarms[index].id).delete();
+    String alarmId = context.read<UserLoginStatusProvider>().getAlarms[index].id;
+    FirebaseFirestore.instance.collection('alarm').doc(alarmId).delete();
+    FirebaseFirestore.instance.collection('user').doc(context.read<UserLoginStatusProvider>().getUserID).update(
+        {
+          'alarm' : FieldValue.arrayRemove([alarmId]),
+        }
+    );
     Provider.of<UserLoginStatusProvider>(context,listen: false).removeAlarm(index);
     setState(() {
 

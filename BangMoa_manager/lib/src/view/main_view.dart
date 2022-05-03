@@ -114,7 +114,7 @@ class _MainViewState extends State<MainView> {
         print(response.error);
         return Text(response.error.toString());
       } else {
-        print(json.decode(response.data!.body));
+        var result = json.decode(response.data!.body)["result"];
         return Scaffold(
           appBar: AppBar(
             title: Row(
@@ -127,8 +127,37 @@ class _MainViewState extends State<MainView> {
               ],
             ),
           ),
-          body: ListView(
-            children: [],
+          body: ListView.builder(
+            itemCount: result.length,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Text(
+                            "${result[index]["date"]!} 예약${index+1}",
+                            style: const TextStyle(fontSize: 20),
+                          )
+                        ),
+                        Text("예약 테마 : ${result[index]["theme_name"]!}"),
+                        Text("예약 시간 : ${result[index]["time"]!}"),
+                        Text("예약 인원 : ${result[index]["user_count"]!}"),
+                        Text("예약자 명 : ${result[index]["user_name"]!}"),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
           ),
           floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
