@@ -149,6 +149,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                               width: MediaQuery.of(context).size.width-36.0,
                             ),
                           ),
+                          const Text("테마 정보"),
                           Row(
                             children: [
                               Container(
@@ -249,6 +250,8 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                             ],
                             mainAxisAlignment : MainAxisAlignment.center,
                           ),
+                          const SizedBox(height: 20,),
+                          const Text("추가정보"),
                           Row(
                             mainAxisAlignment : MainAxisAlignment.center,
                             children: [
@@ -303,6 +306,31 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                           Row(
                             children: [
                               Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  border: Border.all(color: Colors.black),
+                                ),
+                                child: const Text("총 금액", textAlign: TextAlign.center,),
+                                alignment: Alignment.center,
+                                width: (MediaQuery.of(context).size.width-30.0)*0.3,
+                                height: 50,
+                              ),
+                              Container(
+                                child: Text((infoProvider.getCost*int.parse(dropdownValue)).toString() + "원", textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
+                                alignment: Alignment.center,
+                                width: (MediaQuery.of(context).size.width-30.0)*0.7,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.black),
+                                ),
+                              ),
+                            ],
+                            mainAxisAlignment : MainAxisAlignment.center,
+                          ),
+                          Row(
+                            children: [
+                              Container(
                                 child: const Text("예약자 성함", textAlign: TextAlign.center,),
                                 alignment: Alignment.center,
                                 width: (MediaQuery.of(context).size.width-30.0)*0.3,
@@ -353,31 +381,6 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                                   ],
                                   keyboardType: TextInputType.number,
                                 ),
-                                alignment: Alignment.center,
-                                width: (MediaQuery.of(context).size.width-30.0)*0.7,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(color: Colors.black),
-                                ),
-                              ),
-                            ],
-                            mainAxisAlignment : MainAxisAlignment.center,
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  border: Border.all(color: Colors.black),
-                                ),
-                                child: const Text("총 금액", textAlign: TextAlign.center,),
-                                alignment: Alignment.center,
-                                width: (MediaQuery.of(context).size.width-30.0)*0.3,
-                                height: 50,
-                              ),
-                              Container(
-                                child: Text((infoProvider.getCost*int.parse(dropdownValue)).toString() + "원", textAlign: TextAlign.center, overflow: TextOverflow.ellipsis),
                                 alignment: Alignment.center,
                                 width: (MediaQuery.of(context).size.width-30.0)*0.7,
                                 height: 50,

@@ -63,14 +63,14 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Center(
-                                child: ClipRRect(
-                                  child: Image.network(
-                                    selectedTheme.poster,
-                                    height: getPosterImageHeight(context),
-                                    width: getPosterImageWidth(context),
-                                    fit: BoxFit.fill,
-                                  ),
-                                )
+                              child: ClipRRect(
+                                child: Image.network(
+                                  selectedTheme.poster,
+                                  height: getPosterImageHeight(context),
+                                  width: getPosterImageWidth(context),
+                                  fit: BoxFit.fill,
+                                ),
+                              )
                             ),
                             Padding(
                               padding: const EdgeInsets.all(6.0),

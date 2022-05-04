@@ -105,7 +105,7 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip, L
     String game = "";
     for (var alarm in alarmList) {
       http.Response _res = await http.post(
-          Uri.parse("http://3.39.80.150:5000/reservation/theme/status"),
+          Uri.parse("http://3.39.80.150:5000/theme/status"),
           body: json.encode(
               {
                 "id" : alarm.themeID,
@@ -117,16 +117,16 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip, L
       var body = json.decode(_res.body);
       print(body.toString());
 
-      // if (body.toString() != "{}") {
-      //   var timeTable = body[element.name] as Map;
-      //   for (var key in timeTable.keys) {
-      //     List<bool> boolList = List<bool>.from(timeTable[key].values.toList());
-      //     if (boolList.contains(true)) {
-      //       availableCount++;
-      //       game = alarm.themeName;
-      //     }
-      //   }
-      // }
+      if (body.toString() != "{}") {
+        List<bool> boolList = List<bool>.from(body.values.toList());
+        if (boolList.contains(true)) {
+          availableCount++;
+          if (game.isEmpty) {
+            var theme = await FirebaseFirestore.instance.collection("theme").doc(alarm.themeID).get();
+            game = theme.get("name");
+          }
+        }
+      }
     }
     if (availableCount > 0) {
       await flip.show(0, '방탈출모아',
