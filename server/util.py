@@ -21,6 +21,8 @@ class BangMoaFireStroe:
             doc_ref = self.db.collection(collection_name).document()
 
         for key in data_dict:
+            if not isinstance(data_dict[key], str):
+                continue
             if data_dict[key].isdigit():
                 data_dict[key] = int(data_dict[key])
             elif data_dict[key][0] == '[' and data_dict[key][-1] == ']':
