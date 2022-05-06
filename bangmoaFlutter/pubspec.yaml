@@ -45,6 +45,7 @@ dependencies:
   intl: ^0.17.0
   flutter_local_notifications: ^9.4.0
   workmanager: ^0.4.1
+  flutter_multi_formatter: ^2.5.1
 
 dev_dependencies:
   flutter_test:

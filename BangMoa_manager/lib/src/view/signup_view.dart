@@ -80,6 +80,16 @@ class _SignUpViewState extends State<SignUpView> {
     }
   }
 
+  Widget buildTextInputField(String name, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(border: const OutlineInputBorder(), labelText: name),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,14 +100,7 @@ class _SignUpViewState extends State<SignUpView> {
             const SizedBox(height: 20),
             const Text("회원정보"),
             const SizedBox(height: 20),
-            TextField(
-              controller: _idController,
-              decoration: const InputDecoration(
-                  labelText: 'ID',
-                  border: OutlineInputBorder()
-              ),
-            ),
-            const SizedBox(height: 10),
+            buildTextInputField('ID', _idController),
             TextField(
               controller: _pwController,
               decoration: const InputDecoration(
@@ -109,30 +112,9 @@ class _SignUpViewState extends State<SignUpView> {
             const SizedBox(height: 20),
             const Text("카페정보"),
             const SizedBox(height: 20),
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                  labelText: '카페이름',
-                  border: OutlineInputBorder()
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _addressController,
-              decoration: const InputDecoration(
-                  labelText: '주소',
-                  border: OutlineInputBorder()
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _phoneController,
-              decoration: const InputDecoration(
-                  labelText: '전화번호',
-                  border: OutlineInputBorder()
-              ),
-            ),
-            const SizedBox(height: 20),
+            buildTextInputField('카페 이름', _nameController),
+            buildTextInputField('주소', _addressController),
+            buildTextInputField('전화번호', _phoneController),
             ElevatedButton(child: const Text('Submit'), onPressed: onClickSubmitButton),
           ],
         ),

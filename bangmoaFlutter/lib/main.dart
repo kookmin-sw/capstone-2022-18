@@ -1,14 +1,13 @@
 import 'dart:convert';
 
 import 'package:bangmoa/src/models/alarm.dart';
-import 'package:bangmoa/src/models/cafeModel.dart';
 import 'package:bangmoa/src/models/BMTheme.dart';
-import 'package:bangmoa/src/provider/cafeProvider.dart';
+import 'package:bangmoa/src/models/manager.dart';
+import 'package:bangmoa/src/provider/managerProvider.dart';
 import 'package:bangmoa/src/provider/reserveInfoProvider.dart';
 import 'package:bangmoa/src/provider/reviewProvider.dart';
 import 'package:bangmoa/src/provider/selectedThemeProvider.dart';
 import 'package:bangmoa/src/provider/serchTextProvider.dart';
-import 'package:bangmoa/src/provider/themeCafeListProvider.dart';
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/mainView.dart';
 import 'package:bangmoa/src/view/registerNicknameView.dart';
@@ -36,7 +35,7 @@ void main() async {
     frequency: const Duration(minutes: 15),
   );
 
-  cafeList = await loadFirebaseCafeList();
+  managerList = await loadFirebaseManagerList();
   themeList = await loadFirebaseThemeList();
 
   runApp(
@@ -45,9 +44,8 @@ void main() async {
         ChangeNotifierProvider<ThemeProvider>(create: (BuildContext context) => ThemeProvider()),
         ChangeNotifierProvider<SelectedThemeProvider>(create: (BuildContext context) => SelectedThemeProvider()),
         ChangeNotifierProvider<UserLoginStatusProvider>(create: (BuildContext context) => UserLoginStatusProvider()),
-        ChangeNotifierProvider<CafeProvider>(create: (BuildContext context) => CafeProvider()),
+        ChangeNotifierProvider<ManagerProvider>(create: (BuildContext context) => ManagerProvider()),
         ChangeNotifierProvider<ReviewProvider>(create: (BuildContext context) => ReviewProvider()),
-        ChangeNotifierProvider<ThemeCafeListProvider>(create: (BuildContext context) => ThemeCafeListProvider()),
         ChangeNotifierProvider<SearchTextProvider>(create: (BuildContext context) => SearchTextProvider()),
         ChangeNotifierProvider<ReserveInfoProvider>(create: (BuildContext context) => ReserveInfoProvider()),
       ],
@@ -56,31 +54,35 @@ void main() async {
   );
 }
 
-List<Cafe> cafeList = [];
+List<Manager> managerList = [];
 List<BMTheme> themeList = [];
 
 void callbackDispatcher() async {
   List<Alarm> alarmList = [];
   Workmanager().executeTask((task, inputData) async {
     await Firebase.initializeApp();
-    var userDoc = await FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).get();
-    List<String> alarmData = userDoc.data()!["alarms"]?.cast<String>();
-    for (var element in alarmData) {
-      var alarmDoc = await FirebaseFirestore.instance.collection("alarm").doc(element).get();
-      alarmList.add(Alarm.fromDocument(alarmDoc));
-    }
-    FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
-    var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
-    var IOS = const IOSInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-    );
+    if (FirebaseAuth.instance.currentUser != null) {
+      var userDoc = await FirebaseFirestore.instance.collection("user").doc(FirebaseAuth.instance.currentUser!.uid).get();
+      List<String> alarmData = userDoc.data()!["alarms"]?.cast<String>();
+      for (var element in alarmData) {
+        var alarmDoc = await FirebaseFirestore.instance.collection("alarm").doc(element).get();
+        alarmList.add(Alarm.fromDocument(alarmDoc));
+      }
+      FlutterLocalNotificationsPlugin flip = FlutterLocalNotificationsPlugin();
+      var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
+      var IOS = const IOSInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+      );
 
-    var settings = InitializationSettings(android: android, iOS: IOS);
-    flip.initialize(settings);
-    await _showNotificationWithDefaultSound(flip, alarmList);
-    return Future.value(true);
+      var settings = InitializationSettings(android: android, iOS: IOS);
+      flip.initialize(settings);
+      await _showNotificationWithDefaultSound(flip, alarmList);
+      return Future.value(true);
+    } else {
+      return Future.value(false);
+    }
   });
 }
 
@@ -101,36 +103,33 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip, L
   if (alarmList.isNotEmpty) {
     int availableCount = 0;
     String game = "";
-    for (var alarm in alarmList) {
-      List<Cafe> cafeList = [];
-      var cafe = await FirebaseFirestore.instance.collection("cafe").where("themes", arrayContains: alarm.themeID).get();
-      for (var cafeDoc in cafe.docs) {
-        cafeList.add(Cafe.fromDocument(cafeDoc));
-      }
-      http.Response _res = await http.post(
-          Uri.parse("http://3.39.80.150:5000/reservation"),
-          body: json.encode(
-              {
-                "id" : alarm.themeID,
-                "date" : alarm.date,
-              }
-          ),
-          headers: {"Content-Type": "application/json"}
-      );
-      var body = json.decode(_res.body);
+    try{
+      for (var alarm in alarmList) {
+        http.Response _res = await http.post(
+            Uri.parse("http://3.39.80.150:5000/theme/status"),
+            body: json.encode(
+                {
+                  "id" : alarm.themeID,
+                  "date" : alarm.date,
+                }
+            ),
+            headers: {"Content-Type": "application/json"}
+        );
+        var body = json.decode(_res.body);
+        print(body.toString());
 
-      for (var element in cafeList) {
         if (body.toString() != "{}") {
-          var timeTable = body[element.name] as Map;
-          for (var key in timeTable.keys) {
-            List<bool> boolList = List<bool>.from(timeTable[key].values.toList());
-            if (boolList.contains(true)) {
-              availableCount++;
+          List<bool> boolList = List<bool>.from(body.values.toList());
+          if (boolList.contains(true)) {
+            availableCount++;
+            if (game.isEmpty) {
               game = alarm.themeName;
             }
           }
         }
       }
+    } catch(e){
+      print(e);
     }
     if (availableCount > 0) {
       await flip.show(0, '방탈출모아',
@@ -143,7 +142,7 @@ Future _showNotificationWithDefaultSound(FlutterLocalNotificationsPlugin flip, L
 
 Future<List<BMTheme>> loadFirebaseThemeList() async {
   List<BMTheme> themeList = [];
-  await FirebaseFirestore.instance.collection('thema').get().then((snapshot) {
+  await FirebaseFirestore.instance.collection('theme').get().then((snapshot) {
     for (var doc in snapshot.docs) {
       themeList.add(BMTheme.fromDocument(doc));
     }
@@ -151,14 +150,14 @@ Future<List<BMTheme>> loadFirebaseThemeList() async {
   return themeList;
 }
 
-Future<List<Cafe>> loadFirebaseCafeList() async {
-  List<Cafe> cafeList = [];
-  await FirebaseFirestore.instance.collection('cafe').get().then((snapshot) {
+Future<List<Manager>> loadFirebaseManagerList() async {
+  List<Manager> managerList = [];
+  await FirebaseFirestore.instance.collection('manager').get().then((snapshot) {
     for (var doc in snapshot.docs) {
-      cafeList.add(Cafe.fromDocument(doc));
+      managerList.add(Manager.fromDocument(doc));
     }
   });
-  return cafeList;
+  return managerList;
 }
 
 class MyApp extends StatelessWidget {
@@ -166,7 +165,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<CafeProvider>(context).initCafeList(cafeList);
+    Provider.of<ManagerProvider>(context).initManagerList(managerList);
     Provider.of<ThemeProvider>(context).initThemeList(themeList);
     return StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
@@ -196,7 +195,11 @@ class MyApp extends StatelessWidget {
                     for (var alarmID in alarmIdList) {
                       var alarmCollection = FirebaseFirestore.instance.collection("alarm").doc(alarmID);
                       alarmCollection.get().then(
-                              (value) => alarmList.add(Alarm.fromDocument(value))
+                        (value) {
+                          if(value.exists) {
+                            alarmList.add(Alarm.fromDocument(value));
+                          }
+                        }
                       );
                     }
                     Provider.of<UserLoginStatusProvider>(context, listen: false).setAlarm(alarmList);

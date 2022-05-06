@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 Widget themeInfoViewLoadingIndicator() {
   return const CircularProgressIndicator();
 }
-EdgeInsetsGeometry imagePadding = const EdgeInsets.all(8.0);
-EdgeInsetsGeometry genreAndDifficultyPadding = const EdgeInsets.only(right: 10.0);
-EdgeInsetsGeometry descriptionPadding = const EdgeInsets.all(8.0);
 
 double getPosterImageHeight(BuildContext context) {
   return MediaQuery.of(context).size.height*0.5;
@@ -20,12 +17,20 @@ double getBottomPaddingHeight(BuildContext context) {
   return MediaQuery.of(context).size.height*0.1;
 }
 
+const double themeTitleSize = 25;
+const double reservationButtonHeight = 35;
+const double reservationButtonWidth = 80;
+const double intervalSize = 15;
+
 // Const used in reviewBottomSheet
-double sheetMinSize = 0.08;
-double sheetMaxSize = 1;
-double sheetBorderLineWidth = 1;
-BorderRadiusGeometry sheetBorderRadius = const BorderRadius.vertical(top: Radius.circular(20));
-EdgeInsetsGeometry sheetDragBarPadding = const EdgeInsets.all(8.0);
+const double divisionLineHeight = 1;
+const double verticalDivisionLineWidth = 1;
+const double verticalDivisionLineHeight = 60;
+const double reviewTileHeight = 60;
+
+double getDivisionLineWidth(BuildContext context) {
+  return MediaQuery.of(context).size.width*0.99;
+}
 
 double getReviewListBoxHeight(BuildContext context) {
   return MediaQuery.of(context).size.height*0.92;
@@ -36,12 +41,6 @@ double getReviewListBoxWidth(BuildContext context) {
 }
 
 // Const used in reviewTile
-Color reviewTileColor = Colors.white;
-EdgeInsetsGeometry tileRowPadding = const EdgeInsets.only(top: 8.0);
-TextStyle reviewTextStyle = const TextStyle(
-    color: Colors.black
-);
-
 double getNickNameBoxWidth(BuildContext context) {
-  return MediaQuery.of(context).size.width*0.25;
+  return MediaQuery.of(context).size.width*0.2;
 }

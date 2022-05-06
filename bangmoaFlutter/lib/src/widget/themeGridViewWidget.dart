@@ -9,7 +9,7 @@ class ThemeGridViewWidget extends StatefulWidget {
   final List<BMTheme> themeList;
   final double viewHeight;
   final String viewText;
-  const ThemeGridViewWidget({Key? key, required this.themeList, required double this.viewHeight, required this.viewText}) : super(key: key);
+  const ThemeGridViewWidget({Key? key, required this.themeList, required this.viewHeight, required this.viewText}) : super(key: key);
 
   @override
   _ThemeGridViewWidgetState createState() => _ThemeGridViewWidgetState();
@@ -19,21 +19,26 @@ class _ThemeGridViewWidgetState extends State<ThemeGridViewWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.viewHeight,
+      height: widget.viewHeight*widget.themeList.length/2+25,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Text(widget.viewText, style: TextStyle(fontSize: 15, color: themeGridViewStringColor),),
+            child: Text(widget.viewText, style: const TextStyle(fontSize: subheadTextSize, color: Colors.white),),
           ),
           Expanded(
             child: GridView.builder(
               itemCount: widget.themeList.length,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: themeGridViewDelegate,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 5,
+                childAspectRatio: 0.75,
+              ),
               itemBuilder: (BuildContext context, int index) {
-                return ThemeGridTileWidget(thema: widget.themeList[index]);
+                return ThemeGridTileWidget(theme: widget.themeList[index]);
               }
             ),
           ),
