@@ -3,6 +3,8 @@
 
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/loginView.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +17,32 @@ class UserProfileView extends StatefulWidget {
 
 class _UserProfileViewState extends State<UserProfileView> {
   late bool _loginStatus;
+
+  void removeButtonAction(int index) {
+    String alarmId = context.read<UserLoginStatusProvider>().getAlarms[index].id;
+    FirebaseFirestore.instance.collection('alarm').doc(alarmId).delete();
+    FirebaseFirestore.instance.collection('user').doc(context.read<UserLoginStatusProvider>().getUserID).update(
+        {
+          'alarm' : FieldValue.arrayRemove([alarmId]),
+        }
+    );
+    Provider.of<UserLoginStatusProvider>(context,listen: false).removeAlarm(index);
+    setState(() {
+
+    });
+  }
+
+  void logOutButtonAction() async {
+    try {
+      context.read<UserLoginStatusProvider>().logout();
+      return await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      print('sign out failed');
+      print(e.toString());
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     UserLoginStatusProvider userLoginStatusProvider = Provider.of<UserLoginStatusProvider>(context);
@@ -26,7 +54,7 @@ class _UserProfileViewState extends State<UserProfileView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
+              SizedBox(
                 height: 40,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -36,7 +64,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                   ],
                 ),
               ),
-              Container(
+              SizedBox(
                   height: MediaQuery.of(context).size.height*0.2,
                   child: const Text("로그인 정보가 없습니다.", style: TextStyle(color: Colors.white),)
               ),
@@ -66,7 +94,7 @@ class _UserProfileViewState extends State<UserProfileView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               height: 40,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -87,9 +115,7 @@ class _UserProfileViewState extends State<UserProfileView> {
               ),
             ),
             TextButton(
-              onPressed: () {
-
-              },
+              onPressed: logOutButtonAction,
               child: SizedBox(
                 child: const Text(
                   "로그아웃",
@@ -115,17 +141,29 @@ class _UserProfileViewState extends State<UserProfileView> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
-                          Text("알람 ${index+1}", style: TextStyle(color: Colors.white)),
+                          Text("알람 ${index+1}", style: const TextStyle(color: Colors.white)),
                           Row(
                             children: [
                               const Text("예약 테마 : " ,style: TextStyle(color: Colors.white)),
-                              Text(userLoginStatusProvider.getAlarms[index].themeName ,style: TextStyle(color: Colors.white)),
+                              Text(userLoginStatusProvider.getAlarms[index].themeName ,style: const TextStyle(color: Colors.white)),
                             ],
                           ),
                           Row(
-                            children: [const Text("예약 날짜 : " ,style: TextStyle(color: Colors.white)),
-                              Text(userLoginStatusProvider.getAlarms[index].date ,style: TextStyle(color: Colors.white)),
+                            children: [
+                              const Text("예약 날짜 : " ,style: TextStyle(color: Colors.white)),
+                              Text(userLoginStatusProvider.getAlarms[index].date ,style: const TextStyle(color: Colors.white)),
                             ]
+                          ),
+                          Row(
+                            children: [
+                              Expanded(child: Container()),
+                              TextButton(
+                                onPressed: () {
+                                  removeButtonAction(index);
+                                },
+                                child: const Text("삭제", style: TextStyle(color: Colors.white),)
+                              )
+                            ],
                           )
                         ],
                       ),

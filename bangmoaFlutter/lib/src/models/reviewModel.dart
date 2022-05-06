@@ -5,11 +5,11 @@
 class ReviewModel{
   late String id;
   late String text;
+  late String time;
   late String themaID;
   late String writerID;
   late String writerNickName;
-
   late double rating;
 
-  ReviewModel(this.id, this.text, this.themaID, this.writerID, this.writerNickName, this.rating);
+  ReviewModel(this.id, this.text, this.themaID, this.writerID, this.writerNickName, this.rating, this.time);
 }

@@ -2,11 +2,13 @@
 // 테마 설명부분과 하단 댓글 Bottom Sheet 로 구성되어 있음.
 // 하단 Bottom Sheet 은 reviewBottomSheet 위젯 사용.
 
+import 'dart:async';
+
+import 'package:bangmoa/src/const/commonConst.dart';
 import 'package:bangmoa/src/const/themeInfoViewConst.dart';
-import 'package:bangmoa/src/models/cafeModel.dart';
 import 'package:bangmoa/src/models/BMTheme.dart';
+import 'package:bangmoa/src/models/manager.dart';
 import 'package:bangmoa/src/provider/selectedThemeProvider.dart';
-import 'package:bangmoa/src/provider/themeCafeListProvider.dart';
 import 'package:bangmoa/src/view/reservationView.dart';
 import 'package:bangmoa/src/widget/reviewBottomSheetWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,36 +25,32 @@ class ThemeInfoView extends StatefulWidget {
 
 class _ThemeInfoViewState extends State<ThemeInfoView> {
   late BMTheme selectedTheme;
-  List<Cafe> cafeList = [];
+  late Manager manager;
 
   @override
   Widget build(BuildContext context) {
     selectedTheme = Provider.of<SelectedThemeProvider>(context).getSelectedTheme;
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('cafe').where("themes", arrayContains: selectedTheme.id).snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> cafeSnapshot) {
-        cafeList = [];
-        if (cafeSnapshot.hasError) {
-          return Text('Error : ${cafeSnapshot.error}');
+    return StreamBuilder<QuerySnapshot>(
+      stream : FirebaseFirestore.instance.collection('manager').where("id", isEqualTo: selectedTheme.manager_id).snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> managerSnapshot) {
+        if (managerSnapshot.hasError) {
+          return Text('Error : ${managerSnapshot.error}');
         }
-        if (cafeSnapshot.connectionState == ConnectionState.waiting) {
+        if (managerSnapshot.connectionState == ConnectionState.waiting) {
           return themeInfoViewLoadingIndicator();
         }
-        cafeSnapshot.data?.docs.forEach((element) {
-          cafeList.add(Cafe.fromDocument(element));
-        });
-        Provider.of<ThemeCafeListProvider>(context).setCafeList(cafeList);
+        manager = Manager.fromDocument(managerSnapshot.data!.docs.first);
         return Scaffold(
           backgroundColor: Colors.black,
           body : Column(
             children: [
-              Container(
-                height: 40,
+              SizedBox(
+                height: appBarSize,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
-                    const Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP', color: Colors.white),),
+                    Image.asset("asset/image/bangmoaLogo.png", height: logoHeight, width: logoWidth, fit: BoxFit.fill,),
+                    const Text("방탈출 모아", style: TextStyle(fontSize: titleSize, fontFamily: 'POP', color: Colors.white),),
                   ],
                 ),
               ),
@@ -67,50 +65,34 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Center(
-                                child: ClipRRect(
-                                  child: Image.network(
-                                    selectedTheme.poster,
-                                    height: getPosterImageHeight(context),
-                                    width: getPosterImageWidth(context),
-                                    fit: BoxFit.fill,
-                                  ),
-                                )
+                              child: ClipRRect(
+                                child: Image.network(
+                                  selectedTheme.poster,
+                                  height: getPosterImageHeight(context),
+                                  width: getPosterImageWidth(context),
+                                  fit: BoxFit.fill,
+                                ),
+                              )
                             ),
                             Padding(
                               padding: const EdgeInsets.all(6.0),
                               child: Center(
                                 child: Padding(
                                   padding: const EdgeInsets.all(5.0),
-                                  child: Text(selectedTheme.name, style: const TextStyle(fontSize: 25,), overflow: TextOverflow.ellipsis, ),
+                                  child: Text(selectedTheme.name, style: const TextStyle(fontSize: themeTitleSize), overflow: TextOverflow.ellipsis, ),
                                 ),
                               ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: List.generate(cafeList.length+1,
-                                      (index) {
-                                    if (index == 0) {
-                                      return const Padding(
-                                        padding: EdgeInsets.only(right: 8.0),
-                                        child: Text("지점 :"),
-                                      );
-                                    }
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 8.0),
-                                      child: Text(cafeList[index-1].name),
-                                    );
-                                  }
-                              ),
-                            ),
+                            const Text("지점 : "),
                             Padding(
-                              padding: genreAndDifficultyPadding,
+                              padding: const EdgeInsets.only(right: 10.0),
                               child: Container(
                                 child: Text("장르 : ${selectedTheme.genre}"),
                                 alignment: Alignment.centerRight,
                               ),
                             ),
                             Padding(
-                              padding: genreAndDifficultyPadding,
+                              padding: const EdgeInsets.only(right: 10.0),
                               child: Container(
                                 child: Text("난이도 : ${selectedTheme.difficulty.toString()}"),
                                 alignment: Alignment.centerRight,
@@ -118,7 +100,7 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                             ),
                             Center(
                               child: Padding(
-                                padding: descriptionPadding,
+                                padding: const EdgeInsets.all(8.0),
                                 child: Text(selectedTheme.description),
                               ),
                             ),
@@ -127,15 +109,16 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(20)
+                                  borderRadius: BorderRadius.circular(5)
                                 ),
-                                height: 35,
-                                width: 80,
+                                height: reservationButtonHeight,
+                                width: reservationButtonWidth,
                                 alignment: Alignment.center,
                                 child: TextButton(
-                                  child: Text("예약 확인", style: TextStyle(color: Colors.white),),
+                                  child: const Text("예약 확인", style: TextStyle(color: Colors.white),),
                                   onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ReservationView()));
+                                    Provider.of<SelectedThemeProvider>(context, listen: false).setManager(manager);
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ReservationView()));
                                   },
                                 ),
                               ),
@@ -143,8 +126,8 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 15,
+                      const SizedBox(
+                        height: intervalSize,
                       ),
                       reviewBottomSheet(context),
                     ],

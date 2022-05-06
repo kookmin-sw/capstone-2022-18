@@ -2,7 +2,6 @@
 // Login With google 버튼 하나만 존재하는 페이지.
 // 로그인 시 FireStore Authentication에 새로운 user가 추가된다.
 
-import 'package:bangmoa/src/const/loginViewConst.dart';
 import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +16,10 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  Widget loginViewLoadingIndicator() {
+    return const CircularProgressIndicator();
+  }
+
   Future<UserCredential> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
@@ -43,7 +46,7 @@ class _LoginViewState extends State<LoginView> {
                   children: [
                     TextButton(
                       onPressed: signInWithGoogle,
-                      child: loginButtonText,
+                      child: const Text("Login With Google"),
                     )
                   ],
                 ),
