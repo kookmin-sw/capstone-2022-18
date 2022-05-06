@@ -6,30 +6,33 @@ import pandas as pd
 from util import BangMoaFireStroe
 
 
-def init_rating_dataframe(key_file):
-    # new theme-user dataframe from review
-    bmfs = BangMoaFireStroe(key_file)
+def init_rating_dataframe(bmfs):
+    df = pd.DataFrame()
+
+    users = bmfs.db.collection('user').stream()
+    for user in users:
+        df[user.id] = pd.Series(dtype=int)
+
+    themes = bmfs.db.collection('theme').stream()
+    for theme in themes:
+        df = df.append(pd.Series(name=theme.id, dtype=int))
+    
     reviews = bmfs.db.collection('review').stream()
-    review_data = {}
-    for r in reviews:
-        review = r.to_dict()
-        if review['writerID'] not in review_data:
-            review_data[review['writerID']] = {}
-        review_data[review['writerID']][review['themaID']] = review['rating']
-    df = pd.DataFrame.from_dict(review_data)
-    df.fillna(0, inplace=True)
-    df.to_pickle('./confidential/rating.pkl')
-    clac_similarity()
+    for doc in reviews:
+        review = doc.to_dict()
+        df.at[review['themaID'], review['writerID']] = review['rating']
+    
+    df = df.fillna(0)
+    return df
 
 
-def clac_similarity():
-    df = pd.read_pickle('./confidential/rating.pkl')
+def clac_similarity(rating_dataframe):
     similarity = pd.DataFrame(
-        data=cosine_similarity(df),
-        index=df.index,
-        columns=df.index
+        data=cosine_similarity(rating_dataframe),
+        index=rating_dataframe.index,
+        columns=rating_dataframe.index
     )
-    similarity.to_pickle('./confidential/similarity.pkl')
+    print(similarity)
 
 def get_similar_theme(user_id):
     # read visited themes
@@ -42,6 +45,5 @@ def get_similar_theme(user_id):
     print(res.index[:3])
 
 if __name__ == '__main__':
-    key_file = sys.argv[1]
-    #init_rating_dataframe(key_file)
-    get_similar_theme('te03st')
+    bmfs = BangMoaFireStroe(sys.argv[1])
+    clac_similarity(init_rating_dataframe(bmfs))
