@@ -2,6 +2,8 @@
 // 테마 설명부분과 하단 댓글 Bottom Sheet 로 구성되어 있음.
 // 하단 Bottom Sheet 은 reviewBottomSheet 위젯 사용.
 
+import 'dart:async';
+
 import 'package:bangmoa/src/const/commonConst.dart';
 import 'package:bangmoa/src/const/themeInfoViewConst.dart';
 import 'package:bangmoa/src/models/BMTheme.dart';
@@ -81,7 +83,7 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                                 ),
                               ),
                             ),
-                            Text("지점 : "),
+                            const Text("지점 : "),
                             Padding(
                               padding: const EdgeInsets.only(right: 10.0),
                               child: Container(

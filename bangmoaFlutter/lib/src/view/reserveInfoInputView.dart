@@ -149,7 +149,8 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                               width: MediaQuery.of(context).size.width-36.0,
                             ),
                           ),
-                          const Text("테마 정보"),
+                          const SizedBox(height: 20,),
+                          const Text("테마 정보",style: TextStyle(fontSize: 15)),
                           Row(
                             children: [
                               Container(
@@ -251,7 +252,7 @@ class _ReserveInfoInputViewState extends State<ReserveInfoInputView> {
                             mainAxisAlignment : MainAxisAlignment.center,
                           ),
                           const SizedBox(height: 20,),
-                          const Text("추가정보"),
+                          const Text("추가정보", style: TextStyle(fontSize: 15)),
                           Row(
                             mainAxisAlignment : MainAxisAlignment.center,
                             children: [

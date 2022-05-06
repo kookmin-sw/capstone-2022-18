@@ -21,32 +21,35 @@ class ThemeGridTileWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
-        child: Column(
-          children: [
-            Center(child: Image.network(theme.poster, height: posterHeight, width: posterWidth, fit: BoxFit.fill,)),
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: Text(theme.name,style: const TextStyle(fontSize: themeTitleFontSize, color: Colors.white),overflow: TextOverflow.ellipsis),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: Text(theme.genre, style: const TextStyle(color: Colors.white)),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 5.0),
-                  child: Text("난이도 : ${theme.difficulty.toString()}", style: const TextStyle(color: Colors.white)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 5.0),
-                  child: Text("${theme.runningtime.toString()}분", style: const TextStyle(color: Colors.white)),
-                ),
-              ],
-            )
-          ],
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              Center(child: Image.network(theme.poster, height: posterHeight, width: posterWidth, fit: BoxFit.fill,)),
+              Padding(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: Text(theme.name,style: const TextStyle(fontSize: themeTitleFontSize),overflow: TextOverflow.ellipsis),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: Text(theme.genre),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: Text("난이도 : ${theme.difficulty.toString()}"),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 5.0),
+                    child: Text("${theme.runningtime.toString()}분"),
+                  ),
+                ],
+              )
+            ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+          ),
         ),
         onTap: () {
           Provider.of<SelectedThemeProvider>(context, listen: false).setSelectedTheme(theme);

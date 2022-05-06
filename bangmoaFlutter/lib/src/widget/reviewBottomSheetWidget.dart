@@ -30,7 +30,7 @@ Widget reviewBottomSheet(BuildContext context) {
                 'text' : _textEditingController.text,
                 'themaID' : Provider.of<SelectedThemeProvider>(context, listen: false).getSelectedTheme.id,
                 'writerID' : Provider.of<UserLoginStatusProvider>(context, listen: false).getUserID,
-                'rating' : _rating,
+                'rating' : _rating.toInt().toString(),
                 'time' : DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()).toString(),
               }
           ),
@@ -129,7 +129,7 @@ Widget reviewBottomSheet(BuildContext context) {
           ),
         ),
         SizedBox(
-          height: 82.0*reviewList.length,
+          height: 60.0*reviewList.length + 25,
           width: getReviewListBoxWidth(context),
           child: ListView.builder(
               physics: const NeverScrollableScrollPhysics(),

@@ -29,7 +29,7 @@ const double verticalDivisionLineHeight = 60;
 const double reviewTileHeight = 60;
 
 double getDivisionLineWidth(BuildContext context) {
-  return MediaQuery.of(context).size.width*0.95;
+  return MediaQuery.of(context).size.width*0.99;
 }
 
 double getReviewListBoxHeight(BuildContext context) {
@@ -42,5 +42,5 @@ double getReviewListBoxWidth(BuildContext context) {
 
 // Const used in reviewTile
 double getNickNameBoxWidth(BuildContext context) {
-  return MediaQuery.of(context).size.width*0.25;
+  return MediaQuery.of(context).size.width*0.2;
 }
