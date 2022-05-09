@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bangmoa/src/models/alarm.dart';
 import 'package:bangmoa/src/models/BMTheme.dart';
+import 'package:bangmoa/src/models/bangmoaUser.dart';
 import 'package:bangmoa/src/models/manager.dart';
 import 'package:bangmoa/src/provider/managerProvider.dart';
 import 'package:bangmoa/src/provider/reserveInfoProvider.dart';
@@ -188,7 +189,8 @@ class MyApp extends StatelessWidget {
                     return const Center(child: CircularProgressIndicator(),);
                   }
                   if (userDataSnapshot.data!.exists) {
-                    Provider.of<UserLoginStatusProvider>(context, listen: false).setUserID(userAuthSnapshot.data!.uid);
+                    Provider.of<UserLoginStatusProvider>(context, listen: false).setUser(BangmoaUser.fromDocument(userDataSnapshot.data!));
+                    Provider.of<UserLoginStatusProvider>(context).setUserID(userAuthSnapshot.data!.uid);
                     Provider.of<UserLoginStatusProvider>(context, listen: false).setUserNickName(userDataSnapshot.data!["nickname"]);
                     List<String> alarmIdList = List<String>.from(userDataSnapshot.data!["alarms"]);
                     List<Alarm> alarmList = [];

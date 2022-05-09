@@ -6,13 +6,13 @@ import 'package:bangmoa/src/const/commonConst.dart';
 import 'package:bangmoa/src/models/BMTheme.dart';
 import 'package:bangmoa/src/provider/serchTextProvider.dart';
 import 'package:bangmoa/src/provider/themeProvider.dart';
+import 'package:bangmoa/src/provider/userLoginStatusProvider.dart';
 import 'package:bangmoa/src/view/searchResultView.dart';
 import 'package:bangmoa/src/view/userProfileView.dart';
 import 'package:bangmoa/src/widget/recommendThemeWidget.dart';
 import 'package:bangmoa/src/widget/themeGridViewWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:math';
 
 class MainView extends StatefulWidget {
   const MainView({Key? key}) : super(key: key);
@@ -28,9 +28,11 @@ class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     List<BMTheme> _themeList = Provider.of<ThemeProvider>(context).getThemeList;
-    var rng = Random();
-    for (var i = 0; i < 6; i++) {
-      recommendList.add(_themeList[rng.nextInt(_themeList.length)]);
+    List<String> _recommendIDList = context.read<UserLoginStatusProvider>().getRecommend;
+    for (var element in _themeList) {
+      if (_recommendIDList.contains(element.id)) {
+        recommendList.add(element);
+      }
     }
     return Scaffold(
       floatingActionButton: FloatingActionButton(

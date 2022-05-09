@@ -23,7 +23,7 @@ class _UserProfileViewState extends State<UserProfileView> {
     FirebaseFirestore.instance.collection('alarm').doc(alarmId).delete();
     FirebaseFirestore.instance.collection('user').doc(context.read<UserLoginStatusProvider>().getUserID).update(
         {
-          'alarm' : FieldValue.arrayRemove([alarmId]),
+          'alarms' : FieldValue.arrayRemove([alarmId]),
         }
     );
     Provider.of<UserLoginStatusProvider>(context,listen: false).removeAlarm(index);
