@@ -29,15 +29,6 @@ class _SearchConditionMenuWidgetState extends State<SearchConditionMenuWidget> {
           },
           body: Container(
                 height: 200,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-
-                      ],
-                    )
-                  ],
-                ),
               ),
           isExpanded: _expanded,
           canTapOnHeader: true,

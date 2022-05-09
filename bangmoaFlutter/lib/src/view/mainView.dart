@@ -23,12 +23,15 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   List<BMTheme> recommendList = [];
+  List<String> _recommendIDList = [];
   final textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     List<BMTheme> _themeList = Provider.of<ThemeProvider>(context).getThemeList;
-    List<String> _recommendIDList = context.read<UserLoginStatusProvider>().getRecommend;
+    if (context.read<UserLoginStatusProvider>().getLogin) {
+      _recommendIDList = context.read<UserLoginStatusProvider>().getRecommend;
+    }
     for (var element in _themeList) {
       if (_recommendIDList.contains(element.id)) {
         recommendList.add(element);
@@ -87,7 +90,7 @@ class _MainViewState extends State<MainView> {
                 }
               },
             ),
-            recommendThemeWidget(context, recommendList),
+            recommendList.isNotEmpty?recommendThemeWidget(context, recommendList):Container(),
             ThemeGridViewWidget(themeList: _themeList, viewHeight: 290, viewText: "전체 테마"),
           ],
         ),

@@ -12,7 +12,6 @@ import 'package:bangmoa/src/provider/selectedThemeProvider.dart';
 import 'package:bangmoa/src/view/reservationView.dart';
 import 'package:bangmoa/src/widget/reviewBottomSheetWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
