@@ -28,11 +28,21 @@ def login_manager():
 @app.route('/signup/manager', methods=['POST'])
 def signup_manager():
     input_data = request.get_json()
-    query = bmfs.db.collection(u'theme').where(u'manager_id', u'==', input_data['id']).stream()
+    query = bmfs.db.collection(u'manager').where(u'_id', u'==', input_data['id']).stream()
     for doc in query:
         return jsonify({'result': 'false'})
     bmfs.write('manager', input_data)
     return jsonify({'result': 'true'})
+
+
+@app.route('/manager/theme', methods=['POST'])
+def manager_theme():
+    input_data = request.get_json()
+    result = {}
+    query = bmfs.db.collection(u'theme').where(u'manager_id', u'==', input_data['id']).stream()
+    for doc in query:
+        result[doc.id] = doc.to_dict()
+    return jsonify(result)
 
 
 @app.route('/theme/add', methods=['POST'])
@@ -40,6 +50,47 @@ def theme_add():
     input_data = request.form.to_dict()
     poster_file = request.files.get('poster')
     doc_ref = bmfs.db.collection(u'theme').document()
+
+    filename = doc_ref.id + '.' + poster_file.filename.split('.')[-1]
+    blob = bucket.blob('theme/' + filename)
+    blob.upload_from_string(
+        poster_file.read(),
+        content_type=poster_file.content_type
+    )
+    blob.make_public()
+    input_data['poster'] = blob.public_url
+    bmfs.write('theme', input_data, doc_ref.id)
+
+    return jsonify({'result': 'true'})
+
+
+@app.route('/theme/remove', methods=['POST'])
+def theme_remove():
+    input_data = request.get_json()
+    doc = bmfs.db.collection(u'theme').document(input_data['id'])
+    poster_filename = doc.id + '.' + doc.to_dict()['poster'].split('.')[-1]
+    blob = bucket.blob('theme/' + poster_filename)
+    blob.delete()
+    doc.delete()
+    return jsonify({'result': 'true', 'theme_id': input_data['id']})
+
+
+@app.route('/theme/edit', methods=['POST'])
+def theme_edit():
+    input_data = request.form.to_dict()
+    theme_id = input_data['id']
+    input_data.pop('id', None)
+
+    # remove
+    doc = bmfs.db.collection(u'theme').document(theme_id)
+    poster_filename = doc.id + '.' + doc.to_dict()['poster'].split('.')[-1]
+    blob = bucket.blob('theme/' + poster_filename)
+    blob.delete()
+    doc.delete()
+
+    # add
+    poster_file = request.files.get('poster')
+    doc_ref = bmfs.db.collection(u'theme').document(theme_id)
 
     filename = doc_ref.id + '.' + poster_file.filename.split('.')[-1]
     blob = bucket.blob('theme/' + filename)
@@ -73,8 +124,15 @@ def reservation_status():
 
 @app.route('/review/add', methods=['POST'])
 def review_add():
-    bmfs.write('review', request.get_json())
-    return jsonify({'result': 'true'})
+    input_data = request.get_json()
+    docs = bmfs.db.collection(u'review').where(
+        u'themaID', u'==', input_data['themaID']).where(
+        u'writerID', u'==', input_data['writerID']).stream()
+    for doc in docs:
+        db.collection(u'reivew').document(doc.id).update(input_data)
+        return jsonify({'result', 'edit'})
+    bmfs.write('review', input_data)
+    return jsonify({'result': 'add'})
 
 
 @app.route('/reservation/add', methods=['POST'])
@@ -88,6 +146,12 @@ def reservation_add():
         return jsonify({'result', 'false'})
     bmfs.write('reservation', request.get_json())
     return jsonify({'result': 'true'})
+
+
+@app.route('/reservation/cancel', methods=['POST'])
+def reservation_cancel():
+    input_data = request.get_json()
+    db.collection().document(input_data['id']).delete
 
 
 @app.route('/reservation/manager/status', methods=['POST'])
