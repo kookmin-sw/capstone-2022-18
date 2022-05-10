@@ -63,11 +63,33 @@ class _UserProfileViewState extends State<UserProfileView> {
   }
 
   void reservationCancelButtonAction(int index) {
-    FirebaseFirestore.instance.collection("reservation").doc(_reserveList[index].id).delete();
-    _reserveList.removeAt(index);
-    setState(() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: const Text("예약을 취소하시겠습니까?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                FirebaseFirestore.instance.collection("reservation").doc(_reserveList[index].id).delete();
+                _reserveList.removeAt(index);
+                Navigator.pop(context);
+                setState(() {
 
-    });
+                });
+              },
+              child: const Text("ok")
+            ),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("cancel")
+            )
+          ],
+        );
+      }
+    );
   }
 
   @override
@@ -148,18 +170,25 @@ class _UserProfileViewState extends State<UserProfileView> {
                     ),
                   ),
                 ),
-                TextButton(
-                  onPressed: logOutButtonAction,
-                  child: SizedBox(
-                    child: const Text(
-                      "로그아웃",
-                      style: TextStyle(
-                          fontSize: 30,
-                          color: Colors.white
-                      ),
-                    ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
                     height: MediaQuery.of(context).size.height*0.1,
                     width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.indigo,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: TextButton(
+                      onPressed: logOutButtonAction,
+                      child: const Text(
+                        "로그아웃",
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Colors.white
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 userLoginStatusProvider.getAlarms.isEmpty?Container() : SingleChildScrollView(
