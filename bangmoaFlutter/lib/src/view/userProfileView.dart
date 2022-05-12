@@ -141,163 +141,167 @@ class _UserProfileViewState extends State<UserProfileView> {
       builder: (context, AsyncSnapshot<List<Reservation>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
-        }
-        _reserveList = snapshot.data!;
-        return Scaffold(
-          backgroundColor: Colors.black,
-          body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
-                      const Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP', color: Colors.white),),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "닉네임 : ${userLoginStatusProvider.getNickName}",
-                    style: const TextStyle(
-                        fontSize: 30,
-                        color: Colors.white
+        } else if (snapshot.hasError) {
+          print(snapshot.error.toString());
+          return Container();
+        } else {
+          _reserveList = snapshot.data!;
+          return Scaffold(
+            backgroundColor: Colors.black,
+            body: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset("asset/image/bangmoaLogo.png", height: 40, width: 40, fit: BoxFit.fill,),
+                        const Text("방탈출 모아", style: TextStyle(fontSize: 17, fontFamily: 'POP', color: Colors.white),),
+                      ],
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height*0.1,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      color: Colors.indigo,
-                      borderRadius: BorderRadius.circular(20),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "닉네임 : ${userLoginStatusProvider.getNickName}",
+                      style: const TextStyle(
+                          fontSize: 30,
+                          color: Colors.white
+                      ),
                     ),
-                    child: TextButton(
-                      onPressed: logOutButtonAction,
-                      child: const Text(
-                        "로그아웃",
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Colors.white
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height*0.1,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.indigo,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: TextButton(
+                        onPressed: logOutButtonAction,
+                        child: const Text(
+                          "로그아웃",
+                          style: TextStyle(
+                              fontSize: 30,
+                              color: Colors.white
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                userLoginStatusProvider.getAlarms.isEmpty?Container() : SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text("알람목록",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20
-                            )
+                  userLoginStatusProvider.getAlarms.isEmpty?Container() : SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text("알람목록",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20
+                              )
+                          ),
                         ),
-                      ),
-                      Column(
-                        children: List.generate(userLoginStatusProvider.getAlarms.length, (index) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey)
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Text("알람 ${index+1}", style: const TextStyle(color: Colors.white, fontSize: 15)),
-                                  Row(
-                                    children: [
-                                      const Text("예약 테마 : " ,style: TextStyle(color: Colors.white)),
-                                      Text(userLoginStatusProvider.getAlarms[index].themeName ,style: const TextStyle(color: Colors.white)),
-                                    ],
-                                  ),
-                                  Row(
+                        Column(
+                          children: List.generate(userLoginStatusProvider.getAlarms.length, (index) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey)
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    Text("알람 ${index+1}", style: const TextStyle(color: Colors.white, fontSize: 15)),
+                                    Row(
                                       children: [
-                                        const Text("예약 날짜 : " ,style: TextStyle(color: Colors.white)),
-                                        Text(userLoginStatusProvider.getAlarms[index].date ,style: const TextStyle(color: Colors.white)),
-                                      ]
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(child: Container()),
-                                      TextButton(
-                                          onPressed: () {
-                                            removeButtonAction(index);
-                                          },
-                                          child: const Text("삭제", style: TextStyle(color: Colors.white),)
-                                      )
-                                    ],
-                                  )
-                                ],
+                                        const Text("예약 테마 : " ,style: TextStyle(color: Colors.white)),
+                                        Text(userLoginStatusProvider.getAlarms[index].themeName ,style: const TextStyle(color: Colors.white)),
+                                      ],
+                                    ),
+                                    Row(
+                                        children: [
+                                          const Text("예약 날짜 : " ,style: TextStyle(color: Colors.white)),
+                                          Text(userLoginStatusProvider.getAlarms[index].date ,style: const TextStyle(color: Colors.white)),
+                                        ]
+                                    ),
+                                    Row(
+                                      children: [
+                                        Expanded(child: Container()),
+                                        TextButton(
+                                            onPressed: () {
+                                              removeButtonAction(index);
+                                            },
+                                            child: const Text("삭제", style: TextStyle(color: Colors.white),)
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
+                          )
                           ),
-                        )
                         ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text("예약목록",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20
-                            )
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text("예약목록",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20
+                              )
+                          ),
                         ),
-                      ),
-                      Column(
-                        children: List.generate(_reserveList.length, (index) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey)
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Center(child: Text("${_reserveList[index].theme_name} 예약", style: const TextStyle(color: Colors.white, fontSize: 15))),
-                                  Text("예약날짜 : ${_reserveList[index].date}", style: const TextStyle(color: Colors.white)),
-                                  Text("예약시간 : ${_reserveList[index].time}", style: const TextStyle(color: Colors.white)),
-                                  Text("예약인원 : ${_reserveList[index].user_count}", style: const TextStyle(color: Colors.white),),
-                                  Text("예약자 성함 : ${_reserveList[index].user_name}", style: const TextStyle(color: Colors.white)),
-                                  Row(
-                                    children: [
-                                      Expanded(child: Container()),
-                                      TextButton(
-                                          onPressed: () {
-                                            reservationCancelButtonAction(index);
-                                          },
-                                          child: const Text("예약 취소", style: TextStyle(color: Colors.white),)
-                                      )
-                                    ],
-                                  )
-                                ],
+                        Column(
+                          children: List.generate(_reserveList.length, (index) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey)
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Center(child: Text("${_reserveList[index].theme_name} 예약", style: const TextStyle(color: Colors.white, fontSize: 15))),
+                                    Text("예약날짜 : ${_reserveList[index].date}", style: const TextStyle(color: Colors.white)),
+                                    Text("예약시간 : ${_reserveList[index].time}", style: const TextStyle(color: Colors.white)),
+                                    Text("예약인원 : ${_reserveList[index].user_count}", style: const TextStyle(color: Colors.white),),
+                                    Text("예약자 성함 : ${_reserveList[index].user_name}", style: const TextStyle(color: Colors.white)),
+                                    Row(
+                                      children: [
+                                        Expanded(child: Container()),
+                                        TextButton(
+                                            onPressed: () {
+                                              reservationCancelButtonAction(index);
+                                            },
+                                            child: const Text("예약 취소", style: TextStyle(color: Colors.white),)
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
+                          )
                           ),
-                        )
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        }
       },
     );
   }
