@@ -51,7 +51,7 @@ def theme_add():
     poster_file = request.files.get('poster')
     doc_ref = bmfs.db.collection(u'theme').document()
 
-    filename = doc_ref.id + '.' + poster_file.filename.split('.')[-1]
+    filename = doc_ref.id
     blob = bucket.blob('theme/' + filename)
     blob.upload_from_string(
         poster_file.read(),
@@ -68,7 +68,7 @@ def theme_add():
 def theme_remove():
     input_data = request.get_json()
     doc = bmfs.db.collection(u'theme').document(input_data['id'])
-    poster_filename = doc.id + '.' + doc.to_dict()['poster'].split('.')[-1]
+    poster_filename = doc.id
     blob = bucket.blob('theme/' + poster_filename)
     blob.delete()
     doc.delete()
@@ -83,7 +83,7 @@ def theme_edit():
 
     # remove
     doc = bmfs.db.collection(u'theme').document(theme_id)
-    poster_filename = doc.id + '.' + doc.to_dict()['poster'].split('.')[-1]
+    poster_filename = doc.id
     blob = bucket.blob('theme/' + poster_filename)
     blob.delete()
     doc.delete()
@@ -92,7 +92,7 @@ def theme_edit():
     poster_file = request.files.get('poster')
     doc_ref = bmfs.db.collection(u'theme').document(theme_id)
 
-    filename = doc_ref.id + '.' + poster_file.filename.split('.')[-1]
+    filename = doc_ref.id
     blob = bucket.blob('theme/' + filename)
     blob.upload_from_string(
         poster_file.read(),
@@ -129,7 +129,7 @@ def review_add():
         u'themaID', u'==', input_data['themaID']).where(
         u'writerID', u'==', input_data['writerID']).stream()
     for doc in docs:
-        db.collection(u'reivew').document(doc.id).update(input_data)
+        bmfs.db.collection(u'reivew').document(doc.id).update(input_data)
         return jsonify({'result', 'edit'})
     bmfs.write('review', input_data)
     return jsonify({'result': 'add'})
