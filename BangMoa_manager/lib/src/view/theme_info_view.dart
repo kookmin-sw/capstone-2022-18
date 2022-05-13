@@ -32,7 +32,8 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
         data["runningtime"],
         int.parse(data["players"][0]),
         int.parse(data["players"][2]),
-        List.castFrom(data["timetable"])
+        List.castFrom(data["timetable"]),
+        data['bookable']=='true'
     );
   }
 
@@ -55,17 +56,17 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
           print(response.error);
           return Text(response.error.toString());
         } else {
-          themeList = [];
           if (!infoProvider.getInitState) {
+            themeList = [];
             Map<String, dynamic> data = json.decode(response.data!.body);
             List<String> themeIDs = data.keys.toList();
             themeIDs.forEach((String key) {
               infoProvider.addTheme(makeThemeModelFromMap(key, data[key]));
             });
-            themeList = infoProvider.getThemeList;
             print(themeList.length);
             infoProvider.finishInit();
           }
+          themeList = infoProvider.getThemeList;
           return Container(
             color: Colors.grey,
             child: ListView.builder(
@@ -103,7 +104,7 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                                       })
                                   );
                                   setState(() {
-
+                                    themeList.removeAt(index);
                                   });
                                 },
                                 child: const Text("삭제"),
@@ -120,7 +121,7 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                           Center(child: Text(themeList[index].description)),
                           Text("장르 : ${themeList[index].genre}"),
                           Text("난이도 : ${themeList[index].difficulty}"),
-                          Text("추천인원 : ${themeList[index].maxplayer} ~ ${themeList[index].maxplayer}"),
+                          Text("추천인원 : ${themeList[index].minplayer} ~ ${themeList[index].maxplayer}"),
                           Text("플레이시간 : ${themeList[index].runningtime}"),
                         ],
                       ),

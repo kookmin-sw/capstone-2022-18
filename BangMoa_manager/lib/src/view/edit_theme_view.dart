@@ -30,6 +30,7 @@ class _EditThemeViewState extends State<EditThemeView> {
   int _hour = 24;
   int _minute = 0;
   late bool isPosterSelected;
+  late bool bookable;
   List<String> timeList = [];
 
   @override
@@ -68,6 +69,7 @@ class _EditThemeViewState extends State<EditThemeView> {
     timeList = context.read<ThemeInfoProvider>().getSelectedTheme.timetable;
     _minPlayer = context.read<ThemeInfoProvider>().getSelectedTheme.minplayer;
     _maxPlayer = context.read<ThemeInfoProvider>().getSelectedTheme.maxplayer;
+    bookable = context.read<ThemeInfoProvider>().getSelectedTheme.bookable;
     super.initState();
   }
 
@@ -112,9 +114,11 @@ class _EditThemeViewState extends State<EditThemeView> {
     request.fields['timetable'] = timeList.toString();
     request.fields['runningtime'] = _runningTimeController.text;
     request.fields['manager_id'] = context.read<LoginStatusProvider>().getId;
+    request.fields['bookable'] = bookable.toString();
     request.files.add(await http.MultipartFile.fromPath('poster' ,context.read<SelectedImageProvider>().getImage.path, contentType: MediaType('image', context.read<SelectedImageProvider>().getImage.path.split('.').last)));
     var response = await request.send();
     if (response.statusCode == 200) {
+      context.read<ThemeInfoProvider>().resetState();
       setState(() {
 
       });
@@ -273,6 +277,16 @@ class _EditThemeViewState extends State<EditThemeView> {
                 TextButton(
                   onPressed: addButtonAction,
                   child: const Text("추가"),
+                ),
+                Expanded(child: Container()),
+                const Text('예약 가능 여부'),
+                Switch(
+                    value: bookable,
+                    onChanged: (value) {
+                      setState(() {
+                        bookable = value;
+                      });
+                    }
                 ),
               ],
             ),

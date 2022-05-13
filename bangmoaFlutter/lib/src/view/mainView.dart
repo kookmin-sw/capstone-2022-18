@@ -61,6 +61,7 @@ class _MainViewState extends State<MainView> {
             TextField(
               controller: textController,
               keyboardType: TextInputType.text,
+              style: const TextStyle(color: Colors.white),
               decoration: const InputDecoration(
                 hintText: "테마 검색",
                 hintStyle: TextStyle(color: Colors.white),
@@ -91,7 +92,7 @@ class _MainViewState extends State<MainView> {
               },
             ),
             recommendList.isNotEmpty?recommendThemeWidget(context, recommendList):Container(),
-            ThemeGridViewWidget(themeList: _themeList, viewHeight: 290, viewText: "전체 테마"),
+            ThemeGridViewWidget(themeList: _themeList, viewHeight: 350, viewText: "전체 테마"),
           ],
         ),
         scrollDirection: Axis.vertical,

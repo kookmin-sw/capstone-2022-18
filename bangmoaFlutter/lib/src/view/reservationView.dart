@@ -133,6 +133,7 @@ class _ReservationViewState extends State<ReservationView> {
                     height: 400,
                     selectedDateTime: _currentDate,
                   ),
+                  _theme.bookable == "true"?
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -185,7 +186,8 @@ class _ReservationViewState extends State<ReservationView> {
                         ),
                       ),
                     ],
-                  ),
+                  ):
+                  const Text("현재 예약이 불가능한 테마입니다."),
                 ],
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:bangmoa_manager/src/function/theme_info_function.dart';
 import 'package:bangmoa_manager/src/provider/login_status_provider.dart';
 import 'package:bangmoa_manager/src/provider/selected_image_provider.dart';
+import 'package:bangmoa_manager/src/provider/theme_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http_parser/http_parser.dart';
@@ -26,6 +27,7 @@ class _AddThemeViewState extends State<AddThemeView> {
   int _hour = 24;
   int _minute = 0;
   late bool isPosterSelected;
+  bool bookable = true;
   List<String> timeList = [];
 
   void addButtonAction() {
@@ -59,8 +61,10 @@ class _AddThemeViewState extends State<AddThemeView> {
     request.fields['timetable'] = timeList.toString();
     request.fields['runningtime'] = _runningTimeController.text;
     request.fields['manager_id'] = context.read<LoginStatusProvider>().getId;
+    request.fields['bookable'] = bookable.toString();
     request.files.add(await http.MultipartFile.fromPath('poster' ,context.read<SelectedImageProvider>().getImage.path, contentType: MediaType('image', context.read<SelectedImageProvider>().getImage.path.split('.').last)));
     var response = await request.send();
+    context.read<ThemeInfoProvider>().resetState();
     if (response.statusCode == 200) {
       setState(() {
 
@@ -188,7 +192,7 @@ class _AddThemeViewState extends State<AddThemeView> {
               }
             ),
             const SizedBox(height: 20,),
-            const Text('시간추가'),
+            const Text('예약 시간 추가'),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -226,6 +230,16 @@ class _AddThemeViewState extends State<AddThemeView> {
                 TextButton(
                   onPressed: addButtonAction,
                   child: const Text("추가"),
+                ),
+                Expanded(child: Container()),
+                const Text('예약 가능 여부'),
+                Switch(
+                    value: bookable,
+                    onChanged: (value) {
+                      setState(() {
+                        bookable = value;
+                      });
+                    }
                 ),
               ],
             ),

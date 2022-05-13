@@ -26,6 +26,12 @@ class ThemeInfoProvider extends ChangeNotifier {
 
   void finishInit() {
     _isInit = true;
+    // notifyListeners();
+  }
+
+  void resetState() {
+    _isInit = false;
+    _themeList.clear();
     notifyListeners();
   }
 
