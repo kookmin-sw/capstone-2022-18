@@ -1,6 +1,8 @@
 import 'package:bangmoa_manager/src/provider/login_status_provider.dart';
 import 'package:bangmoa_manager/src/provider/selected_image_provider.dart';
+import 'package:bangmoa_manager/src/provider/theme_info_provider.dart';
 import 'package:bangmoa_manager/src/view/add_theme_view.dart';
+import 'package:bangmoa_manager/src/view/edit_theme_view.dart';
 import 'package:bangmoa_manager/src/view/main_view.dart';
 import 'package:bangmoa_manager/src/view/select_poster_view.dart';
 import 'package:bangmoa_manager/src/view/signup_view.dart';
@@ -11,6 +13,7 @@ void main() => runApp(MultiProvider(
   providers: [
     ChangeNotifierProvider<LoginStatusProvider>(create: (BuildContext context) => LoginStatusProvider()),
     ChangeNotifierProvider<SelectedImageProvider>(create: (BuildContext context) => SelectedImageProvider()),
+    ChangeNotifierProvider<ThemeInfoProvider>(create: (BuildContext context) => ThemeInfoProvider()),
   ], child: const MyApp()
 ));
 
@@ -27,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpView(),
         '/addtheme': (context) => const AddThemeView(),
         '/selectposter': (context) => const SelectPosterView(),
+        '/edittheme' : (context) => const EditThemeView(),
       },
     );
   }

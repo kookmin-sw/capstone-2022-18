@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:bangmoa_manager/src/provider/login_status_provider.dart';
+import 'package:bangmoa_manager/src/view/more_view.dart';
+import 'package:bangmoa_manager/src/view/reservation_list_view.dart';
+import 'package:bangmoa_manager/src/view/theme_info_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +23,8 @@ class MainView extends StatefulWidget{
 class _MainViewState extends State<MainView> {
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _pwController = TextEditingController();
+  int _selectedIndex = 0;
+  final List<Widget> _widgetList = [const ReservationListView(), const ThemeInfoView(), const MoreView()];
 
   @override
   void initState() {
@@ -98,75 +103,48 @@ class _MainViewState extends State<MainView> {
   );
 
   // 로그인 이후 메인 화면
-  Widget _mainView() => FutureBuilder(
-    future: http.post(
-        Uri.parse(LoginStatusProvider.baseURL + '/reservation/manager/status'),
-        headers: <String, String> {'Content-Type': 'application/json'},
-        body: json.encode({
-          'id' : context.read<LoginStatusProvider>().getId,
-          'date' : DateFormat('yyyy-MM-dd').format(DateTime.now())
-        })
-    ),
-    builder: (BuildContext context, AsyncSnapshot<http.Response> response) {
-      if (response.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      } else if (response.hasError) {
-        print(response.error);
-        return Text(response.error.toString());
-      } else {
-        var result = json.decode(response.data!.body)["result"];
-        return Scaffold(
-          appBar: AppBar(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  child: const Text('logout'),
-                  onPressed: () => onClickLogoutButton(),
-                )
-              ],
-            ),
+  Widget _mainView() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ElevatedButton(
+              child: const Text('logout'),
+              onPressed: () => onClickLogoutButton(),
+            )
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        backgroundColor: Colors.grey,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white.withOpacity(0.6),
+        onTap: (int index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            label: "예약현황",
+            icon: Icon(Icons.description),
           ),
-          body: ListView.builder(
-            itemCount: result.length,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: Text(
-                            "${result[index]["date"]!} 예약${index+1}",
-                            style: const TextStyle(fontSize: 20),
-                          )
-                        ),
-                        Text("예약 테마 : ${result[index]["theme_name"]!}"),
-                        Text("예약 시간 : ${result[index]["time"]!}"),
-                        Text("예약 인원 : ${result[index]["user_count"]!}"),
-                        Text("예약자 명 : ${result[index]["user_name"]!}"),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }
+          BottomNavigationBarItem(
+            label: "테마정보",
+            icon: Icon(Icons.photo_album),
           ),
-          floatingActionButton: FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () => Navigator.pushNamed(context, '/addtheme'),
+          BottomNavigationBarItem(
+            label: "설정",
+            icon: Icon(Icons.more_horiz),
           ),
-        );
-      }
-    }
-  );
+        ],
+      ),
+      body: _widgetList[_selectedIndex],
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
