@@ -5,17 +5,20 @@ import 'package:bangmoa_manager/src/provider/theme_info_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:path/path.dart' as path;
 
 import 'package:http/http.dart' as http;
 
-class AddThemeView extends StatefulWidget{
-  const AddThemeView({Key? key}) : super(key: key);
+class EditThemeView extends StatefulWidget {
+  const EditThemeView({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AddThemeViewState();
+  State<EditThemeView> createState() => _EditThemeViewState();
 }
 
-class _AddThemeViewState extends State<AddThemeView> {
+class _EditThemeViewState extends State<EditThemeView> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _genreController = TextEditingController();
@@ -27,8 +30,48 @@ class _AddThemeViewState extends State<AddThemeView> {
   int _hour = 24;
   int _minute = 0;
   late bool isPosterSelected;
-  bool bookable = true;
+  late bool bookable;
   List<String> timeList = [];
+
+  @override
+  void initState() {
+    _nameController.value = TextEditingValue(
+      text: context.read<ThemeInfoProvider>().getSelectedTheme.name,
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: context.read<ThemeInfoProvider>().getSelectedTheme.name.length),
+      ),
+    );
+    _descriptionController.value = TextEditingValue(
+      text: context.read<ThemeInfoProvider>().getSelectedTheme.description,
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: context.read<ThemeInfoProvider>().getSelectedTheme.description.length),
+      ),
+    );
+    _genreController.value = TextEditingValue(
+      text: context.read<ThemeInfoProvider>().getSelectedTheme.genre,
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: context.read<ThemeInfoProvider>().getSelectedTheme.genre.length),
+      ),
+    );
+    _costController.value = TextEditingValue(
+      text: context.read<ThemeInfoProvider>().getSelectedTheme.cost.toString(),
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: context.read<ThemeInfoProvider>().getSelectedTheme.cost.toString().length),
+      ),
+    );
+    _runningTimeController.value = TextEditingValue(
+      text: context.read<ThemeInfoProvider>().getSelectedTheme.runningtime.toString(),
+      selection: TextSelection.fromPosition(
+        TextPosition(offset: context.read<ThemeInfoProvider>().getSelectedTheme.runningtime.toString().length),
+      ),
+    );
+    _difficulty = context.read<ThemeInfoProvider>().getSelectedTheme.difficulty;
+    timeList = context.read<ThemeInfoProvider>().getSelectedTheme.timetable;
+    _minPlayer = context.read<ThemeInfoProvider>().getSelectedTheme.minplayer;
+    _maxPlayer = context.read<ThemeInfoProvider>().getSelectedTheme.maxplayer;
+    bookable = context.read<ThemeInfoProvider>().getSelectedTheme.bookable;
+    super.initState();
+  }
 
   void addButtonAction() {
     String hour = _hour.toString();
@@ -50,8 +93,18 @@ class _AddThemeViewState extends State<AddThemeView> {
   }
 
   Future<void> submitButtonAction() async {
-    var request = http.MultipartRequest("POST", Uri.parse(LoginStatusProvider.baseURL + "/theme/add"));
+    var request = http.MultipartRequest("POST", Uri.parse(LoginStatusProvider.baseURL + "/theme/edit"));
+    if(!isPosterSelected) {
+      final response1 = await http.get(Uri.parse(context.read<ThemeInfoProvider>().getSelectedTheme.poster));
+      final documentDirectory = await getApplicationDocumentsDirectory();
+      final file = File(path.join(documentDirectory.path, context.read<ThemeInfoProvider>().getSelectedTheme.poster.split('/').last));
+      file.writeAsBytesSync(response1.bodyBytes);
+      context.read<SelectedImageProvider>().selectImage(file);
+      context.read<SelectedImageProvider>().select();
+    }
+    print(context.read<SelectedImageProvider>().getImage.path);
 
+    request.fields['id'] = context.read<ThemeInfoProvider>().getSelectedTheme.id;
     request.fields['name'] = _nameController.text;
     request.fields['genre'] = _genreController.text;
     request.fields['description'] = _descriptionController.text;
@@ -64,27 +117,24 @@ class _AddThemeViewState extends State<AddThemeView> {
     request.fields['bookable'] = bookable.toString();
     request.files.add(await http.MultipartFile.fromPath('poster' ,context.read<SelectedImageProvider>().getImage.path, contentType: MediaType('image', context.read<SelectedImageProvider>().getImage.path.split('.').last)));
     var response = await request.send();
-    context.read<ThemeInfoProvider>().resetState();
     if (response.statusCode == 200) {
+      context.read<ThemeInfoProvider>().resetState();
       setState(() {
 
       });
       Navigator.pop(context);
+    } else {
+      print(response.statusCode);
     }
   }
 
   @override
-  void initState() {
-    Provider.of<SelectedImageProvider>(context, listen: false).reset();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    isPosterSelected = Provider.of<SelectedImageProvider>(context).getSelectedState;
+    SelectedImageProvider imageProvider = Provider.of(context);
+    isPosterSelected = imageProvider.getSelectedState;
     return Scaffold(
       appBar: AppBar(
-        title: Text("테마 추가")
+        title: const Text("테마 수정"),
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -100,15 +150,12 @@ class _AddThemeViewState extends State<AddThemeView> {
                 SizedBox(
                   height: MediaQuery.of(context).size.width,
                   width: MediaQuery.of(context).size.width,
-                  child: Image.file(context.read<SelectedImageProvider>().getImage, fit: BoxFit.fill),
+                  child: Image.file(imageProvider.getImage, fit: BoxFit.fill),
                 ):
-                Container(
-                  height: 300,
-                  width: 300,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: const Icon(Icons.add, color: Colors.grey),
+                SizedBox(
+                  height: MediaQuery.of(context).size.width,
+                  width: MediaQuery.of(context).size.width,
+                  child: Image.network(context.read<ThemeInfoProvider>().getSelectedTheme.poster, fit: BoxFit.fill),
                 ),
                 onTap: () {
                   posterSelectAction(context);
@@ -177,22 +224,22 @@ class _AddThemeViewState extends State<AddThemeView> {
             const SizedBox(height: 20,),
             const Text('난이도'),
             DropdownButton(
-              hint: const Text("난이도"),
-              items: <int>[1, 2, 3, 4, 5].map((int value) {
-                return DropdownMenuItem<int>(
-                  child: Text(value.toString()),
-                  value: value,
-                );
-              }).toList(),
-              value: _difficulty,
-              onChanged: (int? newValue) {
-                setState(() {
-                  _difficulty = newValue!;
-                });
-              }
+                hint: const Text("난이도"),
+                items: <int>[1, 2, 3, 4, 5].map((int value) {
+                  return DropdownMenuItem<int>(
+                    child: Text(value.toString()),
+                    value: value,
+                  );
+                }).toList(),
+                value: _difficulty,
+                onChanged: (int? newValue) {
+                  setState(() {
+                    _difficulty = newValue!;
+                  });
+                }
             ),
             const SizedBox(height: 20,),
-            const Text('예약 시간 추가'),
+            const Text('시간추가'),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -249,10 +296,10 @@ class _AddThemeViewState extends State<AddThemeView> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: timeList.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 6,
-                  childAspectRatio: 2,
-                  mainAxisSpacing: 6,
-                  crossAxisSpacing: 6
+                    crossAxisCount: 6,
+                    childAspectRatio: 2,
+                    mainAxisSpacing: 6,
+                    crossAxisSpacing: 6
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
@@ -264,7 +311,7 @@ class _AddThemeViewState extends State<AddThemeView> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey)
+                          border: Border.all(color: Colors.grey)
                       ),
                       child: Center(child: Text(timeList[index])),
                     ),
@@ -272,11 +319,11 @@ class _AddThemeViewState extends State<AddThemeView> {
                 },
               ),
             ),
+
             Center(child: ElevatedButton(child: const Text('Submit'), onPressed: submitButtonAction)),
           ],
         ),
       ),
     );
   }
-
 }

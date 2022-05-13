@@ -15,8 +15,9 @@ class BMTheme {
   late int runningtime;
   late String manager_id;
   late List<String> timeTable;
+  late String bookable;
 
-  BMTheme(this.id, this.name, this.description, this.genre, this.difficulty, this.poster, this.cost, this.runningtime, this.manager_id, this.timeTable);
+  BMTheme(this.id, this.name, this.description, this.genre, this.difficulty, this.poster, this.cost, this.runningtime, this.manager_id, this.timeTable, this.bookable);
 
   factory BMTheme.fromDocument(DocumentSnapshot doc) {
     return BMTheme(
@@ -29,7 +30,8 @@ class BMTheme {
       doc.get("cost"),
       doc.get("runningtime"),
       doc.get("manager_id").toString(),
-      List.castFrom(doc.get("timetable"),)
+      List.castFrom(doc.get("timetable"),),
+      doc.get("bookable"),
     );
   }
 }

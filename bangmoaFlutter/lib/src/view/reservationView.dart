@@ -28,6 +28,7 @@ class _ReservationViewState extends State<ReservationView> {
   late String _userID;
   List<String> timeList = [];
   List<bool> boolList = [];
+  bool isPressed = false;
 
   void _requestReserve(DateTime date) async {
     http.Response _res = await http.post(
@@ -132,6 +133,7 @@ class _ReservationViewState extends State<ReservationView> {
                     height: 400,
                     selectedDateTime: _currentDate,
                   ),
+                  _theme.bookable == "true"?
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -177,21 +179,25 @@ class _ReservationViewState extends State<ReservationView> {
                             ),
                             child: const Text("예약 검색", style: TextStyle(color: Colors.white),),
                             onPressed: () {
+                              isPressed = true;
                               _requestReserve(_currentDate);
                             },
                           ),
                         ),
                       ),
                     ],
-                  ),
+                  ):
+                  const Text("현재 예약이 불가능한 테마입니다."),
                 ],
               ),
             ),
             const SizedBox(
               height: 15,
             ),
-            if (timeList.isEmpty)
+            if (!isPressed)
               Container()
+            else if (timeList.isEmpty)
+              const CircularProgressIndicator()
             else
             Container(
               decoration: const BoxDecoration(

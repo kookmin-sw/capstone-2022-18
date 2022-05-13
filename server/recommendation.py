@@ -32,18 +32,22 @@ def clac_similarity(rating_dataframe):
         index=rating_dataframe.index,
         columns=rating_dataframe.index
     )
-    print(similarity)
+    return similarity
 
-def get_similar_theme(user_id):
+def get_similar_theme(rating_df, user_id):
     # read visited themes
-    rating = pd.read_pickle('./confidential/rating.pkl')
-    rated = rating[rating[user_id] > 0][user_id].index
+    rated = rating_df[rating_df[user_id] > 0][user_id].index
     # get top 3
-    similarity = pd.read_pickle('./confidential/similarity.pkl')[rated]
+    similarity = clac_similarity(rating_df)
     calc_sum = similarity.mean(axis=1).drop(rated)
     res = calc_sum.sort_values(ascending=False)
-    print(res.index[:3])
+    print(list(res.index[:3]))
+    return list(res.index)
 
 if __name__ == '__main__':
     bmfs = BangMoaFireStroe(sys.argv[1])
-    clac_similarity(init_rating_dataframe(bmfs))
+    df = init_rating_dataframe(bmfs)
+    users = bmfs.db.collection(u'user').stream()
+    for doc in users:
+        rec = get_similar_theme(df, doc.id)
+        bmfs.db.collection(u'user').document(doc.id).update({'recommand': rec})
