@@ -27,7 +27,7 @@ void main() async {
   await Firebase.initializeApp();
   Workmanager().initialize(
     callbackDispatcher,
-    isInDebugMode: true,
+    isInDebugMode: false,
   );
 
   Workmanager().registerPeriodicTask(

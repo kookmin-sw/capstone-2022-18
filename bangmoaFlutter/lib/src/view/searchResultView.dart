@@ -77,7 +77,7 @@ class _SearchResultViewState extends State<SearchResultView> {
               },
             ),
             _selectedThemeList.isEmpty ? const Center(child: Text("검색 결과가 없습니다."),):
-                ThemeGridViewWidget(themeList: _selectedThemeList, viewHeight: 290, viewText: "${_searchString} 에 대한 검색 결과",)
+                ThemeGridViewWidget(themeList: _selectedThemeList, viewHeight: 320, viewText: "${_searchString} 에 대한 검색 결과",)
           ],
         ),
       ),

@@ -92,7 +92,7 @@ class _MainViewState extends State<MainView> {
               },
             ),
             recommendList.isNotEmpty?recommendThemeWidget(context, recommendList):Container(),
-            ThemeGridViewWidget(themeList: _themeList, viewHeight: 350, viewText: "전체 테마"),
+            ThemeGridViewWidget(themeList: _themeList, viewHeight: 320, viewText: "전체 테마"),
           ],
         ),
         scrollDirection: Axis.vertical,

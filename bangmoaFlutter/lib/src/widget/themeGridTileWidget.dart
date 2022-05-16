@@ -22,28 +22,28 @@ class ThemeGridTileWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
         child: Container(
-          color: Colors.white,
+          color: Colors.black,
           child: Column(
             children: [
               Center(child: Image.network(theme.poster, height: posterHeight, width: posterWidth, fit: BoxFit.fill,)),
               Padding(
                 padding: const EdgeInsets.only(left: 5.0),
-                child: Text(theme.name,style: const TextStyle(fontSize: themeTitleFontSize),overflow: TextOverflow.ellipsis),
+                child: Text(theme.name,style: const TextStyle(fontSize: themeTitleFontSize, color: Colors.white),overflow: TextOverflow.ellipsis),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 5.0),
-                child: Text(theme.genre),
+                child: Text(theme.genre, style: const TextStyle(color: Colors.white)),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 5.0),
-                    child: Text("난이도 : ${theme.difficulty.toString()}"),
+                    child: Text("난이도 : ${theme.difficulty.toString()}", style: const TextStyle(color: Colors.white)),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 5.0),
-                    child: Text("${theme.runningtime.toString()}분"),
+                    child: Text("${theme.runningtime.toString()}분", style: const TextStyle(color: Colors.white)),
                   ),
                 ],
               )
