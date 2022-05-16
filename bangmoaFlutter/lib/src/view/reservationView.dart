@@ -209,7 +209,7 @@ class _ReservationViewState extends State<ReservationView> {
                   children: [
                     Text("${_theme.name} 예약현황"),
                     SizedBox(
-                      height: 65.0*((timeList.length/6).ceil()),
+                      height: 70.0*((timeList.length/6).ceil()),
                       child: GridView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: timeList.length,

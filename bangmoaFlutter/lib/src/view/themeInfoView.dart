@@ -82,7 +82,14 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                                 ),
                               ),
                             ),
-                            const Text("지점 : "),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: Text("지점 : ${manager.name}"),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: Text("위치 : ${manager.address}"),
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(right: 10.0),
                               child: Container(
@@ -93,10 +100,25 @@ class _ThemeInfoViewState extends State<ThemeInfoView> {
                             Padding(
                               padding: const EdgeInsets.only(right: 10.0),
                               child: Container(
+                                child: Text("추천인원 : ${selectedTheme.players}"),
+                                alignment: Alignment.centerRight,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: Container(
                                 child: Text("난이도 : ${selectedTheme.difficulty.toString()}"),
                                 alignment: Alignment.centerRight,
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: Container(
+                                child: Text("진행시간 : ${selectedTheme.runningtime.toString()}"),
+                                alignment: Alignment.centerRight,
+                              ),
+                            ),
+
                             Center(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
