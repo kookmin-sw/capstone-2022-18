@@ -29,9 +29,11 @@ role : 데이터 수집, AWS 서버 관리
 - 유저 앱
 https://drive.google.com/file/d/121cad9ohFtYMYn8nWmmxtqYhA6-F8K7z/view
 - 매니저 앱
+https://drive.google.com/file/d/1bxkTbSXuY1qO3CCBxCdisVbET258uBGd/view?usp=sharing
 
 2. 사용설명서
 - [유저 앱 사용 설명서](/docs/%EB%B0%A9%ED%83%88%EC%B6%9C%EB%AA%A8%EC%95%84%20%EC%9C%A0%EC%A0%80%EC%95%B1%20%ED%8E%98%EC%9D%B4%EC%A7%80%EB%B3%84%20%EC%84%A4%EB%AA%85%EC%84%9C.pdf)
+- [매니저 앱 사용 설명서](/docs/%EB%B0%A9%ED%83%88%EC%B6%9C%EB%AA%A8%EC%95%84%20%EB%A7%A4%EB%8B%88%EC%A0%80%20%EC%95%B1%20%ED%8E%98%EC%9D%B4%EC%A7%80%EB%B3%84%20%EC%84%A4%EB%AA%85%EC%84%9C.pdf)
 
 ### 5. 기타
 구조도
