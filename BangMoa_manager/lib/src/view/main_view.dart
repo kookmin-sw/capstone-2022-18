@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:bangmoa_manager/src/provider/login_status_provider.dart';
-import 'package:bangmoa_manager/src/view/more_view.dart';
 import 'package:bangmoa_manager/src/view/reservation_list_view.dart';
 import 'package:bangmoa_manager/src/view/theme_info_view.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,7 @@ class _MainViewState extends State<MainView> {
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _pwController = TextEditingController();
   int _selectedIndex = 0;
-  final List<Widget> _widgetList = [const ReservationListView(), const ThemeInfoView(), const MoreView()];
+  final List<Widget> _widgetList = [const ReservationListView(), const ThemeInfoView()];
 
   @override
   void initState() {
@@ -134,10 +133,6 @@ class _MainViewState extends State<MainView> {
           BottomNavigationBarItem(
             label: "테마정보",
             icon: Icon(Icons.photo_album),
-          ),
-          BottomNavigationBarItem(
-            label: "설정",
-            icon: Icon(Icons.more_horiz),
           ),
         ],
       ),
