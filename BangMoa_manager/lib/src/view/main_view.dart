@@ -105,11 +105,13 @@ class _MainViewState extends State<MainView> {
   Widget _mainView() {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ElevatedButton(
-              child: const Text('logout'),
+            const Text("방탈출모아 매니저"),
+            TextButton(
+              child: const Text('logout', style: TextStyle(color: Colors.white)),
               onPressed: () => onClickLogoutButton(),
             )
           ],

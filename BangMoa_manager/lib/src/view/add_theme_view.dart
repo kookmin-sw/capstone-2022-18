@@ -84,6 +84,7 @@ class _AddThemeViewState extends State<AddThemeView> {
     isPosterSelected = Provider.of<SelectedImageProvider>(context).getSelectedState;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: Text("테마 추가")
       ),
       body: SingleChildScrollView(
