@@ -134,6 +134,7 @@ class _EditThemeViewState extends State<EditThemeView> {
     isPosterSelected = imageProvider.getSelectedState;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: const Text("테마 수정"),
       ),
       body: SingleChildScrollView(
