@@ -28,9 +28,10 @@ class _MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
+    UserLoginStatusProvider loginStatusProvider = Provider.of<UserLoginStatusProvider>(context);
     List<BMTheme> _themeList = Provider.of<ThemeProvider>(context).getThemeList;
     if (context.read<UserLoginStatusProvider>().getLogin) {
-      _recommendIDList = context.read<UserLoginStatusProvider>().getRecommend;
+      _recommendIDList = loginStatusProvider.getRecommend;
     }
     for (var element in _themeList) {
       if (_recommendIDList.contains(element.id)) {
