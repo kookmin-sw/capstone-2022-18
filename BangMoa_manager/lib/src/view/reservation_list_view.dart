@@ -16,6 +16,7 @@ class ReservationListView extends StatefulWidget {
 class _ReservationListViewState extends State<ReservationListView> {
   @override
   Widget build(BuildContext context) {
+
     return FutureBuilder(
       future: http.post(
           Uri.parse(LoginStatusProvider.baseURL + '/reservation/manager/status'),
@@ -33,6 +34,7 @@ class _ReservationListViewState extends State<ReservationListView> {
           return Text(response.error.toString());
         } else {
           var result = json.decode(response.data!.body)["result"];
+          // print(result[0]);
           return ListView.builder(
             itemCount: result.length,
             scrollDirection: Axis.vertical,
@@ -58,6 +60,7 @@ class _ReservationListViewState extends State<ReservationListView> {
                         Text("예약 시간 : ${result[index]["time"]!}"),
                         Text("예약 인원 : ${result[index]["user_count"]!}"),
                         Text("예약자 명 : ${result[index]["user_name"]!}"),
+                        Text("전화번호 : ${result[index]["user_phone"]!}"),
                       ],
                     ),
                   ),
