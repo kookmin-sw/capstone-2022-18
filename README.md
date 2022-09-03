@@ -1,6 +1,6 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-f059dc9a6f8d3a56e377f745f24479a46679e63a5d9fe6f495e02850cd0d8118.svg)](https://classroom.github.com/online_ide?assignment_repo_id=7010423&assignment_repo_type=AssignmentRepo)
 
-**팀페이지 주소** -> https://kookmin-sw.github.io/capstone-2022-18
+https://kookmin-sw.github.io/capstone-2022-18
 
 ### 1. 프로잭트 소개
 방탈출 게임이란 주어진 시간 안에 퍼즐을 해결하고 밀실을 탈출하는 놀이 문화의 하나로써, 최근 젊은 층을 중심으로 퍼져 나가고 있습니다. 이 프로젝트는 현재 대다수 방탈출 카페들이 가지는 문제점들(정보접근의 어려움, 폐쇄성으로 인한 게임 탐색의 어려움, 높은 예약난이도로 인한 어려움)을 파악하고 해당 어려움을 해소해주기 위한 방탈출게임 종합 플랫폼 모바일 어플리케이션을 개발하는 것을 목적으로 합니다.
